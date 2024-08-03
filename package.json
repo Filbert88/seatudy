@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "npx tsx prisma/seed.tsx",
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
