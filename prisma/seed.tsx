@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, DifficultyLevel, NotificationType, Role, TransactionType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -9,7 +9,8 @@ async function main() {
       password: 'password1',
       phoneNumber: '1234567890',
       campus: 'Main Campus',
-      role: 'USER',  
+      role: Role.USER,
+      balance: BigInt(100000), 
     },
   });
 
@@ -19,7 +20,8 @@ async function main() {
       password: 'password2',
       phoneNumber: '0987654321',
       campus: 'Main Campus',
-      role: 'INSTRUCTOR',  
+      role: Role.INSTRUCTOR,
+      balance: BigInt(50000), 
     },
   });
 
@@ -29,7 +31,8 @@ async function main() {
       description: 'Description for Course 1',
       syllabus: 'Syllabus for Course 1',
       instructor: { connect: { id: user2.id } },
-      difficulty: 'BEGINNER',  
+      difficulty: DifficultyLevel.BEGINNER,
+      price: BigInt(50000), 
     },
   });
 
@@ -39,7 +42,8 @@ async function main() {
       description: 'Description for Course 2',
       syllabus: 'Syllabus for Course 2',
       instructor: { connect: { id: user2.id } },
-      difficulty: 'INTERMEDIATE', 
+      difficulty: DifficultyLevel.INTERMEDIATE,
+      price: BigInt(75000),
     },
   });
 
@@ -80,7 +84,7 @@ async function main() {
     data: {
       user: { connect: { id: user1.id } },
       message: 'You have a new assignment submission',
-      type: 'ASSIGNMENT_SUBMISSION', 
+      type: NotificationType.ASSIGNMENT_SUBMISSION,
     },
   });
 
@@ -88,8 +92,8 @@ async function main() {
     data: {
       user: { connect: { id: user1.id } },
       course: { connect: { id: course1.id } },
-      amount: 100.0,
-      type: 'PURCHASE',  
+      amount: BigInt(50000),
+      type: TransactionType.PURCHASE,
     },
   });
 
