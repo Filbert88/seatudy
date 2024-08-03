@@ -19,7 +19,7 @@ model User {
   courses       CourseEnrollment[]
   reviews       Review[]
   assignments   Submission[]
-  balance       Float           @default(0.0)
+  balance       BigInt          @default(0)
   forumPosts    ForumPost[]
   forumComments ForumComment[]
   notifications Notification[]
@@ -46,6 +46,7 @@ model Course {
   averageRating Float?             @default(0.0)
   forums        Forum[]
   transactions  Transaction[]
+  price         BigInt
 }
 
 model CourseEnrollment {
@@ -64,7 +65,7 @@ model CourseProgress {
   id           String           @id @default(uuid())
   enrollment   CourseEnrollment @relation(fields: [enrollmentId], references: [id])
   enrollmentId String
-  progress     Float            @default(0.0)  
+  progress     String           @default("0")
   lastAccess   DateTime         @default(now())
 }
 
@@ -178,7 +179,7 @@ model Transaction {
   userId    String
   course    Course?  @relation(fields: [courseId], references: [id])
   courseId  String?  
-  amount    Float
+  amount    BigInt
   createdAt DateTime @default(now())
   type      TransactionType
 }
