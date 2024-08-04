@@ -14,17 +14,17 @@ model User {
   phoneNumber   String
   campus        String
   role          Role            @default(USER)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
   courses       CourseEnrollment[]
-  reviews       Review[]
+  instructedCourses Course[]
   assignments   Submission[]
-  balance       BigInt          @default(0)
+  reviews       Review[]
   forumPosts    ForumPost[]
   forumComments ForumComment[]
   notifications Notification[]
   transactions  Transaction[]
-  instructedCourses Course[]
+  balance       BigInt          @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 }
 
 model Course {
@@ -37,16 +37,18 @@ model Course {
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   enrollments   CourseEnrollment[]
-  reviews       Review[]
-  assignments   Assignment[]
   materials     CourseMaterial[]
-  forumPosts    ForumPost[]
   categories    CourseCategoryCourse[]
-  difficulty    DifficultyLevel
-  averageRating Float?             @default(0.0)
+  assignments   Assignment[]
+  reviews       Review[]
   forums        Forum[]
+  forumPosts    ForumPost[]
   transactions  Transaction[]
+  averageRating Float?             @default(0.0)
+  difficulty    DifficultyLevel
   price         BigInt
+
+  @@index([difficulty, averageRating])
 }
 
 model CourseEnrollment {
@@ -65,8 +67,8 @@ model CourseProgress {
   id           String           @id @default(uuid())
   enrollment   CourseEnrollment @relation(fields: [enrollmentId], references: [id])
   enrollmentId String
-  progress     String           @default("0")
-  lastAccess   DateTime         @default(now())
+  progressPct  String           @default("0")
+  lastAccessedAt   DateTime         @default(now())
 }
 
 model CourseCategory {
@@ -89,9 +91,19 @@ model CourseMaterial {
   url         String
   course      Course   @relation(fields: [courseId], references: [id])
   courseId    String
+  bucket      Bucket   @relation(fields: [bucketId], references: [id])
+  bucketId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   @@unique([title, courseId])
+}
+
+model Bucket {
+  id            String           @id @default(uuid())
+  name          String           @unique
+  courseMaterials CourseMaterial[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now())
 }
 
 model Assignment {
@@ -189,10 +201,9 @@ enum TransactionType {
   PURCHASE
 }
 
-enum Role {
-  USER
-  INSTRUCTOR
-  ADMIN
+enum NotificationType {
+  ASSIGNMENT_SUBMISSION
+  COURSE_PURCHASE
 }
 
 enum DifficultyLevel {
@@ -201,7 +212,8 @@ enum DifficultyLevel {
   ADVANCED
 }
 
-enum NotificationType {
-  ASSIGNMENT_SUBMISSION
-  COURSE_PURCHASE
+enum Role {
+  USER
+  INSTRUCTOR
+  ADMIN
 }
