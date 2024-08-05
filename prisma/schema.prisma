@@ -16,6 +16,7 @@ model User {
   role          Role            @default(USER)
   courses       CourseEnrollment[]
   instructedCourses Course[]
+  accessedMaterials CourseMaterialAccess[]
   assignments   Submission[]
   reviews       Review[]
   forumPosts    ForumPost[]
@@ -32,6 +33,7 @@ model Course {
   title         String
   description   String
   syllabus      String
+  thumbnailUrl  String?
   instructor    User               @relation(fields: [instructorId], references: [id])
   instructorId  String
   createdAt     DateTime           @default(now())
@@ -93,9 +95,21 @@ model CourseMaterial {
   courseId    String
   bucket      Bucket   @relation(fields: [bucketId], references: [id])
   bucketId    String
+  accesses  CourseMaterialAccess[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   @@unique([title, courseId])
+}
+
+model CourseMaterialAccess {
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [userId], references: [id])
+  userId          String
+  courseMaterial  CourseMaterial @relation(fields: [courseMaterialId], references: [id])
+  courseMaterialId String
+  accessedAt      DateTime      @default(now())
+
+  @@unique([userId, courseMaterialId])
 }
 
 model Bucket {
