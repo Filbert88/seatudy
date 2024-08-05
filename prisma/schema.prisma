@@ -9,9 +9,10 @@ datasource db {
 
 model User {
   id            String          @id @default(uuid())
+  fullName      String
   email         String          @unique
   password      String
-  phoneNumber   String
+  phoneNumber   String          @unique
   campus        String
   role          Role            @default(USER)
   courses       CourseEnrollment[]
