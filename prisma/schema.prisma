@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password      String
+  phoneNumber   String
+  campus        String
+  role          Role            @default(USER)
+  courses       CourseEnrollment[]
+  instructedCourses Course[]
+  assignments   Submission[]
+  reviews       Review[]
+  forumPosts    ForumPost[]
+  forumComments ForumComment[]
+  notifications Notification[]
+  transactions  Transaction[]
+  balance       BigInt          @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Course {
+  id            String             @id @default(uuid())
+  title         String
+  description   String
+  syllabus      String
+  instructor    User               @relation(fields: [instructorId], references: [id])
+  instructorId  String
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  enrollments   CourseEnrollment[]
+  materials     CourseMaterial[]
+  categories    CourseCategoryCourse[]
+  assignments   Assignment[]
+  reviews       Review[]
+  forums        Forum[]
+  forumPosts    ForumPost[]
+  transactions  Transaction[]
+  averageRating Float?             @default(0.0)
+  difficulty    DifficultyLevel
+  price         BigInt
+
+  @@index([difficulty, averageRating])
+}
+
+model CourseEnrollment {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  progress   CourseProgress[]
+  @@unique([userId, courseId]) 
+}
+
+model CourseProgress {
+  id           String           @id @default(uuid())
+  enrollment   CourseEnrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId String
+  progressPct  String           @default("0")
+  lastAccessedAt   DateTime         @default(now())
+}
+
+model CourseCategory {
+  id    String   @id @default(uuid())
+  name  String   @unique
+  categories CourseCategoryCourse[]
+}
+
+model CourseCategoryCourse {
+  courseId       String
+  categoryId     String
+  course         Course   @relation(fields: [courseId], references: [id])
+  category       CourseCategory @relation(fields: [categoryId], references: [id])
+  @@id([courseId, categoryId])
+}
+
+model CourseMaterial {
+  id          String   @id @default(uuid())
+  title       String
+  url         String
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    String
+  bucket      Bucket   @relation(fields: [bucketId], references: [id])
+  bucketId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  @@unique([title, courseId])
+}
+
+model Bucket {
+  id            String           @id @default(uuid())
+  name          String           @unique
+  courseMaterials CourseMaterial[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @default(now())
+}
+
+model Assignment {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  dueDate     DateTime
+  course      Course     @relation(fields: [courseId], references: [id])
+  courseId    String
+  submissions Submission[]
+  @@unique([title, courseId])
+}
+
+model Submission {
+  id           String     @id @default(uuid())
+  content      String
+  createdAt    DateTime   @default(now())
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId String
+  student      User       @relation(fields: [studentId], references: [id])
+  studentId    String
+  grade        Float?
+  @@unique([assignmentId, studentId]) 
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  content   String
+  rating    Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Forum {
+  id         String       @id @default(uuid())
+  course     Course       @relation(fields: [courseId], references: [id])
+  courseId   String
+  posts      ForumPost[]
+}
+
+model ForumPost {
+  id         String       @id @default(uuid())
+  content    String
+  forum      Forum        @relation(fields: [forumId], references: [id])
+  forumId    String
+  user       User         @relation(fields: [userId], references: [id])
+  userId     String
+  comments   ForumComment[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+  @@unique([content, forumId, userId])  
+  course     Course       @relation(fields: [courseId], references: [id])
+  courseId   String
+}
+
+model ForumComment {
+  id         String       @id @default(uuid())
+  content    String
+  post       ForumPost    @relation(fields: [postId], references: [id])
+  postId     String
+  user       User         @relation(fields: [userId], references: [id])
+  userId     String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+  @@unique([content, postId, userId])  
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  message   String
+  type      NotificationType
+  createdAt DateTime @default(now())
+  read      Boolean  @default(false)
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?  
+  amount    BigInt
+  createdAt DateTime @default(now())
+  type      TransactionType
+}
+
+enum TransactionType {
+  DEPOSIT
+  PURCHASE
+}
+
+enum NotificationType {
+  ASSIGNMENT_SUBMISSION
+  COURSE_PURCHASE
+}
+
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum Role {
+  USER
+  INSTRUCTOR
+  ADMIN
+}
