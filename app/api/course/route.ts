@@ -19,15 +19,19 @@ export const GET = async (req: Request) => {
   try {
     const courses = await prisma.course.findMany({
       where: {
-        title: {
-          contains: title ? title : undefined,
-          mode: "insensitive",
-        },
-        categories: {
-          some: {
-            categoryId: categoryId ? categoryId : undefined,
-          },
-        },
+        title: title
+          ? {
+              contains: title,
+              mode: "insensitive",
+            }
+          : undefined,
+        categories: categoryId
+          ? {
+              some: {
+                categoryId: categoryId,
+              },
+            }
+          : undefined,
         difficulty: difficulty ? difficulty : undefined,
         averageRating: rating ? parseFloat(rating) : undefined,
       },
@@ -42,6 +46,10 @@ export const GET = async (req: Request) => {
         transactions: true,
       },
     });
+
+    if (courses.length == 0) {
+      return NextResponse.json({ message: "No courses found" }, { status: 404 });
+    }
 
     return NextResponse.json({ message: "Success", data: courses }, { status: 200 });
   } catch (error: any) {

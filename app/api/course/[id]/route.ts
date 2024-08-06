@@ -28,6 +28,10 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
       },
     });
 
+    if (!courses) {
+      return NextResponse.json({ message: "No courses found" }, { status: 404 });
+    }
+
     return NextResponse.json({ message: "Success", data: courses }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
