@@ -35,6 +35,7 @@ model Course {
   description   String
   syllabus      String
   thumbnailUrl  String?
+  skills        String[]
   instructor    User               @relation(fields: [instructorId], references: [id])
   instructorId  String
   createdAt     DateTime           @default(now())
@@ -96,7 +97,7 @@ model CourseMaterial {
   courseId    String
   bucket      Bucket   @relation(fields: [bucketId], references: [id])
   bucketId    String
-  accesses  CourseMaterialAccess[]
+  accesses    CourseMaterialAccess[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   @@unique([title, courseId])
@@ -125,7 +126,7 @@ model Assignment {
   id          String     @id @default(uuid())
   title       String
   description String
-  dueDate     DateTime
+  dueDateOffset  Int      @default(0)
   course      Course     @relation(fields: [courseId], references: [id])
   courseId    String
   submissions Submission[]
@@ -165,6 +166,7 @@ model Forum {
 
 model ForumPost {
   id         String       @id @default(uuid())
+  title      String
   content    String
   forum      Forum        @relation(fields: [forumId], references: [id])
   forumId    String
@@ -201,14 +203,18 @@ model Notification {
 }
 
 model Transaction {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  course    Course?  @relation(fields: [courseId], references: [id])
-  courseId  String?  
-  amount    BigInt
-  createdAt DateTime @default(now())
-  type      TransactionType
+  id               String   @id @default(uuid())
+  user             User     @relation(fields: [userId], references: [id])
+  userId           String
+  course           Course?  @relation(fields: [courseId], references: [id])
+  courseId         String?  
+  amount           BigInt
+  cardNumber       String
+  expirationDate   String
+  cvc              String
+  cardHolderName   String
+  createdAt        DateTime @default(now())
+  type             TransactionType
 }
 
 enum TransactionType {
