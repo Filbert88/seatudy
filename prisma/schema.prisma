@@ -33,7 +33,7 @@ model Course {
   id            String             @id @default(uuid())
   title         String
   description   String
-  syllabus      String
+  syllabus      String[]
   thumbnailUrl  String?
   skills        String[]
   instructor    User               @relation(fields: [instructorId], references: [id])
