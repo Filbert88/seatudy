@@ -41,14 +41,15 @@ const Card: React.FC<Props> = (props) => {
     if (props.isLogin) {
       alert("Add to cart");
     } else {
-      alert("Sign in to purchase");
       router.push("/login");
     }
   };
   return (
     <>
       {isLoading ? (
-        <div className="text-center">Loading course details...</div>
+        <div className="text-center flex flex-col">
+          Loading course details...
+        </div>
       ) : (
         <div
           className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[7rem] right-[12rem] bg-white ml-20"
@@ -72,7 +73,7 @@ const Card: React.FC<Props> = (props) => {
                 <button
                   onClick={handleClick}
                   type="button"
-                  className="bg-primary text-black border-black border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-black hover:text-white"
+                  className="bg-primary text-black border-black border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-black hover:text-white z-1"
                 >
                   Add to cart
                 </button>

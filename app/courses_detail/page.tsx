@@ -81,15 +81,16 @@ const CoursesDetailPage = () => {
             {outline}
           </ul>
         </div>
-        <div className="px-5 py-4 m-5 w-full order-1 md:order-2 z-10"></div>
-      </div>
-      <div className="px-5 py-4 m-5 w-[50%]">
-        <Card
-          price={550000}
-          isLogin={false}
-          averageRating={4.2}
-          syllabus={syllabus}
-        />
+        <div className="px-5 py-4 m-5 w-full order-1 md:order-2 z-50">
+          <div className="px-5 py-4 m-5 w-[50%] z-1">
+            <Card
+              price={550000}
+              isLogin={false}
+              averageRating={4.2}
+              syllabus={syllabus}
+            />
+          </div>
+        </div>
       </div>
     </>
   );
