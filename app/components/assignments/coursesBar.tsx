@@ -38,7 +38,7 @@ const CoursesBar: React.FC<Props> = (props) => {
   };
   return (
     <>
-      <div className="fixed mx-5 my-5 font-nunito left-0">
+      <div className="fixed top-20 mx-5 my-5 font-nunito left-0">
         <div className="text-lg font-bold mb-5">{props.title}</div>
         <div className="text-md font-bold">Course Materials</div>
         <hr className="border-t-2 border-secondary mb-4 w-[13rem]" />

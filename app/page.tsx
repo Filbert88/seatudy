@@ -9,6 +9,7 @@ import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
   interface Course {
+    id: string;
     title: string;
     materials: object[];
     averageRating: number;
@@ -90,6 +91,7 @@ export default function Home() {
             difficulty={course.difficulty}
             thumbnailURL={course.thumbnailUrl}
             className="mr-5"
+            onClick={() => router.push(`/learning-material?id=${course.id}`)}
           />
         ))}
         </div>

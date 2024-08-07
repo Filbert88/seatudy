@@ -11,11 +11,12 @@ interface Props {
   difficulty: string;
   thumbnailURL: string;
   className?: string;
+  onClick?: () => void;
 }
 
-const CoursesCard = ({ courseTitle, totalChapters, rating, skills, totalEnrolled, difficulty, thumbnailURL, className }: Props) => {
+const CoursesCard = ({ courseTitle, totalChapters, rating, skills, totalEnrolled, difficulty, thumbnailURL, className, onClick }: Props) => {
   return (
-    <div className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md shadow-gray-500 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}>
+    <div onClick={onClick} className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md shadow-gray-500 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}>
       <div className="aspect-w-16 aspect-h-9 relative">
         <Image 
           src={thumbnailURL ? thumbnailURL : 'https://imgur.com/O1gDMZb.png'} 
