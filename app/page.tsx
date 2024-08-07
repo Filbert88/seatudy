@@ -4,8 +4,23 @@ import { useRouter } from 'next/navigation';
 import SeatudyLogo from './assets/seatudy-logo';
 import CoursesCard from './components/courses-card';
 import Navbar from "./components/navbar";
+import { useEffect, useState } from 'react';
+import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
+  interface Course {
+    title: string;
+    materials: object[];
+    averageRating: number;
+    skills: string[];
+    enrollments: object[];
+    difficulty: string;
+    thumbnailUrl: string;
+  }
+  
+  const [courseData, setCourseData] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
 
   const handleLoginClick = () => {
@@ -16,8 +31,33 @@ export default function Home() {
     router.push('/register');
   }
 
+  const getCourses = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/course', {
+        method: "GET",
+        headers: {
+          "accept": "application/json",
+        },
+      });
+      const data = await response.json();
+      setCourseData(data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+    
+  }
+
+  useEffect(() => {
+    getCourses();
+  }, []);
+
+
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
+      {isLoading && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
       <Navbar isLoggedIn={false} />
       <div className="w-full h-[20rem] bg-cover bg-[url('/assets/home_loggedout.png')] flex flex-col text-white mt-20">
         <div className="flex-grow flex justify-end">
@@ -38,46 +78,20 @@ export default function Home() {
       <div className="flex-grow mx-20 my-5">
         <div className="font-bold text-2xl mb-5">Explore our courses</div>
         <div className="flex">
-        <CoursesCard
-          courseTitle='Introduction to Flutter'
-          totalChapters={10}
-          rating={4.1}
-          skills={['Dart', 'Flutter', 'Android Studio']}
-          totalEnrolled={8960}
-          difficulty='Intermediate'
-          thumbnailURL='https://imgur.com/pIn9tcd.png'
-          className="mr-5"
-        />
-        <CoursesCard
-          courseTitle='Introduction to SQL'
-          totalChapters={8}
-          rating={4.6}
-          skills={['MySQL', 'Microsoft SSMS']}
-          totalEnrolled={12555}
-          difficulty='Beginner'
-          thumbnailURL='https://imgur.com/mB6wcMq.png'
-          className="mr-5"
-        />
-        <CoursesCard
-          courseTitle='Data Structure and Algorithm'
-          totalChapters={12}
-          rating={4.9}
-          skills={['Advanced C', 'Data structure']}
-          totalEnrolled={36925}
-          difficulty='Intermediate'
-          thumbnailURL='https://imgur.com/xL4wiRB.png'
-          className="mr-5"
-        />
-        <CoursesCard
-          courseTitle='Introduction to JavaScript'
-          totalChapters={4}
-          rating={4.8}
-          skills={['JavaScript', 'DOM Manipulation']}
-          totalEnrolled={19569}
-          difficulty='Beginner'
-          thumbnailURL='https://imgur.com/O1gDMZb.png'
-          className="mr-5"
-        />
+
+        {courseData.map((course, index) => (
+          <CoursesCard
+            key={index}
+            courseTitle={course.title}
+            totalChapters={course.materials.length}
+            rating={course.averageRating}
+            skills={course.skills}
+            totalEnrolled={course.enrollments.length}
+            difficulty={course.difficulty}
+            thumbnailURL={course.thumbnailUrl}
+            className="mr-5"
+          />
+        ))}
         </div>
         
       </div>

@@ -25,7 +25,7 @@ const Navbar = ({ isLoggedIn, activePage }: Props) => {
   }
 
   return (
-    <nav className="h-20 bg-secondary flex fixed w-full">
+    <nav className="h-20 bg-secondary flex fixed w-full z-50">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
         <div className="flex items-center hover:cursor-pointer" onClick={handleLogoClick}>
           <SeatudyLogo className="h-10 w-10 mx-2"/>
