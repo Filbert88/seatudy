@@ -2,11 +2,17 @@
 import Image from "next/image";
 import InfoIcon from "../../../public/assets/info.png";
 import FileIcon from "../../../public/assets/File.png";
+import CheckedIcon from "../../../public/assets/checked.png"
 import Instructions from "./instructions";
 import { useState } from "react";
 
 const Submission = () => {
   const [validate, setValidate] = useState(false);
+  const [file, setFile] = useState(null);
+  const handleFileChange = (e: any) => {
+    setFile(e.target.files[0]);
+  };
+
   const handleClick = () => {
     setValidate(!validate);
   };
@@ -15,6 +21,11 @@ const Submission = () => {
       alert("Please agree to the terms and conditions");
       return;
     }
+    if (file === null) {
+      alert("Please upload a file");
+      return;
+    }
+    // Submit the file to Cloudinary (sync with Filbert)
     alert("Your file has been submitted successfully");
   };
   return (
@@ -32,15 +43,21 @@ const Submission = () => {
         Upload your project file down below:
       </div>
       <div className="border-2 flex flex-col max-w-fit min-w-[90vh] border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
-        <Image src={FileIcon} alt="file" width={80} height={80} />
+        {file == null ? <Image src={FileIcon} alt="file" width={80} height={80} /> : <Image src = {CheckedIcon} alt = "checked" width = {80} height = {80} />}
         <div className="flex flex-row">
           <div className="font-nunito font-bold pr-1 py-5">
             Drag and drop file here or
           </div>
-          <button className="font-nunito font-bold underline">
-            Choose File
-          </button>
+          <label className="cursor-pointer bg-transparent py-5 text-gray-700">
+            <span className="font-nunito font-bold underline">Choose File</span>
+            <input type="file" onChange={handleFileChange} className="hidden" />
+          </label>
         </div>
+        {file != null && (
+          <span className="pl-2 text-green-500 font-nunito font-bold underline">
+            Ready to be submitted!
+          </span>
+        )}
       </div>
       <Instructions>Supported formats: **.zip, .rar**</Instructions>
       <form className="py-5 flex flex-row">
