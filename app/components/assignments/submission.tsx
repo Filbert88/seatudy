@@ -10,11 +10,13 @@ import { uploadFileToCloudinary } from "@/lib/utils";
 const Submission = () => {
   const [validate, setValidate] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [url, setUrl] = useState<string | null>(null); // buat ngetest doang
+  const [uploading, setUploading] = useState(false);
   const allowedFileTypes = [
-    "application/zip",
-    "application/x-zip-compressed",
-    "application/x-rar-compressed",
-    "application/x-compressed",
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
   ];
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -22,7 +24,7 @@ const Submission = () => {
       if (allowedFileTypes.includes(selectedFile.type)) {
         setFile(selectedFile);
       } else {
-        alert("Please upload a file in .zip or .rar format");
+        alert("Please upload a file in pdf or image format");
         console.log(selectedFile.type);
         console.log(allowedFileTypes);
       }
@@ -44,10 +46,13 @@ const Submission = () => {
     }
     // Submit the file to Cloudinary (sync with Filbert)
     try {
-      await uploadFileToCloudinary(file);
+      setUploading(true);
+      const uploadedUrl = await uploadFileToCloudinary(file);
+      setUrl(uploadedUrl);
     } catch (err) {
       console.error(err);
     } finally {
+      setUploading(false);
       alert("File uploaded successfully!");
     }
   };
@@ -57,7 +62,7 @@ const Submission = () => {
       <div className="border flex flex-row p-5 items-center min-w-[10vh] max-w-fit">
         <Image src={InfoIcon} alt="info" width={40} height={40} />
         <div className="font-nunito font-bold p-5">
-          Please upload your file in .zip format
+          Please upload your file in pdf, png, jpeg, or jpg format
         </div>
       </div>
 
@@ -86,7 +91,7 @@ const Submission = () => {
           </span>
         )}
       </div>
-      <Instructions>Supported formats: **.zip, .rar**</Instructions>
+      <Instructions>Supported formats: **pdf, png, jpeg, jpg**</Instructions>
       <form className="py-5 flex flex-row">
         <input type="checkbox" className="mr-3" onClick={handleClick} />
         <Instructions>
@@ -101,8 +106,21 @@ const Submission = () => {
         }`}
         onClick={handleSubmit}
       >
-        Submit
+        {uploading ? "Uploading..." : "Submit"}
       </button>
+      {url && (
+        <div className="mt-4">
+          <h2 className="text-xl font-bold">Uploaded File:</h2>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 underline"
+          >
+            {url}
+          </a>
+        </div>
+      )}
     </>
   );
 };
