@@ -1,4 +1,5 @@
 import Card from "../components/courses/card";
+import Navbar from "../components/navbar";
 
 const CoursesDetailPage = () => {
   const dummyArray = [
@@ -23,8 +24,9 @@ const CoursesDetailPage = () => {
   });
   return (
     <>
-      <div className="bg-secondary px-40">
-        <h1 className="font-nunito font-bold text-4xl mx-5 text-primary">
+      <Navbar isLoggedIn={false} />
+      <div className="bg-secondary px-40 pt-20 pb-5">
+        <h1 className="font-nunito font-bold text-4xl mx-5 pt-10 text-primary">
           Introduction to Javascript
         </h1>
         <div className="flex flex-row w-[50%]">
@@ -35,7 +37,7 @@ const CoursesDetailPage = () => {
             techniques.
           </p>
         </div>
-        <div className="flex flex-row font-bold text-primary my-5 py-6 space-x-20 mx-5">
+        <div className="flex flex-row font-bold text-primary space-x-20 mx-5">
           <p>Difficulty: Beginner</p>
           <p>Duration: 4 hours</p>
           <p>Instructor: Sherly</p>
@@ -55,12 +57,14 @@ const CoursesDetailPage = () => {
         </div>
         <div className="px-5 py-4 m-5 w-full order-1 md:order-2 z-10"></div>
       </div>
-      <Card
-        price={550000}
-        isLogin={false}
-        averageRating={4.2}
-        syllabus={dummySyllabus}
-      />
+      <div className="px-5 py-4 m-5 w-[50%]">
+        <Card
+          price={550000}
+          isLogin={false}
+          averageRating={4.2}
+          syllabus={dummySyllabus}
+        />
+      </div>
     </>
   );
 };
