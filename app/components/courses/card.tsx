@@ -5,7 +5,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 interface Props {
-  // define the props interface here
   price: number;
   isLogin: boolean;
   averageRating: number;
@@ -34,8 +33,8 @@ const Card: React.FC<Props> = (props) => {
   return (
     <>
       <div
-        className="flex flex-col rounded-md drop-shadow-md border fixed bottom-0 top-[3.7rem] right-[12rem] bg-white z-50"
-        style={{ width: "400px", height: "580px" }}
+        className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[7rem] right-[12rem] bg-white ml-20"
+        style={{ width: "500px", height: "580px" }}
       >
         <div className="relative w-full">
           <Image
