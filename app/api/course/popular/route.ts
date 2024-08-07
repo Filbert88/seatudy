@@ -31,6 +31,7 @@ export const GET = async (req: Request) => {
 
     return NextResponse.json({ message: "Success", data: courses }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error in GET /api/course/popular", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 };

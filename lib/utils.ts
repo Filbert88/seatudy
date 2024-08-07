@@ -2,10 +2,12 @@ export async function uploadFileToCloudinary(file: File) {
   if (!file) {
     throw new Error("Please select a file to upload");
   }
+  console.log(file);
 
   try {
-    const response = await fetch("/api/signature");
+    const response = await fetch("http://localhost:3000/api/signature");
     const data = await response.json();
+    console.log("data di utils.ts", data);
 
     const formData = new FormData();
     formData.append("file", file);
@@ -32,6 +34,7 @@ export async function uploadFileToCloudinary(file: File) {
     });
 
     const uploadResult = await uploadResponse.json();
+    console.log(uploadResult);
 
     if (uploadResponse.ok) {
       return uploadResult.secure_url;
