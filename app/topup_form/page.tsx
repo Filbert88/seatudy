@@ -9,6 +9,36 @@ const TopUpFormPage = () => {
   const [cardCVC, setCardCVC] = useState<string>("");
   const [cardName, setCardName] = useState<string>("");
   const [nominals, setNominals] = useState<number>();
+  const handleClick = () => {
+    if (
+      cardNumber === "" ||
+      cardDate === "" ||
+      cardCVC === "" ||
+      cardName === "" ||
+      nominals === 0
+    ) {
+      alert("Please fill all the fields!");
+    }
+    if (cardNumber.length < 16) {
+      alert("Card number must be 16 digits!");
+    }
+    if (cardDate.length < 5) {
+      alert("Expiration date must be in MM/YY format!");
+    }
+    if (cardCVC.length < 3) {
+      alert("CVC must be 3 digits!");
+    }
+    if (nominals === 0) {
+      alert("Nominals must be more than 0!");
+    } else {
+      alert("Saved!");
+    }
+  };
+
+  const handleInputPhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phoneNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+    setCardNumber(phoneNumber);
+  };
 
   return (
     <>
@@ -26,7 +56,7 @@ const TopUpFormPage = () => {
               placeholder="Enter a card number..."
               className="p-3 rounded-md bg-slate-300 text-grays w-full h-8"
               value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
+              onChange={handleInputPhoneNumber}
             />
           </div>
           <div className="font-bold">Expiration Date</div>
@@ -82,7 +112,7 @@ const TopUpFormPage = () => {
               Go Back
             </button>
             <button
-              onClick={() => alert("Saved!")}
+              onClick={handleClick}
               type="button"
               className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold"
             >
