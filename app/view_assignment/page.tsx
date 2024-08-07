@@ -3,6 +3,7 @@ import { useState } from "react";
 import CoursesBar from "../components/assignments/coursesBar";
 import Instructions from "../components/assignments/instructions";
 import Navbar from "../components/navbar";
+import Submission from "../components/assignments/submission";
 
 const dummyMaterials = [
   "Quick Introduction",
@@ -16,6 +17,9 @@ const dummyAssignments = [
   "To Do List Application",
   "Javascript Quiz",
 ];
+
+const dummyInstructions =
+  "**Create a simple to-do list application using JavaScript.** *The application should have the following features*:\n\n- Add a new task\n- Mark a task as completed\n- Delete a task\n- Edit a task\n\nYou can use any front-end framework or library to build the application. The application should be responsive and user-friendly. You can use any CSS framework to style the application. The application should be hosted on a public URL. You can use any hosting platform to host the application. The application should be accessible via the URL provided in the submission. The application should be built using JavaScript, HTML, and CSS. You can use any front-end framework or library to build the application. The application should be responsive and user-friendly. You can use any CSS framework to style the application. The application should be hosted on a public URL. You can use any hosting platform to host the application. The application should be accessible via the URL provided in the submission.";
 
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
@@ -31,7 +35,7 @@ const AssignmentPage = () => {
   return (
     <>
       <Navbar isLoggedIn={false} />
-      <div className="flex flex-row py-20">
+      <div className="flex flex-row py-20 pl-64">
         <CoursesBar
           title="Introduction to Javascript"
           materials={dummyMaterials}
@@ -61,8 +65,10 @@ const AssignmentPage = () => {
           </div>
           <hr className="border-t-2 border-gray-300 mx-10 mt-3 mb-5 min-w-[150vh]" />
           <div className="ml-10">
-            {showInstructions && <Instructions />}
-            {showSubmissions && <div>Submissions</div>}
+            {showInstructions && (
+              <Instructions>{dummyInstructions}</Instructions>
+            )}
+            {showSubmissions && <Submission />}
           </div>
         </div>
       </div>
