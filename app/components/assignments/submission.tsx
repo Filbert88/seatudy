@@ -2,15 +2,30 @@
 import Image from "next/image";
 import InfoIcon from "../../../public/assets/info.png";
 import FileIcon from "../../../public/assets/File.png";
-import CheckedIcon from "../../../public/assets/checked.png"
+import CheckedIcon from "../../../public/assets/checked.png";
 import Instructions from "./instructions";
 import { useState } from "react";
 
 const Submission = () => {
   const [validate, setValidate] = useState(false);
   const [file, setFile] = useState(null);
+  const allowedFileTypes = [
+    "application/zip",
+    "application/x-zip-compressed",
+    "application/x-rar-compressed",
+    "application/x-compressed",
+  ];
   const handleFileChange = (e: any) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    if (selectedFile) {
+      if (allowedFileTypes.includes(selectedFile.type)) {
+        setFile(selectedFile);
+      } else {
+        alert("Please upload a file in .zip or .rar format");
+        console.log(selectedFile.type);
+        console.log(allowedFileTypes);
+      }
+    }
   };
 
   const handleClick = () => {
@@ -43,7 +58,11 @@ const Submission = () => {
         Upload your project file down below:
       </div>
       <div className="border-2 flex flex-col max-w-fit min-w-[90vh] border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
-        {file == null ? <Image src={FileIcon} alt="file" width={80} height={80} /> : <Image src = {CheckedIcon} alt = "checked" width = {80} height = {80} />}
+        {file == null ? (
+          <Image src={FileIcon} alt="file" width={80} height={80} />
+        ) : (
+          <Image src={CheckedIcon} alt="checked" width={80} height={80} />
+        )}
         <div className="flex flex-row">
           <div className="font-nunito font-bold pr-1 py-5">
             Drag and drop file here or

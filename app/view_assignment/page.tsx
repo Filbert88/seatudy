@@ -5,6 +5,9 @@ import Instructions from "../components/assignments/instructions";
 import Navbar from "../components/navbar";
 import Submission from "../components/assignments/submission";
 
+let AssignmentTitle = "Assignment 2: To do list application";
+let CourseTitle = "Introduction to Javascript";
+
 const dummyMaterials = [
   "Quick Introduction",
   "Algorithm & Basic Logics",
@@ -37,13 +40,13 @@ const AssignmentPage = () => {
       <Navbar isLoggedIn={false} />
       <div className="flex flex-row py-20 pl-64">
         <CoursesBar
-          title="Introduction to Javascript"
+          title={CourseTitle}
           materials={dummyMaterials}
           assignments={dummyAssignments}
         />
         <div className="flex flex-col ">
           <div className="my-5 ml-10 font-nunito font-bold text-3xl">
-            Assignment 2: To do list application
+            {AssignmentTitle}
           </div>
           <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
             <button
