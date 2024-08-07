@@ -5,17 +5,18 @@ import FileIcon from "../../../public/assets/File.png";
 import CheckedIcon from "../../../public/assets/checked.png";
 import Instructions from "./instructions";
 import { useState } from "react";
+import { uploadFileToCloudinary } from "@/lib/utils";
 
 const Submission = () => {
   const [validate, setValidate] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
   const allowedFileTypes = [
     "application/zip",
     "application/x-zip-compressed",
     "application/x-rar-compressed",
     "application/x-compressed",
   ];
-  const handleFileChange = (e: any) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type)) {
@@ -31,7 +32,8 @@ const Submission = () => {
   const handleClick = () => {
     setValidate(!validate);
   };
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if (validate === false) {
       alert("Please agree to the terms and conditions");
       return;
@@ -41,7 +43,13 @@ const Submission = () => {
       return;
     }
     // Submit the file to Cloudinary (sync with Filbert)
-    alert("Your file has been submitted successfully");
+    try {
+      await uploadFileToCloudinary(file);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      alert("File uploaded successfully!");
+    }
   };
   return (
     <>
