@@ -18,6 +18,7 @@ const courseSchema = z.object({
   skills: z.array(z.string().min(3, { message: "Skills must be at least 3 characters long" })).optional(),
   difficulty: z.string().min(1, { message: "Difficulty must be inputted" }).optional(),
   price: z.string().min(0, { message: "Price must be at least 0" }).optional(),
+  categoryIds: z.array(z.string().uuid(), { message: "Invalid category IDs" }).optional(),
 });
 
 function stringToDifficulty(difficulty: string): DifficultyLevel {
@@ -93,6 +94,7 @@ export const PATCH = async (req: Request, { params }: { params: { id: string } }
     const skills = formData.getAll("skills") as string[];
     const difficulty = formData.get("difficulty")?.toString() || "";
     const price = formData.get("price");
+    const categoryIds = formData.getAll("categoryIds") as string[];
 
     const parsedBody = courseSchema.safeParse({ title, description, syllabus, skills, difficulty, price });
     console.log(parsedBody);
@@ -130,6 +132,19 @@ export const PATCH = async (req: Request, { params }: { params: { id: string } }
       where: { id: id },
       data: updateData,
     });
+
+    if (categoryIds.length > 0) {
+      await prisma.courseCategoryCourse.deleteMany({
+        where: { courseId: id },
+      });
+
+      await prisma.courseCategoryCourse.createMany({
+        data: categoryIds.map((categoryId) => ({
+          courseId: id,
+          categoryId: categoryId,
+        })),
+      });
+    }
 
     return NextResponse.json({ message: "Success", data: updateCourse }, { status: 201 });
   } catch (error: any) {
