@@ -25,3 +25,16 @@ export interface CardInterface {
   className?: string;
   onClick?: () => void;
 }
+
+export interface CourseDetailsInterface {
+  title: string;
+  description: string;
+  difficulty: string;
+  duration: string;
+  instructor: string;
+  whatYoullLearn: string[]; // Array of strings
+  syllabus: string[]; // Array of strings
+  price?: number; // Optional field
+  averageRating?: number; // Optional field
+  isLogin?: boolean; // Optional field
+}

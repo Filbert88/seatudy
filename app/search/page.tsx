@@ -7,22 +7,13 @@ import Navbar from "../components/navbar";
 import FilterBar from '../components/filter-bar';
 import { useEffect, useState } from 'react';
 import { BounceLoader } from 'react-spinners';
+import { CourseInterface } from '../components/types/types';
 
 export default function Home() {
-  interface Course {
-    id: string;
-    title: string;
-    materials: object[];
-    averageRating: number;
-    skills: string[];
-    enrollments: object[];
-    difficulty: string;
-    thumbnailUrl: string;
-  }
 
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string | null>("");
-  const [results, setResults] = useState<Course[]>([]);
+  const [results, setResults] = useState<CourseInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
 
