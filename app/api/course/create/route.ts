@@ -19,6 +19,10 @@ function stringToDifficulty(difficulty: string): DifficultyLevel {
 }
 
 export const POST = async (req: Request) => {
+  if (req.method !== "POST") {
+    return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
+  }
+
   const session = await getServerSession({ req, ...authOptions });
   if (!session) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });

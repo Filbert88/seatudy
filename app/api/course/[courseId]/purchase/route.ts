@@ -6,6 +6,10 @@ import { NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 export const POST = async (req: Request, { params }: { params: { courseId: string } }) => {
+  if (req.method !== "POST") {
+    return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
+  }
+
   const courseId = params.courseId;
 
   const session = await getServerSession({ req, ...authOptions });

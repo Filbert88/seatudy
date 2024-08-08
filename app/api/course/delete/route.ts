@@ -6,9 +6,7 @@ import { Role } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   if (req.method !== "POST") {
-    return new NextResponse(`Method ${req.method} Not Allowed`, {
-      status: 405,
-    });
+    return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
   }
 
   const session = await getServerSession({ req, ...authOptions });
