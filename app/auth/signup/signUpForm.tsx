@@ -2,6 +2,8 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
+import SeatudyLogo from "@/app/assets/seatudy-logo";
+import { BounceLoader } from "react-spinners";
 
 const userSchema = z
   .object({
@@ -40,25 +42,40 @@ const SignupForm: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const [errors, setErrors] = useState<Partial<z.ZodFormattedError<FormData>>>(
     {}
   );
+
   const router = useRouter();
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name === 'phoneNumber') {
+      handlePhoneNumberField(value);
+      return;
+    }
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleLoginClick = () => {
+    router.push("/login");
+  }
+
+  const handleSubmit = async () => {
     const validation = userSchema.safeParse(formData);
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
     if (!validation.success) {
       setErrors(validation.error.format());
-    } else {
+    } 
+    else {
       try {
+        setIsLoading(true);
         const response = await fetch("/api/auth/signup", {
           method: "POST",
           headers: {
@@ -72,136 +89,79 @@ const SignupForm: React.FC = () => {
         if (response.ok) {
           router.push("/auth/signin");
         } else {
-          // Handle errors
           console.error(data.message);
         }
       } catch (err) {
         console.error("An error occurred:", err);
+        alert("An error occurred. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
+  const handlePhoneNumberField = (value: any) => {
+    const phoneNumber = value.replace(/\D/g, ''); // Remove non-numeric characters
+    setFormData({...formData, phoneNumber: phoneNumber});
+  }
+  
+  
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Full Name</label>
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
-          />
+    <div className="w-screen min-h-screen bg-[url('/assets/register_bg.png')] bg-cover py-20 px-[15rem] flex flex-col font-nunito">
+      {isLoading && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
+      <div className="rounded-3xl flex bg-third flex-grow h-full">
+        <div className="w-[50%] bg-[url('/assets/register_rectangle.png')] bg-cover rounded-l-3xl p-8">
+          <div className="flex items-center">
+            <SeatudyLogo className="w-10 h-10"/>
+            <span className="font-bold text-2xl text-white ml-4">seatudy</span>
+          </div>
+        </div>
+        <div className="w-full rounded-r-3xl p-10">
+          <div className="font-bold text-white text-4xl mb-[2rem]">Welcome to seatudy</div>
+          <input type="text" value={formData.fullName} onChange={handleChange} className="w-full h-10 rounded-lg px-3" placeholder="Full Name" name="fullName" required/>
           {errors.fullName && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.fullName._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.fullName._errors[0]}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
-          />
+          <input type="text" value={formData.email} onChange={handleChange} className="w-full h-10 rounded-lg px-3 mt-4" placeholder="Email" name="email" required/>
           {errors.email && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.email._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.email._errors[0]}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Phone Number</label>
-          <input
-            type="text"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
-          />
+          <input type="text" value={formData.phoneNumber} onChange={handleChange} className="w-full h-10 rounded-lg px-3 mt-4" placeholder="Phone Number" name="phoneNumber" required/>
           {errors.phoneNumber && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.phoneNumber._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.phoneNumber._errors[0]}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Campus</label>
-          <input
-            type="text"
-            name="campus"
-            value={formData.campus}
-            onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
-          />
+          <input type="text" value={formData.campus} onChange={handleChange} className="w-full h-10 rounded-lg px-3 mt-4" placeholder="Campus" name="campus" required/>
           {errors.campus && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.campus._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.campus._errors[0]}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Role</label>
           <select
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
+            className="w-full h-10 rounded-lg px-3 mt-4"
           >
             <option value="">Select Role</option>
             <option value="user">User</option>
             <option value="instructor">Instructor</option>
           </select>
           {errors.role && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.role._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.role._errors[0]}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
-          />
+          <input type="password" onChange={handleChange} value={formData.password} className="w-full h-10 rounded-lg px-3 mt-4" placeholder="Password" name="password" required/>
           {errors.password && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.password._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.password._errors[0]}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Confirm Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md text-black"
-          />
+          <input type="password" onChange={handleChange} value={formData.confirmPassword} className="w-full h-10 rounded-lg px-3 mt-4" placeholder="Confirm Password" name="confirmPassword" required/>
           {errors.confirmPassword && (
-            <p className="text-red-600 text-sm mt-1">
-              {errors.confirmPassword._errors[0]}
-            </p>
+            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword._errors[0]}</p>
           )}
+          <div className="mt-4">
+            <a className="text-primary mr-2">Already have an account?</a>
+            <a className="text-primary underline hover:cursor-pointer" onClick={handleLoginClick}>Sign In here</a>
+          </div>
+          <div onClick={handleSubmit} className="bg-fourth mt-8 w-fit px-10 py-2 text-white font-bold rounded-lg hover:cursor-pointer">Sign Up</div>
         </div>
-        <div>
-          <button
-            type="submit"
-            className="w-full p-2 bg-blue-600 text-white font-bold rounded-md "
-          >
-            Sign Up
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };
