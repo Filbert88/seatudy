@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix",
+    "lint": "eslint --fix app/**/*.{js,ts,tsx} components/**/*.{js,ts,tsx}",
     "seed": "npx tsx prisma/seed.tsx",
     "db:studio": "npx prisma studio",
     "prepare": "husky",
@@ -15,7 +15,7 @@
   },
   "type":"module",
   "lint-staged": {
-    "*.{js,ts,tsx}": "eslint --fix"
+    "*.{js,ts,tsx}": "eslint --fix app/**/*.{js,ts,tsx} components/**/*.{js,ts,tsx}"
   },
   "dependencies": {
     "@jest/types": "^29.6.3",
