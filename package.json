@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint --fix",
     "seed": "npx tsx prisma/seed.tsx",
     "db:studio": "npx prisma studio",
     "prepare": "husky",
