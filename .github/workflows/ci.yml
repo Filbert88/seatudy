@@ -19,7 +19,7 @@ jobs:
       - name: Set up pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 6.32.9
+          version: 7.13.0 
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -27,8 +27,17 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install dependencies with retry
+        run: |
+          retries=3
+          count=0
+          until [ $count -ge $retries ]
+          do
+            pnpm install && break
+            count=$((count+1))
+            echo "Retrying pnpm install... ($count/$retries)"
+            sleep 10
+          done
 
       - name: Run ESLint
         run: pnpm eslint .
