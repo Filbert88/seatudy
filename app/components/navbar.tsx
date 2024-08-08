@@ -4,9 +4,11 @@ import SeatudyLogo from "../assets/seatudy-logo";
 import { IoSearch, IoNotificationsOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
+import { signOut, useSession } from 'next-auth/react';
 
 const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -41,7 +43,7 @@ const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
           />
         </div>
         <div className="flex items-center">
-          {isLoggedIn && (
+          {status === 'authenticated' && (
             <a
               href="#"
               className={`mx-10 font-semibold hover:underline text-md ${
@@ -68,11 +70,11 @@ const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
             Popular Courses
           </a>
         </div>
-        <div className="flex items-center justify-end ml-auto mr-5">
-          {isLoggedIn && (
+        <div className="flex items-center justify-end ml-auto mr-10">
+          {status === 'authenticated' && (
             <>
               <IoNotificationsOutline className="text-primary mx-2 h-6 w-6" />
-              <div className="hover:cursor-pointer ml-5 flex items-center">
+              <div onClick={() => signOut()} className="hover:cursor-pointer ml-5 flex items-center">
                 <div className="mr-4 text-md">User</div>
                 <div className="bg-primary h-8 w-8 rounded-full"></div>
               </div>
