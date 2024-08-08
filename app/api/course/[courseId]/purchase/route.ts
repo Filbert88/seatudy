@@ -2,29 +2,18 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import { PrismaClient, TransactionType } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-const transactionSchema = z.object({
-  // amount: z.string().min(4, { message: "Amount must be at least 4 digit" }),
-  cardNumber: z.string().min(3, { message: "Card number must be at least 3 characters long" }),
-  expirationDate: z
-    .string()
-    .date()
-    .refine((date) => new Date(date) > new Date(), { message: "Expiration date must be a future date" }),
-  cvc: z.string().min(3, { message: "CVC must be at least 3 characters long" }),
-  cardHolderName: z.string().min(3, { message: "Card holder name must be at least 3 characters long" }),
-});
+export const POST = async (req: Request, { params }: { params: { courseId: string } }) => {
+  const courseId = params.courseId;
 
-export const POST = async (req: Request, { params }: { params: { id: string } }) => {
-  const courseId = params.id;
+  const session = await getServerSession({ req, ...authOptions });
+  if (!session) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
+
   try {
-    const session = await getServerSession({ req, ...authOptions });
-    if (!session) {
-      return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-    }
-
     const course = await prisma.course.findUnique({ where: { id: courseId } });
     if (!course) {
       return NextResponse.json({ message: "No courses found" }, { status: 404 });
@@ -40,18 +29,8 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
     }
 
     const body = await req.json();
-    const parsedBody = transactionSchema.safeParse(body);
-    if (!parsedBody.success) {
-      return NextResponse.json(
-        {
-          message: "Invalid input",
-          errors: parsedBody.error.errors,
-        },
-        { status: 400 }
-      );
-    }
 
-    const { cardNumber, expirationDate, cvc, cardHolderName } = parsedBody.data;
+    const { cardNumber, expirationDate, cvc, cardHolderName } = body;
 
     const alredyEnrolled = await prisma.courseEnrollment.findFirst({
       where: {
