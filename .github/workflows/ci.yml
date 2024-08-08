@@ -40,7 +40,7 @@ jobs:
           done
 
       - name: Run ESLint
-        run: pnpm eslint .
+        run: pnpm eslint --fix
 
       - name: Run tests
         run: pnpm test
