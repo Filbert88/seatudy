@@ -1,20 +1,9 @@
 import Card from "../components/courses/card";
 import Navbar from "../components/navbar";
+import { CourseDetailsInterface } from "../components/types/types";
 
-interface CourseDetails {
-  title: string;
-  description: string;
-  difficulty: string;
-  duration: string;
-  instructor: string;
-  whatYoullLearn: string[]; // Array of strings
-  syllabus: string[]; // Array of strings
-  price?: number; // Optional field
-  averageRating?: number; // Optional field
-  isLogin?: boolean; // Optional field
-}
 
-const courseDetailsModel: CourseDetails = {
+const courseDetailsModel: CourseDetailsInterface = {
   // Dummy data -> Replace with actual data once API is integrated
   title: "Introduction to Javascript",
   description:

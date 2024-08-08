@@ -15,7 +15,7 @@ const ViewProfilePage = () => {
   const [balance, setBalance] = useState<number>();
 
   const handleTopUp = () => {
-    router.push("/topup_form");
+    router.push("/topup-form");
   };
 
   return (

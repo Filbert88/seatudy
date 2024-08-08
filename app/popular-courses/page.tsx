@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import SeatudyLogo from './assets/seatudy-logo';
-import CoursesCard from './components/courses-card';
-import Navbar from "./components/navbar";
+import SeatudyLogo from '../assets/seatudy-logo';
+import CoursesCard from '../components/courses-card';
+import Navbar from "../components/navbar";
 import { useEffect, useState } from 'react';
 import { BounceLoader } from 'react-spinners';
-import { CourseInterface } from './components/types/types';
+import { CourseInterface } from '../components/types/types';
 
 export default function Home() {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
@@ -25,7 +25,7 @@ export default function Home() {
   const getCourses = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/course', {
+      const response = await fetch('/api/course/popular', {
         method: "GET",
         headers: {
           "accept": "application/json",
@@ -50,25 +50,16 @@ export default function Home() {
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
       {isLoading && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
       <Navbar isLoggedIn={false} />
-      <div className="w-full h-[20rem] bg-cover bg-[url('/assets/home_loggedout.png')] flex flex-col text-white mt-20">
-        <div className="flex-grow flex justify-end">
-          <div className="w-[40%] h-full items-center flex flex-col justify-center">
-            <span className="font-bold text-4xl p-3">Elevate your skills with</span>
-            <div className="flex p-3">
-              <SeatudyLogo className="h-10 w-10 mx-2"/>
-              <span className="font-bold text-3xl">seatudy</span>
-            </div>
-            <div className="flex p-3">
-              <a onClick={handleRegisterClick} className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4">Join for free</a>
-              <a onClick={handleLoginClick} className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4">I have an account</a>
-            </div>
-            
+      <div className="w-full h-[20rem] bg-cover bg-[url('/assets/popular_courses.png')] flex flex-col text-white mt-20">
+        <div className="flex-grow flex justify-center">
+          <div className="w-full h-full items-center flex flex-col justify-center">
+            <span className="font-bold text-6xl p-3">Popular Courses</span>     
           </div>
         </div>
       </div>
       <div className="flex-grow mx-20 my-5">
-        <div className="font-bold text-2xl mb-5">Explore our courses</div>
-        <div className="flex">
+        <div className="font-bold text-2xl mb-5">Our most enrolled courses</div>
+        <div className="flex flex-wrap">
         {courseData.map((course, index) => (
           <CoursesCard
             key={index}
@@ -79,7 +70,7 @@ export default function Home() {
             totalEnrolled={course.enrollments.length}
             difficulty={course.difficulty}
             thumbnailURL={course.thumbnailUrl}
-            className="mr-5"
+            className="mr-5 mb-5"
             onClick={() => router.push(`/learning-material?id=${course.id}`)}
           />
         ))}
