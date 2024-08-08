@@ -3,19 +3,11 @@ import React, { useState } from "react";
 import SeatudyLogo from "../assets/seatudy-logo";
 import { IoSearch, IoNotificationsOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import { NavbarInterface } from "./types/types";
 
-interface Props {
-  isLoggedIn: boolean;
-  activePage?: string;
-}
-
-const Navbar = ({ isLoggedIn, activePage }: Props) => {
+const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
-
-  const handleLogoClick = () => {
-    router.push("/");
-  };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -24,12 +16,16 @@ const Navbar = ({ isLoggedIn, activePage }: Props) => {
     }
   };
 
+  const handleNavbarClick = (route: string) => {
+    router.push(route);
+  }
+
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
         <div
           className="flex items-center hover:cursor-pointer"
-          onClick={handleLogoClick}
+          onClick={() => handleNavbarClick('/')}
         >
           <SeatudyLogo className="h-10 w-10 mx-2" />
           <span className="font-semibold text-2xl mx-2">seatudy</span>
@@ -56,16 +52,16 @@ const Navbar = ({ isLoggedIn, activePage }: Props) => {
             </a>
           )}
           <a
-            href="#"
-            className={`mx-10 font-semibold hover:underline text-md ${
+            onClick={() => handleNavbarClick('/all-courses')}
+            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
               activePage === "All Courses" && "text-fourth"
             }`}
           >
             All Courses
           </a>
           <a
-            href="#"
-            className={`mx-10 font-semibold hover:underline text-md ${
+            onClick={() => handleNavbarClick('/popular-courses')}
+            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
               activePage === "Popular Courses" && "text-fourth"
             }`}
           >

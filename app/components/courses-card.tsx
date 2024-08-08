@@ -1,20 +1,9 @@
 import React from "react";
 import { FaStar, FaUser, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import Image from "next/image";
+import { CardInterface } from "./types/types";
 
-interface Props {
-  courseTitle: string;
-  totalChapters: number;
-  rating: number;
-  skills: string[];
-  totalEnrolled: number;
-  difficulty: string;
-  thumbnailURL: string;
-  className?: string;
-  onClick?: () => void;
-}
-
-const CoursesCard = ({ courseTitle, totalChapters, rating, skills, totalEnrolled, difficulty, thumbnailURL, className, onClick }: Props) => {
+const CoursesCard = ({ courseTitle, totalChapters, rating, skills, totalEnrolled, difficulty, thumbnailURL, className, onClick }: CardInterface) => {
   return (
     <div onClick={onClick} className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md shadow-gray-500 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}>
       <div className="aspect-w-16 aspect-h-9 relative">
