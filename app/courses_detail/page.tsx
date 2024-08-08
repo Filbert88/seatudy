@@ -2,11 +2,9 @@ import Card from "../components/courses/card";
 import Navbar from "../components/navbar";
 
 interface CourseDetails {
-  id: string; // Unique identifier for the course
   title: string;
   description: string;
   difficulty: string;
-  thumbnailUrl: string;
   duration: string;
   instructor: string;
   whatYoullLearn: string[]; // Array of strings
@@ -18,8 +16,6 @@ interface CourseDetails {
 
 const courseDetailsModel: CourseDetails = {
   // Dummy data -> Replace with actual data once API is integrated
-  id: "1",
-  thumbnailUrl: "https://images.unsplash.com/photo-1612830725324-3b3b3f1b3b3b",
   title: "Introduction to Javascript",
   description:
     "This course provides a foundational understanding of JavaScript, an essential programming language for web development. The course also covers DOM manipulation, event handling, and basic debugging techniques.",
