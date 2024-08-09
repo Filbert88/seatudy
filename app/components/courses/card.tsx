@@ -25,9 +25,9 @@ const Card: React.FC<Props> = (props) => {
 
   const handleClick = () => {
     if (props.isLogin) {
-      alert("Add to cart");
+      router.push("/checkout");
     } else {
-      router.push("/login");
+      router.push("/auth/signin");
     }
   };
   return (
@@ -39,7 +39,7 @@ const Card: React.FC<Props> = (props) => {
       ) : (
         <div
           className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[5rem] right-[12rem] bg-white ml-20"
-          style={{ width: "400px", height: "600px" }}
+          style={{ width: "400px", height: "550px" }}
         >
           <div className="relative w-full h-48">
             <Image
@@ -61,7 +61,7 @@ const Card: React.FC<Props> = (props) => {
                   type="button"
                   className="bg-primary text-black border-black border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-black hover:text-white z-1"
                 >
-                  Add to cart
+                  Checkout
                 </button>
               ) : (
                 <button

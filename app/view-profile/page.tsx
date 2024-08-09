@@ -2,21 +2,110 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DummyProfile from "../../public/assets/dummy_icon.jpg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
+import { signOut, useSession } from "next-auth/react";
+import { UserInterface } from "../components/types/types";
+import { BounceLoader } from "react-spinners";
 
 const ViewProfilePage = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [userData, setUserData] = useState<UserInterface>();
+  const [userID, setUserID] = useState<string>();
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<number>();
+  const [phoneNumber, setPhoneNumber] = useState<string>();
   const [campus, setCampus] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [balance, setBalance] = useState<number>();
+  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const { data: session, status } = useSession();
 
   const handleTopUp = () => {
     router.push("/topup-form");
   };
+
+  useEffect(() => {
+    const checkIfUserIsLoggedIn = () => {
+      if (status === "authenticated") {
+        setIsLogin(true);
+      } else {
+        setIsLogin(false);
+      }
+    };
+    checkIfUserIsLoggedIn();
+
+    const fetchUserData = async () => {
+      console.log(userData);
+      try {
+        if (session) {
+          setIsLoading(true);
+          const response = await fetch("/api/profile", {
+            method: "GET",
+            headers: {
+              accept: "application/json",
+            },
+          });
+          const data = await response.json();
+          setUserData(data.data);
+          if (!userID) {
+            setUserID(data.data.id);
+            setFullName(session?.user?.name ?? "");
+            setEmail(session?.user?.email ?? "");
+            setPhoneNumber(data.data.phoneNumber ?? "");
+            setCampus(data.data.campus ?? "");
+            setPassword(data.data.password ?? "");
+            setBalance(data.data.balance ?? 0);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserData();
+  }, [session, status, userID]);
+
+  const handleSave = async () => {
+    if (session) {
+      try {
+        const response = await fetch(`/api/profile/update`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName,
+            email,
+            phoneNumber,
+            campus,
+            password,
+          }),
+        });
+        const data = await response.json();
+        if (data) {
+          alert("Profile updated successfully");
+        }
+      } catch (error) {
+        alert("Failed to update profile");
+        console.error(error);
+      }
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-40 z-50 flex items-center justify-center">
+        <BounceLoader color="#393E46" />
+      </div>
+    );
+  }
+
+  if (isLogin === false) {
+    router.push("/auth/signin");
+  }
 
   return (
     <>
@@ -85,7 +174,7 @@ const ViewProfilePage = () => {
                   }
                   className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
                   value={phoneNumber ?? ""}
-                  onChange={(e) => setPhoneNumber(parseInt(e.target.value))}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                 />
               </div>
               <div className="font-bold">Campus</div>
@@ -112,13 +201,22 @@ const ViewProfilePage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <button
-                onClick={() => alert("Saved!")}
-                type="button"
-                className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
-              >
-                Save
-              </button>
+              <div className="flex flex-row">
+                <button
+                  onClick={handleSave}
+                  type="button"
+                  className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md bg-tertiary text-background border-2 border-red-500 px-8 font-nunito text-red-500 font-extrabold my-5 ml-5 py-1"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </button>
+              </div>
             </form>
           </div>
         </div>

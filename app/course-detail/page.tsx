@@ -3,12 +3,18 @@ import { useEffect, useState } from "react";
 import Card from "../components/courses/card";
 import Navbar from "../components/navbar";
 import { CourseDetailsInterface } from "../components/types/types";
+import { useSession } from "next-auth/react";
+import { getInstructorNamebyId } from "@/lib/queries/profile";
+import { BounceLoader } from "react-spinners";
 
 const CoursesDetailPage = () => {
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [courseId, setCourseId] = useState<string>("");
+  const { data: session, status } = useSession();
   const courseDetailUrl = `/api/course/${courseId}`;
+  const [instructorName, setInstructorName] = useState<string>("");
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -39,12 +45,32 @@ const CoursesDetailPage = () => {
     if (courseId) {
       getCoursesDetail();
     }
-  }, [courseId, courseDetailUrl]);
+
+    const checkIfUserIsLoggedIn = () => {
+      if (status === "authenticated") {
+        setIsLogin(true);
+      } else {
+        setIsLogin(false);
+      }
+    };
+    checkIfUserIsLoggedIn();
+
+    if (courseDetails) {
+      const instructorId = courseDetails.instructorId;
+      const fetchInstructorName = async () => {
+        const name = await getInstructorNamebyId(instructorId);
+        if (name) {
+          setInstructorName(name);
+        }
+      };
+      fetchInstructorName();
+    }
+  }, [courseId, courseDetailUrl, status]);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
+      <div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-40 z-50 flex items-center justify-center">
+        <BounceLoader color="#393E46" />
       </div>
     );
   }
@@ -64,6 +90,7 @@ const CoursesDetailPage = () => {
       </li>
     );
   });
+
   return (
     <>
       <Navbar />
@@ -78,7 +105,7 @@ const CoursesDetailPage = () => {
         </div>
         <div className="flex flex-row font-bold text-primary space-x-20 mx-5">
           <p>Difficulty: {courseDetails.difficulty}</p>
-          <p>Instructor: {courseDetails.instructorId}</p>
+          <p>Instructor: {instructorName}</p>
         </div>
       </div>
       <div className="flex md:flex-row flex-col-reverse">
@@ -98,7 +125,7 @@ const CoursesDetailPage = () => {
             <Card
               thumbnailUrl={courseDetails.thumbnailUrl}
               price={courseDetails.price}
-              isLogin={false}
+              isLogin={isLogin}
               averageRating={courseDetails.averageRating}
               syllabus={courseDetails.syllabus}
             />

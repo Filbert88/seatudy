@@ -4,7 +4,7 @@ import SeatudyLogo from "../assets/seatudy-logo";
 import { IoSearch, IoNotificationsOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
-import { signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = ({ activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,14 +43,14 @@ const Navbar = ({ activePage }: NavbarInterface) => {
 
   const handleNavbarClick = (route: string) => {
     router.push(route);
-  }
+  };
 
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
         <div
           className="flex items-center hover:cursor-pointer"
-          onClick={() => handleNavbarClick('/')}
+          onClick={() => handleNavbarClick("/")}
         >
           <SeatudyLogo className="h-10 w-10 mx-2" />
           <span className="font-semibold text-2xl mx-2">seatudy</span>
@@ -66,7 +66,7 @@ const Navbar = ({ activePage }: NavbarInterface) => {
           />
         </div>
         <div className="flex items-center">
-          {status === 'authenticated' && (
+          {status === "authenticated" && (
             <a
               href="#"
               className={`mx-10 font-semibold hover:underline text-md ${
@@ -77,7 +77,7 @@ const Navbar = ({ activePage }: NavbarInterface) => {
             </a>
           )}
           <a
-            onClick={() => handleNavbarClick('/all-courses')}
+            onClick={() => handleNavbarClick("/all-courses")}
             className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
               activePage === "All Courses" && "text-fourth"
             }`}
@@ -85,7 +85,7 @@ const Navbar = ({ activePage }: NavbarInterface) => {
             All Courses
           </a>
           <a
-            onClick={() => handleNavbarClick('/popular-courses')}
+            onClick={() => handleNavbarClick("/popular-courses")}
             className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
               activePage === "Popular Courses" && "text-fourth"
             }`}
@@ -94,11 +94,14 @@ const Navbar = ({ activePage }: NavbarInterface) => {
           </a>
         </div>
         <div className="flex items-center justify-end ml-auto mr-10">
-          {status === 'authenticated' && (
+          {status === "authenticated" && (
             <>
               <IoNotificationsOutline className="text-primary mx-2 h-6 w-6" />
-              <div onClick={() => signOut()} className="hover:cursor-pointer ml-5 flex items-center">
-                <div className="mr-4 text-md">{session.user.name}</div>
+              <div
+                onClick={() => router.push("/view-profile")}
+                className="hover:cursor-pointer ml-5 flex items-center"
+              >
+                <div className="mr-4 text-md">{session?.user?.name}</div>
                 <div className="bg-primary h-8 w-8 rounded-full"></div>
               </div>
             </>
