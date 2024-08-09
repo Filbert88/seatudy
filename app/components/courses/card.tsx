@@ -25,9 +25,9 @@ const Card: React.FC<Props> = (props) => {
 
   const handleClick = () => {
     if (props.isLogin) {
-      alert("Add to cart");
+      router.push("/checkout");
     } else {
-      router.push("/login");
+      router.push("/auth/signin");
     }
   };
   return (
@@ -61,7 +61,7 @@ const Card: React.FC<Props> = (props) => {
                   type="button"
                   className="bg-primary text-black border-black border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-black hover:text-white z-1"
                 >
-                  Add to cart
+                  Checkout
                 </button>
               ) : (
                 <button

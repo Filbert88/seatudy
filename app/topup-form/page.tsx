@@ -6,6 +6,7 @@ import visaIcon from "../../public/assets/visa_icon.png";
 import mastercardIcon from "../../public/assets/mastercard_icon.png";
 import amexIcon from "../../public/assets/amex_icon.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const TopUpFormPage = () => {
   const [cardNumber, setCardNumber] = useState<string>("");
@@ -13,6 +14,7 @@ const TopUpFormPage = () => {
   const [cardCVC, setCardCVC] = useState<string>("");
   const [cardName, setCardName] = useState<string>("");
   const [nominals, setNominals] = useState<number>();
+  const router = useRouter();
 
   const handleClick = () => {
     let isVisa = /^4\d{12}(\d{3})?$/;
@@ -167,7 +169,7 @@ const TopUpFormPage = () => {
           </div>
           <div className="flex flex-row justify-end space-x-4 pt-5">
             <button
-              onClick={() => alert("Go Back!")}
+              onClick={() => router.back()}
               type="button"
               className="rounded-md bg-tertiary text-background border-fourth border-2 px-6 font-nunito text-fourth font-extrabold"
             >
