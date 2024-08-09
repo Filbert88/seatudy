@@ -2,9 +2,9 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DummyProfile from "../../public/assets/dummy_icon.jpg";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { UserInterface } from "../components/types/types";
 import { BounceLoader } from "react-spinners";
 
@@ -37,7 +37,7 @@ const ViewProfilePage = () => {
     checkIfUserIsLoggedIn();
 
     const fetchUserData = async () => {
-      console.log(1);
+      console.log(userData);
       try {
         if (session) {
           setIsLoading(true);
@@ -101,6 +101,10 @@ const ViewProfilePage = () => {
         <BounceLoader color="#393E46" />
       </div>
     );
+  }
+
+  if (isLogin === false) {
+    router.push("/auth/signin");
   }
 
   return (
@@ -197,13 +201,22 @@ const ViewProfilePage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <button
-                onClick={handleSave}
-                type="button"
-                className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
-              >
-                Save
-              </button>
+              <div className="flex flex-row">
+                <button
+                  onClick={handleSave}
+                  type="button"
+                  className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md bg-tertiary text-background border-2 border-red-500 px-8 font-nunito text-red-500 font-extrabold my-5 ml-5 py-1"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </button>
+              </div>
             </form>
           </div>
         </div>

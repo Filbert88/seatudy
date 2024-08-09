@@ -39,7 +39,7 @@ const Card: React.FC<Props> = (props) => {
       ) : (
         <div
           className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[5rem] right-[12rem] bg-white ml-20"
-          style={{ width: "400px", height: "600px" }}
+          style={{ width: "400px", height: "550px" }}
         >
           <div className="relative w-full h-48">
             <Image
