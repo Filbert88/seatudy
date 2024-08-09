@@ -79,7 +79,7 @@ const TopUpFormPage = () => {
 
   return (
     <>
-      <Navbar isLoggedIn={false} />
+      <Navbar />
       <div className="w-screen h-screen items-center justify-center bg-primary flex">
         <form className="form-content p-5 mt-10 min-w-[80vh] rounded-md items-center justify-center bg-white">
           <div className="font-nunito text-2xl pb-5 w-full text-start font-extrabold text-secondary">

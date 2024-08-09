@@ -1,9 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CoursesBar from "../components/assignments/coursesBar";
 import Instructions from "../components/assignments/instructions";
 import Navbar from "../components/navbar";
 import Submission from "../components/assignments/submission";
+import { CourseInterface } from "../components/types/types";
+import { BounceLoader } from "react-spinners";
 
 let AssignmentTitle = "Assignment 2: To do list application";
 let CourseTitle = "Introduction to Javascript";
@@ -27,6 +29,11 @@ const dummyInstructions =
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [showSubmissions, setShowSubmissions] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [index, setIndex] = useState<number>(0);
+  const [courseData, setCourseData] = useState<CourseInterface>();
+
+
   const handleClickInstructions = () => {
     setShowInstructions(true);
     setShowSubmissions(false);
@@ -35,46 +42,79 @@ const AssignmentPage = () => {
     setShowInstructions(false);
     setShowSubmissions(true);
   };
+
+  const getCourses = async (id: any) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/course/${id}`, {
+        method: "GET",
+        headers: {
+          "accept": "application/json",
+        },
+      });
+      const data = await response.json();
+      setCourseData(data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('id');
+    const index = new URLSearchParams(window.location.search).get('index');
+    setIndex(parseInt(index ?? '0'));
+    if (id) {
+      getCourses(id);
+    }
+  }, [])
+
   return (
     <>
-      <Navbar isLoggedIn={false} />
+      {isLoading && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
+      <Navbar />
       <div className="flex flex-row py-20 pl-64">
         <CoursesBar
-          title={CourseTitle}
-          materials={dummyMaterials}
-          assignments={dummyAssignments}
+          title={courseData?.title || ""}
+          materials={courseData?.materials.map((material) => material.title) || []}
+          assignments={courseData?.assignments?.map((assignment) => assignment.title) || []}
+          active={{ type: "assignments", index: index }}
         />
-        <div className="flex flex-col ">
-          <div className="my-5 ml-10 font-nunito font-bold text-3xl">
-            {AssignmentTitle}
+        {!isLoading &&
+          <div className="flex flex-col ">
+            <div className="my-5 ml-10 font-nunito font-bold text-3xl">
+              {`Assignment ${index + 1}: ${courseData?.assignments?.[index].title}`}
+            </div>
+            <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
+              <button
+                onClick={handleClickInstructions}
+                className={`px-2 ${
+                  showInstructions ? "border-b-2 border-cyan-500 font-bold" : ""
+                }`}
+              >
+                Instructions
+              </button>
+              <button
+                onClick={handleClickSubmissions}
+                className={`px-2 ${
+                  showSubmissions ? "border-b-2 border-cyan-500 font-bold" : ""
+                }`}
+              >
+                Submissions
+              </button>
+            </div>
+            <hr className="border-t-2 border-gray-300 mx-10 mt-3 mb-5 min-w-[150vh]" />
+            <div className="ml-10">
+              {showInstructions && (
+                <Instructions>{courseData?.assignments?.[index].description ?? "No instructions given"}</Instructions>
+              )}
+              {showSubmissions && <Submission />}
+            </div>
           </div>
-          <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
-            <button
-              onClick={handleClickInstructions}
-              className={`px-2 ${
-                showInstructions ? "border-b-2 border-cyan-500 font-bold" : ""
-              }`}
-            >
-              Instructions
-            </button>
-            <button
-              onClick={handleClickSubmissions}
-              className={`px-2 ${
-                showSubmissions ? "border-b-2 border-cyan-500 font-bold" : ""
-              }`}
-            >
-              Submissions
-            </button>
-          </div>
-          <hr className="border-t-2 border-gray-300 mx-10 mt-3 mb-5 min-w-[150vh]" />
-          <div className="ml-10">
-            {showInstructions && (
-              <Instructions>{dummyInstructions}</Instructions>
-            )}
-            {showSubmissions && <Submission />}
-          </div>
-        </div>
+        }
       </div>
+      
     </>
   );
 };

@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
       {isLoading && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
-      <Navbar isLoggedIn={false} />
+      <Navbar />
       <div className="w-full h-[20rem] bg-cover bg-[url('/assets/popular_courses.png')] flex flex-col text-white mt-20">
         <div className="flex-grow flex justify-center">
           <div className="w-full h-full items-center flex flex-col justify-center">
@@ -57,7 +57,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="flex-grow mx-20 my-5">
+      <div className="flex-grow mx-40 my-5">
         <div className="font-bold text-2xl mb-5">Our most enrolled courses</div>
         <div className="flex flex-wrap">
         {courseData.map((course, index) => (

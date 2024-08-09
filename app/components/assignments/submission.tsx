@@ -70,7 +70,7 @@ const Submission = () => {
       <div className="font-nunito pt-5 pb-2">
         Upload your project file down below:
       </div>
-      <div className="border-2 flex flex-col max-w-fit min-w-[90vh] border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
+      <div className="border-2 flex flex-col max-w-fit px-60 py-20 border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
         {file == null ? (
           <Image src={FileIcon} alt="file" width={80} height={80} />
         ) : (
@@ -95,9 +95,9 @@ const Submission = () => {
       <form className="py-5 flex flex-row">
         <input type="checkbox" className="mr-3" onClick={handleClick} />
         <Instructions>
-          I understand that submitting work that isn’t my own may result in a
+          {`I understand that submitting work that is not my own may result in a
           **failure** on this course and will not receive a completion
-          certificate
+          certificate`}
         </Instructions>
       </form>
       <button

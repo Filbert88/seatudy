@@ -47,8 +47,8 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito font-bold">
       {isLoading && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
-      <Navbar isLoggedIn={false} />
-      <FilterBar />
+      <Navbar />
+      <FilterBar route="search" />
       <div className="mt-[7.5rem] ml-[16rem] text-2xl">
         <div className="mb-5">{`Showing ${results.length} results of ${searchQuery}`}</div>
         <div className="flex flex-wrap">
@@ -62,7 +62,7 @@ export default function Home() {
             totalEnrolled={course.enrollments.length}
             difficulty={course.difficulty}
             thumbnailURL={course.thumbnailUrl}
-            className="mr-5"
+            className="mr-5 mb-5"
             onClick={() => router.push(`/learning-material?id=${course.id}`)}
           />
         ))}
