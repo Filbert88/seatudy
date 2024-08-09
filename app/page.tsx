@@ -47,19 +47,13 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
-      {(isLoading || status === "loading") && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <BounceLoader color="#393E46" />
-        </div>
-      )}
-      <Navbar isLoggedIn={false} />
-      {status === "authenticated" ? (
+      {(isLoading || status === "loading") && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
+      <Navbar />
+      {status === "authenticated" ? 
         <div className="w-full h-[20rem] bg-cover bg-[url('/assets/home_loggedin.png')] flex flex-col text-white mt-20">
           <div className="flex-grow flex justify-center">
             <div className="w-full h-full items-center flex flex-col justify-center">
-              <span className="font-bold text-5xl p-3">
-                Welcome back, User! Ready to continue your journey?
-              </span>
+              <span className="font-bold text-5xl p-3">{`Welcome back, ${session.user.name}! Ready to continue your journey?`}</span>     
             </div>
           </div>
         </div>
@@ -106,7 +100,7 @@ export default function Home() {
               totalEnrolled={course.enrollments.length}
               difficulty={course.difficulty}
               thumbnailURL={course.thumbnailUrl}
-              className="mr-5"
+              className="mr-5 mb-5"
               onClick={() => router.push(`/course-detail?id=${course.id}`)}
             />
           ))}

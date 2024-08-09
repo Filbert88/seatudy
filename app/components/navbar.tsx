@@ -6,16 +6,39 @@ import { useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
 import { signOut, useSession } from "next-auth/react";
 
-const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
+const Navbar = ({ activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const rating = searchParams.get('rating') || undefined;
+    const difficulty = searchParams.get('difficulty') || undefined;
+    const category = searchParams.get('category') || undefined;
+    const queryParams = buildQueryParams(rating, difficulty, category, searchQuery);
     if (e.key === "Enter") {
       location.reload();
-      router.push(`/search?query=${searchQuery}`);
+      router.push(`/all-courses?${queryParams}`);
     }
+  };
+
+  const buildQueryParams = (rating?: string, difficulty?: string, category?: string, title?: string) => {
+    const params = new URLSearchParams();
+    
+    if (rating) {
+      params.set('rating', rating);
+    }
+    if (difficulty) {
+      params.set('difficulty', difficulty);
+    }
+    if (category) {
+      params.set('category', category);
+    }
+    if (title) {
+      params.set('title', title);
+    }
+    return params.toString();
   };
 
   const handleNavbarClick = (route: string) => {
@@ -23,7 +46,7 @@ const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
   };
 
   return (
-    <nav className="h-20 bg-secondary flex fixed w-full z-50">
+    <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
         <div
           className="flex items-center hover:cursor-pointer"

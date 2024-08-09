@@ -93,7 +93,7 @@ const CoursesDetailPage = () => {
 
   return (
     <>
-      <Navbar isLoggedIn={isLogin} />
+      <Navbar />
       <div className="bg-secondary px-40 pt-20 pb-5">
         <h1 className="font-nunito font-bold text-4xl mx-5 pt-10 text-primary">
           {courseDetails.title}

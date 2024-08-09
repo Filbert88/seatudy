@@ -109,7 +109,7 @@ const ViewProfilePage = () => {
 
   return (
     <>
-      <Navbar isLoggedIn={isLogin} />
+      <Navbar />
       <div className="bg-primary h-full flex px-5 pb-5 pt-[8rem]">
         <div className="flex flex-row space-x-5 px-5 container">
           <div className="flex-shrink-0">

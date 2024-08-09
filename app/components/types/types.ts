@@ -9,6 +9,7 @@ export interface CourseInterface {
   title: string;
   description: string;
   materials: MaterialInterface[];
+  assignments?: AssignmentInterface[];
   averageRating: number;
   skills: string[];
   enrollments: object[];
@@ -26,8 +27,15 @@ export interface MaterialInterface {
   updatedAt: string;
 }
 
+export interface AssignmentInterface {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  dueDateOffset: number;
+}
+
 export interface NavbarInterface {
-  isLoggedIn: boolean;
   activePage?: string;
 }
 
@@ -71,6 +79,7 @@ export interface CourseDetailsInterface {
   transactions: object[];
 }
 
+
 export interface UserInterface {
   id: string;
   email: string;
@@ -81,4 +90,10 @@ export interface UserInterface {
   createdAt: any;
   updatedAt: any;
   balance: number;
+
+export interface CourseSidebarInterface {
+  title: string;
+  materials: string[];
+  assignments: string[];
+  active: { type: string; index: number };
 }
