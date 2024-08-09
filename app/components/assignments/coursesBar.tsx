@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   title: string;
@@ -8,13 +9,21 @@ interface Props {
 
 const CoursesBar: React.FC<Props> = (props) => {
   const [activeSection, setActiveSection] = useState<string>("Materials");
+
+  const router = useRouter();
+
+  const handleButtonClick = (section: string, courseId: string, index: string) => {
+    location.reload();
+    router.push(`/${section}?id=${courseId}&index=${index}`);
+  };
+
   const listMaterials = (materials: string[]) => {
     return materials.map((item, index) => {
       return (
         <button
           className="block text-left w-full p-2 my-2 hover:bg-gray-300"
           key={index}
-          onClick={() => setActiveSection("Materials")}
+          onClick={() => handleButtonClick("learning-material", new URLSearchParams(window.location.search).get('id') ?? '', index.toString())}
         >
           {item}
         </button>
