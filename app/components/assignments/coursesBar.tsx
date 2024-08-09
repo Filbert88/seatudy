@@ -1,13 +1,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CourseSidebarInterface } from "../types/types";
 
-interface Props {
-  title: string;
-  materials: string[];
-  assignments: string[];
-}
-
-const CoursesBar: React.FC<Props> = (props) => {
+const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
   const [activeSection, setActiveSection] = useState<string>("Materials");
 
   const router = useRouter();
@@ -21,8 +16,9 @@ const CoursesBar: React.FC<Props> = (props) => {
     return materials.map((item, index) => {
       return (
         <button
-          className="block text-left w-full p-2 my-2 hover:bg-gray-300"
           key={index}
+          disabled={props.active.type === "materials" && props.active.index === index}
+          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "materials" && props.active.index === index ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
           onClick={() => handleButtonClick("learning-material", new URLSearchParams(window.location.search).get('id') ?? '', index.toString())}
         >
           {item}
@@ -36,9 +32,9 @@ const CoursesBar: React.FC<Props> = (props) => {
       return (
         <button
           key={index}
-          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 
-            ${activeSection === item ? "bg-black" : ""}`}
-          onClick={() => setActiveSection("Assignments")}
+          disabled={props.active.type === "assignments" && props.active.index === index}
+          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "assignments" && props.active.index === index ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("view-assignment", new URLSearchParams(window.location.search).get('id') ?? '', index.toString())}
         >
           {item}
         </button>
@@ -47,16 +43,16 @@ const CoursesBar: React.FC<Props> = (props) => {
   };
   return (
     <>
-      <div className="fixed top-20 mx-5 my-5 font-nunito left-0">
+      <div className="fixed top-20 mx-5 my-5 min-w-[13rem] font-nunito left-0 text-secondary">
         <div className="text-lg font-bold mb-5">{props.title}</div>
         <div className="text-md font-bold">Course Materials</div>
-        <hr className="border-t-2 border-secondary mb-4 w-[13rem]" />
+        <hr className="border-t-1 border-secondary mb-3 w-full" />
         <div className="text-sm">{listMaterials(props.materials)}</div>
         <div className="text-md font-bold">Assignments</div>
-        <hr className="border-t-2 border-secondary mb-4 w-[13rem]" />
+        <hr className="border-t-1 border-secondary mb-3 w-full" />
         <div className="text-sm">{listAssignments(props.assignments)}</div>
         <div className="text-md font-bold">Forum</div>
-        <hr className="border-t-2 border-secondary mb-4 w-[13rem]" />
+        <hr className="border-t-1 border-secondary mb-3 w-full" />
         {["Create a new thread", "View All Discussions"].map((item, index) => {
           return (
             <button
@@ -68,7 +64,7 @@ const CoursesBar: React.FC<Props> = (props) => {
           );
         }, [])}
         <div className="text-md font-bold">Review</div>
-        <hr className="border-t-2 border-secondary mb-4 w-[13rem]" />
+        <hr className="border-t-1 border-secondary mb-3 w-full" />
         <button className="text-sm block text-left w-full p-2 my-2 hover:bg-gray-300">
           Submit a review
         </button>
