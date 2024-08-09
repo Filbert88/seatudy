@@ -6,7 +6,6 @@ import Image from "next/image";
 import checkoutBanner from "../../public/assets/checkout_banner.gif";
 import { useRouter } from "next/navigation";
 import { CourseDetailsInterface } from "../components/types/types";
-import { set } from "zod";
 import { BounceLoader } from "react-spinners";
 
 const CheckOutPage = () => {
