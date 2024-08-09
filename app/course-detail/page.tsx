@@ -123,6 +123,7 @@ const CoursesDetailPage = () => {
         <div className="px-5 py-4 m-5 w-full order-1 md:order-2 z-50">
           <div className="px-5 py-4 m-5 w-[50%] z-1">
             <Card
+              courseId={courseDetails.id}
               thumbnailUrl={courseDetails.thumbnailUrl}
               price={courseDetails.price}
               isLogin={isLogin}
