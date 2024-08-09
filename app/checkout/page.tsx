@@ -33,7 +33,7 @@ const CheckOutPage = () => {
   }, [selectedPaymentMethod, router, status]);
   return (
     <>
-      <Navbar isLoggedIn={isLogin} />
+      <Navbar />
       <div className="w-screen h-screen items-center justify-center bg-primary flex">
         <form className="form-content mt-10 min-w-[60vh] rounded-md items-center justify-center bg-third">
           <div className="relative w-full h-48">
