@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 
 interface Props {
+  thumbnailUrl: string;
   price: number;
   isLogin: boolean;
   averageRating: number;
@@ -13,29 +14,14 @@ interface Props {
 }
 
 const listSyllabus = (syllabus: string[]) => {
-  return syllabus.map((item, index) => {
+  return syllabus?.map((item, index) => {
     return <li key={index}>{item}</li>;
   });
 };
 
 const Card: React.FC<Props> = (props) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchCourseDetails = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch course details
-        const response = await fetch("sherly");
-        const data = await response.json();
-      } catch (error) {
-        console.log("Error fetching course details: ", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCourseDetails();
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = () => {
     if (props.isLogin) {
@@ -52,21 +38,21 @@ const Card: React.FC<Props> = (props) => {
         </div>
       ) : (
         <div
-          className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[7rem] right-[12rem] bg-white ml-20"
-          style={{ width: "691", height: "849" }}
+          className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[5rem] right-[12rem] bg-white ml-20"
+          style={{ width: "400px", height: "600px" }}
         >
-          <div className="relative w-full">
+          <div className="relative w-full h-48">
             <Image
-              src={DummyImage}
-              width={500}
-              height={300}
-              className="w-full h-auto rounded-t-md p-0.5"
+              src={props.thumbnailUrl || DummyImage}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-t-md"
               alt="Course Image"
             />
           </div>
           <div className="p-6 overflow-y-auto">
             <h1 className="font-nunito font-bold text-3xl mb-3">
-              Rp {props.price.toLocaleString()}
+              Rp {props?.price?.toLocaleString()}
             </h1>
             <div>
               {props.isLogin ? (
