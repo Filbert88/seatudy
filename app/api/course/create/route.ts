@@ -40,7 +40,7 @@ export const POST = async (req: Request) => {
     const skills = formData.getAll("skills") as string[];
     const difficulty = formData.get("difficulty")?.toString() || "";
     const price = formData.get("price");
-    const categoryIds = formData.getAll("categoryIds") as string[];
+    const categoryNames = formData.getAll("categoryNames") as string[];
 
     let generatedUrl = null;
     const file = formData.get("file");
@@ -52,6 +52,19 @@ export const POST = async (req: Request) => {
     console.log(file);
     console.log(generatedUrl);
     console.log(formData);
+
+    const categories = await Promise.all(
+      categoryNames.map(async (name) => {
+        const category = await prisma.courseCategory.upsert({
+          where: {
+            name: name.toLowerCase(),
+          },
+          update: {},
+          create: { name: name.toLowerCase() },
+        });
+        return category.id;
+      })
+    );
 
     const newData: any = {
       title,
@@ -68,9 +81,9 @@ export const POST = async (req: Request) => {
       data: newData,
     });
 
-    if (categoryIds.length > 0) {
+    if (categories.length > 0) {
       await prisma.courseCategoryCourse.createMany({
-        data: categoryIds.map((categoryId) => ({
+        data: categories.map((categoryId) => ({
           courseId: course.id,
           categoryId: categoryId,
         })),

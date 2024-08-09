@@ -55,7 +55,7 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
     const skills = formData.getAll("skills") as string[];
     const difficulty = formData.get("difficulty")?.toString() || "";
     const price = formData.get("price");
-    const categoryIds = formData.getAll("categoryIds") as string[];
+    const categoryNames = formData.getAll("categoryNames") as string[];
 
     const updateData: any = {};
 
@@ -76,6 +76,19 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
     }
     console.log(file);
 
+    const categories = await Promise.all(
+      categoryNames.map(async (name) => {
+        const category = await prisma.courseCategory.upsert({
+          where: {
+            name: name.toLowerCase(),
+          },
+          update: {},
+          create: { name: name.toLowerCase() },
+        });
+        return category.id;
+      })
+    );
+
     const updateCourse = await prisma.course.update({
       where: { id: courseId },
       data: {
@@ -84,13 +97,13 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
       },
     });
 
-    if (categoryIds.length > 0) {
+    if (categories.length > 0) {
       await prisma.courseCategoryCourse.deleteMany({
         where: { courseId: courseId },
       });
 
       await prisma.courseCategoryCourse.createMany({
-        data: categoryIds.map((categoryId) => ({
+        data: categories.map((categoryId) => ({
           courseId: courseId,
           categoryId: categoryId,
         })),
