@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/auth-options";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();

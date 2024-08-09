@@ -1,16 +1,13 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
-import { PrismaClient, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-export const POST = async (req: Request, { params }: { params: { courseId: string } }) => {
+export const POST = async (req: Request) => {
   if (req.method !== "POST") {
     return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
   }
-
-  const courseId = params.courseId;
 
   const session = await getServerSession({ req, ...authOptions });
   if (!session) {
@@ -24,13 +21,13 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
   try {
     const body = await req.json();
 
-    const { title, description, dueDateOffset } = body;
+    const { title, description, dueDateOffset, courseId } = body;
 
     const newData: any = {
       title,
       description,
       dueDateOffset,
-      courseId: courseId,
+      courseId,
     };
 
     const assignment = await prisma.assignment.create({

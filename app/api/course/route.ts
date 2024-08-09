@@ -1,7 +1,6 @@
-import { DifficultyLevel, PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { DifficultyLevel } from "@prisma/client";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
