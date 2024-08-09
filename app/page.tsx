@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import SeatudyLogo from './assets/seatudy-logo';
-import CoursesCard from './components/courses-card';
+import { useRouter } from "next/navigation";
+import SeatudyLogo from "./assets/seatudy-logo";
+import CoursesCard from "./components/courses-card";
 import Navbar from "./components/navbar";
 import { useEffect, useState } from 'react';
 import { BounceLoader } from 'react-spinners';
@@ -16,20 +16,20 @@ export default function Home() {
   const router = useRouter();
 
   const handleLoginClick = () => {
-    router.push('/auth/signin');
-  }
+    router.push("/auth/signin");
+  };
 
   const handleRegisterClick = () => {
-    router.push('/auth/signup');
-  }
+    router.push("/auth/signup");
+  };
 
   const getCourses = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/course', {
+      const response = await fetch("/api/course", {
         method: "GET",
         headers: {
-          "accept": "application/json",
+          accept: "application/json",
         },
       });
       const data = await response.json();
@@ -39,13 +39,11 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-    
-  }
+  };
 
   useEffect(() => {
     getCourses();
   }, []);
-
 
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
@@ -72,7 +70,6 @@ export default function Home() {
                 <a onClick={handleRegisterClick} className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4">Join for free</a>
                 <a onClick={handleLoginClick} className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4">I have an account</a>
               </div>
-              
             </div>
           </div>
         </div>
@@ -81,22 +78,21 @@ export default function Home() {
       <div className="flex-grow mx-20 my-5">
         <div className="font-bold text-2xl mb-5">Explore our courses</div>
         <div className="flex">
-        {courseData.map((course, index) => (
-          <CoursesCard
-            key={index}
-            courseTitle={course.title}
-            totalChapters={course.materials.length}
-            rating={course.averageRating}
-            skills={course.skills}
-            totalEnrolled={course.enrollments.length}
-            difficulty={course.difficulty}
-            thumbnailURL={course.thumbnailUrl}
-            className="mr-5"
-            onClick={() => router.push(`/learning-material?id=${course.id}`)}
-          />
-        ))}
+          {courseData.map((course, index) => (
+            <CoursesCard
+              key={index}
+              courseTitle={course.title}
+              totalChapters={course.materials.length}
+              rating={course.averageRating}
+              skills={course.skills}
+              totalEnrolled={course.enrollments.length}
+              difficulty={course.difficulty}
+              thumbnailURL={course.thumbnailUrl}
+              className="mr-5"
+              onClick={() => router.push(`/course-detail?id=${course.id}`)}
+            />
+          ))}
         </div>
-        
       </div>
     </main>
   );

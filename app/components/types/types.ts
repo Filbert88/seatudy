@@ -25,16 +25,31 @@ export interface CardInterface {
   className?: string;
   onClick?: () => void;
 }
+export interface MaterialInterface {
+  id: string;
+  courseId: string;
+  bucketId: string;
+  title: string;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface CourseDetailsInterface {
+  id: string;
   title: string;
   description: string;
+  syllabus: string[];
+  thumbnailUrl: string;
+  skills: string[];
+  instructorId: string;
+  createdAt: string;
+  updatedAt: string;
+  averageRating: number;
   difficulty: string;
-  duration: string;
-  instructor: string;
-  whatYoullLearn: string[]; // Array of strings
-  syllabus: string[]; // Array of strings
-  price?: number; // Optional field
-  averageRating?: number; // Optional field
-  isLogin?: boolean; // Optional field
+  price: number;
+  enrollments: object[];
+  materials: MaterialInterface[];
+  categories: object[];
+  transactions: object[];
 }
