@@ -1,9 +1,8 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
-import { PrismaClient, TransactionType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { TransactionType } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export const POST = async (req: Request, { params }: { params: { courseId: string } }) => {
   if (req.method !== "POST") {

@@ -1,20 +1,19 @@
-import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 
 // Get All Assignment by Course Id
-export const GET = async (req: Request, { params }: { params: { courseId: string } }) => {
-  const courseId = params.courseId;
+export const GET = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const courseId = searchParams.get("courseId");
 
   try {
     const assignments = await prisma.assignment.findMany({
       where: {
-        courseId: courseId,
+        courseId: courseId ? courseId : undefined,
       },
       include: {
         course: true,

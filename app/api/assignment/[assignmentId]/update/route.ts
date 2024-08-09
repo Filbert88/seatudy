@@ -2,15 +2,14 @@ import { PrismaClient, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
-
-export const POST = async (req: Request, { params }: { params: { courseId: string; assignmentId: string } }) => {
+export const POST = async (req: Request, { params }: { params: { assignmentId: string } }) => {
   if (req.method !== "POST") {
     return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
   }
 
-  const { courseId, assignmentId } = params;
+  const { assignmentId } = params;
 
   const session = await getServerSession({ req, ...authOptions });
   if (!session) {

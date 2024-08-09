@@ -1,15 +1,13 @@
-import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
 };
 
 // Get Assignment by Assignment ID
-export const GET = async (req: Request, { params }: { params: { courseId: string; assignmentId: string } }) => {
-  const { courseId, assignmentId } = params;
+export const GET = async (req: Request, { params }: { params: { assignmentId: string } }) => {
+  const { assignmentId } = params;
 
   try {
     const assignment = await prisma.assignment.findUnique({
