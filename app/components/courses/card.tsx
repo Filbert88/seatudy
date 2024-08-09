@@ -11,6 +11,7 @@ interface Props {
   isLogin: boolean;
   averageRating: number;
   syllabus: string[];
+  courseId: string;
 }
 
 const listSyllabus = (syllabus: string[]) => {
@@ -25,7 +26,7 @@ const Card: React.FC<Props> = (props) => {
 
   const handleClick = () => {
     if (props.isLogin) {
-      router.push("/checkout");
+      router.push(`/checkout?id=${props.courseId}`);
     } else {
       router.push("/auth/signin");
     }

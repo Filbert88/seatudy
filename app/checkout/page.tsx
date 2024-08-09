@@ -5,14 +5,27 @@ import Navbar from "../components/navbar";
 import Image from "next/image";
 import checkoutBanner from "../../public/assets/checkout_banner.gif";
 import { useRouter } from "next/navigation";
+import { CourseDetailsInterface } from "../components/types/types";
+import { set } from "zod";
+import { BounceLoader } from "react-spinners";
 
 const CheckOutPage = () => {
   const { data: session, status } = useSession();
   const [isLogin, setIsLogin] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<string[]>([]);
+  const [courseId, setCourseId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("");
   const router = useRouter();
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("id");
+    if (id) {
+      setCourseId(id);
+    }
+  }, []);
 
   useEffect(() => {
     const checkIfUserIsLoggedIn = () => {
@@ -24,16 +37,46 @@ const CheckOutPage = () => {
     };
     checkIfUserIsLoggedIn();
 
+    const getCourse = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/course/${courseId}`, {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+        });
+        const data = await response.json();
+        setCourseDetails(data.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (courseId) {
+      getCourse();
+    }
+
     const routeToAddPaymentMethod = () => {
       if (selectedPaymentMethod === "addNewPayment") {
         router.push("/topup-form");
       }
     };
     routeToAddPaymentMethod();
-  }, [selectedPaymentMethod, router, status]);
+  }, [selectedPaymentMethod, router, status, courseId]);
+
+  if (isLoading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-40 z-50 flex items-center justify-center">
+        <BounceLoader color="#393E46" />
+      </div>
+    );
+  }
   return (
     <>
-      <Navbar isLoggedIn={isLogin} />
+      <Navbar />
       <div className="w-screen h-screen items-center justify-center bg-primary flex">
         <form className="form-content mt-10 min-w-[60vh] rounded-md items-center justify-center bg-third">
           <div className="relative w-full h-48">
@@ -49,7 +92,7 @@ const CheckOutPage = () => {
             Purchase Details
           </div>
           <div className="py-5 px-3 mx-3 mb-3 flex items-center rounded-md bg-gray-800 text-white h-8">
-            Introduction to Javascript
+            {courseDetails?.title}
           </div>
           <div className="font-nunito text-xl px-5 pt-5 text-start font-extrabold text-white">
             Pay for it with
