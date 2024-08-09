@@ -49,7 +49,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
       {(isLoading || status === "loading") && <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center"><BounceLoader color='#393E46'/></div>}
       <Navbar />
-      {status === "authenticated" ? 
+      {status === "authenticated" ? (
         <div className="w-full h-[20rem] bg-cover bg-[url('/assets/home_loggedin.png')] flex flex-col text-white mt-20">
           <div className="flex-grow flex justify-center">
             <div className="w-full h-full items-center flex flex-col justify-center">

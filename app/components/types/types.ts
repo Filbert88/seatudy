@@ -90,6 +90,7 @@ export interface UserInterface {
   createdAt: any;
   updatedAt: any;
   balance: number;
+}
 
 export interface CourseSidebarInterface {
   title: string;
