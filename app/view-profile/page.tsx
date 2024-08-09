@@ -71,8 +71,8 @@ const ViewProfilePage = () => {
   const handleSave = async () => {
     if (session) {
       try {
-        const response = await fetch(`/api/profile/${userID}`, {
-          method: "PUT",
+        const response = await fetch(`/api/profile/update`, {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
