@@ -1,12 +1,29 @@
 export interface CourseInterface {
   id: string;
+  instructorId: string;
+  createdAt: string;
+  updatedAt: string;
+  price: string;
+  categories: string[];
+  transaction: object[];
   title: string;
-  materials: object[];
+  description: string;
+  materials: MaterialInterface[];
   averageRating: number;
   skills: string[];
   enrollments: object[];
   difficulty: string;
   thumbnailUrl: string;
+}
+
+export interface MaterialInterface {
+  id: string;
+  courseId: string;
+  bucketId: string;
+  title: string;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface NavbarInterface {
