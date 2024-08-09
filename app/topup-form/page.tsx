@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
 import visaIcon from "../../public/assets/visa_icon.png";
 import mastercardIcon from "../../public/assets/mastercard_icon.png";
 import amexIcon from "../../public/assets/amex_icon.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { TransactionInterface } from "../components/types/types";
+import { BounceLoader } from "react-spinners";
 
 const TopUpFormPage = () => {
   const [cardNumber, setCardNumber] = useState<string>("");
@@ -14,9 +17,25 @@ const TopUpFormPage = () => {
   const [cardCVC, setCardCVC] = useState<string>("");
   const [cardName, setCardName] = useState<string>("");
   const [nominals, setNominals] = useState<number>();
+  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+  const [transactionData, setTransactionData] =
+    useState<TransactionInterface>();
+
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleInputPhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phoneNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+    setCardNumber(phoneNumber);
+  };
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      setIsLoading(false);
+    }
+  }, [status]);
+
+  const addTransactionData = async () => {
     let isVisa = /^4\d{12}(\d{3})?$/;
     let isMastercard = /^5[1-5]\d{14}$/;
     let isAmex = /^3[47]\d{13}$/;
@@ -70,14 +89,46 @@ const TopUpFormPage = () => {
       return;
     }
 
-    // Case #7: If all the fields are valid
-    alert("Payment method has been added successfully!");
+    try {
+      if (session) {
+        setIsLoading(true);
+        const response = await fetch("/api/topup", {
+          method: "POST",
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: nominals,
+            cardNumber: cardNumber,
+            expirationDate: cardDate,
+            cvc: cardCVC,
+            cardHolderName: cardName,
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTransactionData(data);
+          console.log(transactionData);
+          alert("Payment method has been added successfully!");
+          router.push("/view-profile");
+        }
+      }
+    } catch (error) {
+      alert("Error in POST /api/topup");
+      console.error("Error in POST /api/topup", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleInputPhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-    setCardNumber(phoneNumber);
-  };
+  if (isLoading) {
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-40 z-50 flex items-center justify-center">
+        <BounceLoader color="#393E46" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -176,7 +227,7 @@ const TopUpFormPage = () => {
               Go Back
             </button>
             <button
-              onClick={handleClick}
+              onClick={addTransactionData}
               type="button"
               className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold"
             >
