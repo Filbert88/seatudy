@@ -70,3 +70,15 @@ export interface CourseDetailsInterface {
   categories: object[];
   transactions: object[];
 }
+
+export interface UserInterface {
+  id: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  campus: string;
+  role: any;
+  createdAt: any;
+  updatedAt: any;
+  balance: number;
+}

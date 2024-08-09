@@ -75,7 +75,7 @@ const Navbar = ({ isLoggedIn, activePage }: NavbarInterface) => {
             <>
               <IoNotificationsOutline className="text-primary mx-2 h-6 w-6" />
               <div
-                onClick={() => signOut()}
+                onClick={() => router.push("/view-profile")}
                 className="hover:cursor-pointer ml-5 flex items-center"
               >
                 <div className="mr-4 text-md">{session?.user?.name}</div>
