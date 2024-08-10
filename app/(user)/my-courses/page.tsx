@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import Navbar from "../components/navbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { BounceLoader } from "react-spinners";
-import { CourseInterface } from "../components/types/types";
+import { CourseInterface } from "@/components/types/types";
 import { set } from "zod";
-import CoursesCard from "../components/courses-card";
+import CoursesCard from "@/components/courses-card";
+import LoadingBouncer from "../../(dashboard)/loading";
 
 const MyCoursesPage = () => {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
@@ -50,15 +50,10 @@ const MyCoursesPage = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
-        <BounceLoader color="#393E46" />
-      </div>
-    );
+    return <LoadingBouncer />;
   }
   return (
     <>
-      <Navbar />
       <div className="pt-24 px-16">
         <div className="flex-grow mx-20 my-5">
           <div className="font-bold text-3xl mb-5">Your Course</div>
