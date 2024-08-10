@@ -9,6 +9,12 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  const courseId = req.nextUrl.searchParams.get("courseId");
+
+  if (!courseId) {
+    return NextResponse.json({ message: "Course ID is required" }, { status: 400 });
+  }
+
   const session = await getServerAuthSession();
   if (!session) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
@@ -20,6 +26,11 @@ export async function GET(req: NextRequest) {
 
   try {
     const submissions = await prisma.submission.findMany({
+      where: {
+        assignment: {
+          courseId: courseId,
+        },
+      },
       include: {
         assignment: true,
         student: {
