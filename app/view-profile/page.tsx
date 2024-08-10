@@ -83,7 +83,9 @@ const ViewProfilePage = () => {
         formData.append("phoneNumber", phoneNumber ?? "");
         formData.append("campus", campus);
         formData.append("password", password);
-        formData.append("file", profileFile ?? profileUrl);
+        if (profileFile) {
+          formData.append("file", profileFile);
+        }
         formData.append("balance", balance?.toString() ?? "");
         setIsLoading(true);
         const response = await fetch(`/api/profile/update`, {
