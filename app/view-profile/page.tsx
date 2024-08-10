@@ -25,6 +25,7 @@ const ViewProfilePage = () => {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [profileUrl, setProfileUrl] = useState<string>("");
   const [profileFile, setProfileFile] = useState<File | null>(null);
+  const allowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];
   const { data: session, status } = useSession();
 
   const handleTopUp = () => {
@@ -72,7 +73,7 @@ const ViewProfilePage = () => {
       }
     };
     fetchUserData();
-  }, [session, status, userID]);
+  }, []);
 
   const handleSave = async () => {
     if (session) {
@@ -120,6 +121,10 @@ const ViewProfilePage = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
+      if (!allowedFileTypes.includes(selectedFile.type)) {
+        alert("Please upload a file in image format");
+        return;
+      }
       setProfileFile(selectedFile);
       setProfileUrl(URL.createObjectURL(selectedFile));
     }
