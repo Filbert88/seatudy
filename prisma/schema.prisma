@@ -15,6 +15,7 @@ model User {
   phoneNumber   String          @unique
   campus        String
   role          Role            @default(USER)
+  profileUrl    String?
   courses       CourseEnrollment[]
   instructedCourses Course[]
   accessedMaterials CourseMaterialAccess[]
@@ -210,10 +211,10 @@ model Transaction {
   course           Course?  @relation(fields: [courseId], references: [id])
   courseId         String?  
   amount           BigInt
-  cardNumber       String
-  expirationDate   String
-  cvc              String
-  cardHolderName   String
+  cardNumber       String?
+  expirationDate   String?
+  cvc              String?
+  cardHolderName   String?
   createdAt        DateTime @default(now())
   type             TransactionType
 }
