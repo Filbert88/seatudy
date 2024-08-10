@@ -1,16 +1,16 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import LoadingBouncer from "../all-courses/loading";
+import { useEffect, useState } from "react";
+import LoadingBouncer from "../../../(user)/all-courses/loading";
 
 const ViewSubmissionsPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  useEffect(() => {}, []);
+
   if (isLoading) {
-    return (
-      <LoadingBouncer />
-    );
+    return <LoadingBouncer />;
   }
 
   return (
