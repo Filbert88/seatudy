@@ -26,26 +26,70 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const forum = await prisma.forum.create({
-      data: {
-        courseId,
+    let forum = await prisma.forum.findUnique({
+      where: { courseId },
+      include: {
         posts: {
-          create: {
-            title: postTitle,
-            content: postContent,
-            userId: session.user.id,
-            courseId,
+          select: {
+            id: true,       
+            title: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+              },
+            },
           },
         },
       },
-      include: {
-        posts: true,
-      },
     });
 
-    return NextResponse.json(forum);
+    if (!forum) {
+      forum = await prisma.forum.create({
+        data: {
+          courseId,
+          posts: {
+            create: {
+              title: postTitle,
+              content: postContent,
+              userId: session.user.id,
+              courseId,
+            },
+          },
+        },
+        include: {
+          posts: true,
+        },
+      });
+    } else {
+      const post = await prisma.forumPost.create({
+        data: {
+          title: postTitle,
+          content: postContent,
+          userId: session.user.id,
+          forumId: forum.id,
+          courseId,
+        },
+      });
+
+      forum.posts.push(post);
+    }
+
+    const newPost = forum.posts[forum.posts.length - 1];
+
+    return NextResponse.json({
+      forumId: forum.id,
+      postId: newPost.id,          
+      title: newPost.title,
+      content: newPost.content,
+      createdAt: newPost.createdAt,
+      user: newPost.user,
+    });
   } catch (error) {
-    console.error("Error creating forum and initial post:", error);
+    console.error("Error creating forum or forum post:", error);
     return NextResponse.json(
       {
         message: "Internal Server Error",
