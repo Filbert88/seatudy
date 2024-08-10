@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-  const { postId } = await req.json();
+  const postId = req.nextUrl.searchParams.get("postId");
 
   if (!postId) {
     return NextResponse.json(
