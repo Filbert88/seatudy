@@ -4,8 +4,9 @@ import CoursesBar from "../components/assignments/coursesBar";
 import Instructions from "../components/assignments/instructions";
 import Navbar from "../components/navbar";
 import Submission from "../components/assignments/submission";
-import { CourseInterface } from "../components/types/types";
+import { CourseInterface, SideBarDataInterface } from "../components/types/types";
 import { BounceLoader } from "react-spinners";
+import { getCourses, getSideBarDataFromLocalStorage } from "../components/worker/local-storage-handler";
 
 let AssignmentTitle = "Assignment 2: To do list application";
 let CourseTitle = "Introduction to Javascript";
@@ -31,6 +32,7 @@ const AssignmentPage = () => {
   const [showSubmissions, setShowSubmissions] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [index, setIndex] = useState<number>(0);
+  const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
   const [courseData, setCourseData] = useState<CourseInterface>();
 
 
@@ -43,30 +45,30 @@ const AssignmentPage = () => {
     setShowSubmissions(true);
   };
 
-  const getCourses = async (id: any) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/course/${id}`, {
-        method: "GET",
-        headers: {
-          "accept": "application/json",
-        },
-      });
-      const data = await response.json();
-      setCourseData(data.data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get('id');
-    const index = new URLSearchParams(window.location.search).get('index');
+    const param = new URLSearchParams(window.location.search);
+    const id = param.get("id");
+    const index = param.get("index");
     setIndex(parseInt(index ?? '0'));
     if (id) {
-      getCourses(id);
+      const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
+      if (sideBarDataFromLocalStorage) {
+        setSideBarData(sideBarDataFromLocalStorage);
+      }
+      getCourses(id).then((data) => {
+        setCourseData(data);
+        if (!sideBarDataFromLocalStorage) {
+          const newSideBarData = {
+            materialData: data.materials.map((material: any) => material.title),
+            assignmentData: data.assignments.map((assignment: any) => assignment.title),
+          };
+          setSideBarData(newSideBarData);
+        }
+        setIsLoading(false);
+      }).catch((error) => {
+        console.error("Error fetching course data:", error);
+        setIsLoading(false);
+      });
     }
   }, [])
 
@@ -77,8 +79,12 @@ const AssignmentPage = () => {
       <div className="flex flex-row py-20 pl-64">
         <CoursesBar
           title={courseData?.title || ""}
-          materials={courseData?.materials.map((material) => material.title) || []}
-          assignments={courseData?.assignments?.map((assignment) => assignment.title) || []}
+          materials={
+            sideBarData?.materialData || []
+          }
+          assignments={
+            sideBarData?.assignmentData || []
+          }
           active={{ type: "assignments", index: index }}
         />
         {!isLoading &&

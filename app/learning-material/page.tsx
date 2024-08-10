@@ -4,44 +4,67 @@ import Navbar from "../components/navbar";
 import CoursesBar from "../components/assignments/coursesBar";
 import React from "react";
 import PdfViewer from "../components/pdf-viewer";
-import { CourseInterface } from "../components/types/types";
+import { CourseInterface, SideBarDataInterface } from "../components/types/types";
 import { BounceLoader } from "react-spinners";
+import { getCourses, getSideBarDataFromLocalStorage } from "../components/worker/local-storage-handler";
 
 const MaterialsPage = () => {
   const [index, setIndex] = useState<number>(0);
   const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseData, setCourseData] = useState<CourseInterface>();
+  const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
 
-  const getCourses = async (id: any) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`/api/course/${id}`, {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-        },
-      });
-      const data = await response.json();
-      setCourseData(data.data);
-      if (data.data.materials.length === 0) {
-        setIsMaterialAvailable(false);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const getCourses = async (id: any) => {
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch(`/api/course/${id}`, {
+  //       method: "GET",
+  //       headers: {
+  //         accept: "application/json",
+  //       },
+  //     });
+  //     const data = await response.json();
+  //     setCourseData(data.data);
+  //     if (data.data.materials.length === 0) {
+  //       setIsMaterialAvailable(false);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("id");
-    const index = new URLSearchParams(window.location.search).get("index");
+    const param = new URLSearchParams(window.location.search);
+    const id = param.get("id");
+    const index = param.get("index");
     setIndex(parseInt(index ?? "0"));
     if (id) {
       setCourseId(id);
-      getCourses(id);
+      const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
+      if (sideBarDataFromLocalStorage) {
+        setSideBarData(sideBarDataFromLocalStorage);
+      }
+      getCourses(id).then((data) => {
+        setCourseData(data);
+        if (!sideBarDataFromLocalStorage) {
+          const newSideBarData = {
+            materialData: data.materials.map((material: any) => material.title),
+            assignmentData: data.assignments.map((assignment: any) => assignment.title),
+          };
+          setSideBarData(newSideBarData);
+        }
+        if (data.materials.length === 0) {
+          setIsMaterialAvailable(false);
+        }
+        setIsLoading(false);
+      }).catch((error) => {
+        console.error("Error fetching course data:", error);
+        setIsLoading(false);
+      });
     }
   }, []);
 
@@ -58,11 +81,10 @@ const MaterialsPage = () => {
           <CoursesBar
             title={courseData?.title || ""}
             materials={
-              courseData?.materials.map((material) => material.title) || []
+              sideBarData?.materialData || []
             }
             assignments={
-              courseData?.assignments?.map((assignment) => assignment.title) ||
-              []
+              sideBarData?.assignmentData || []
             }
             active={{ type: "materials", index: index }}
           />

@@ -3,13 +3,12 @@ import { useRouter } from "next/navigation";
 import { CourseSidebarInterface } from "../types/types";
 
 const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
-  const [activeSection, setActiveSection] = useState<string>("Materials");
 
   const router = useRouter();
 
-  const handleButtonClick = (section: string, courseId: string, index: string) => {
+  const handleButtonClick = (section: string, courseId: string, index: any) => {
     location.reload();
-    router.push(`/${section}?id=${courseId}&index=${index}`);
+    router.push(`/${section}?id=${courseId}${index === undefined ? "" : "&index=" + index}`);
   };
 
   const listMaterials = (materials: string[]) => {
@@ -53,16 +52,18 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
         <div className="text-sm">{listAssignments(props.assignments)}</div>
         <div className="text-md font-bold">Forum</div>
         <hr className="border-t-1 border-secondary mb-3 w-full" />
-        {["Create a new thread", "View All Discussions"].map((item, index) => {
-          return (
-            <button
-              key={index}
-              className="text-sm w-full block text-left p-2 my-2 hover:bg-gray-300"
-            >
-              {item}
-            </button>
-          );
-        }, [])}
+        <button 
+          className="text-sm w-full block text-left p-2 my-2 hover:bg-gray-300"
+        >
+          {"Create a new thread"}
+        </button>
+        <button 
+          disabled={props.active.type === "forum" && props.active.index === 1}
+          className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "forum" && props.active.index === 1 ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("view-forum", new URLSearchParams(window.location.search).get('id') ?? '', undefined)}
+        >
+          {"View all discussions"}
+        </button>
         <div className="text-md font-bold">Review</div>
         <hr className="border-t-1 border-secondary mb-3 w-full" />
         <button className="text-sm block text-left w-full p-2 my-2 hover:bg-gray-300">
