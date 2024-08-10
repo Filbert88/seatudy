@@ -18,12 +18,23 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
   }
 
   try {
-    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        instructorId: true,
+      },
+    });
     if (!course) {
       return NextResponse.json({ message: "No courses found" }, { status: 404 });
     }
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true, fullName: true, balance: true },
+    });
     if (!user) {
       return NextResponse.json({ message: "No users found" }, { status: 404 });
     }

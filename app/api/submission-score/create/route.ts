@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerAuthSession } from "../../auth/[...nextauth]/auth-options";
-import { Role } from "@prisma/client";
+import { NotificationType, Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/queries/notification";
 
 export async function POST(req: NextRequest) {
   if (req.method !== "POST") {
@@ -20,13 +21,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const data = await req.json(); 
+    const data = await req.json();
     const { content, grade, assignmentId, studentId } = data;
 
     if (!content || grade === undefined || !assignmentId || !studentId) {
-      return NextResponse.json({
-        message: "Missing required fields"
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          message: "Missing required fields",
+        },
+        { status: 400 }
+      );
     }
 
     const submission = await prisma.submission.create({
@@ -38,11 +42,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const assignment = await prisma.assignment.findUnique({
+      where: { id: assignmentId },
+      select: { title: true },
+    });
+
+    await createNotification(studentId, `Your submission for ${assignment?.title} has been graded. Your new grade is ${grade}`, NotificationType.ASSIGNMENT_SUBMISSION);
+
     return NextResponse.json(submission);
   } catch (error) {
-    console.error('Error creating assignment score:', error);
-    return NextResponse.json({
-      message: 'Internal Server Error',
-    }, { status: 500 });
+    console.error("Error creating assignment score:", error);
+    return NextResponse.json(
+      {
+        message: "Internal Server Error",
+      },
+      { status: 500 }
+    );
   }
 }
