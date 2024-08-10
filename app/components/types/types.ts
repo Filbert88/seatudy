@@ -92,6 +92,11 @@ export interface UserInterface {
   balance: number;
 }
 
+export interface SideBarDataInterface {
+  materialData: string[];
+  assignmentData: string[];
+}
+
 export interface CourseSidebarInterface {
   title: string;
   materials: string[];
