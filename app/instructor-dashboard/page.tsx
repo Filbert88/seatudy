@@ -12,6 +12,7 @@ const InstructorDashboard = () => {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
+
   useEffect(() => {
     // validation if user is not an instructor
     if (status === "authenticated" && session?.user.role !== "INSTRUCTOR") {
@@ -41,7 +42,7 @@ const InstructorDashboard = () => {
       }
     };
     fetchCourses();
-  }, [router, session, status]);
+  }, []);
 
   if (isLoading) {
     return (
