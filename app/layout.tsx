@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
+import StudentNavbar from "@/components/student-navbar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <StudentNavbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
