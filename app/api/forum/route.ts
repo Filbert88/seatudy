@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  const { courseId } = await req.json();
+  const courseId = req.nextUrl.searchParams.get("courseId");
 
   if (!courseId) {
     return NextResponse.json(
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const forum = await prisma.forum.findFirst({
-      where: { courseId: courseId }, 
+      where: { courseId: courseId },
       include: {
         posts: {
           select: {
