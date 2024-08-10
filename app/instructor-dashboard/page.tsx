@@ -52,7 +52,6 @@ const InstructorDashboard = () => {
     );
   }
 
-  console.log(courseData);
   return (
     <>
       <Navbar />
