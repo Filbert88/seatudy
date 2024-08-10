@@ -83,7 +83,7 @@ const CoursesDetailPage = () => {
     );
   }
 
-  const outline = courseDetails?.syllabus?.map((item, index) => {
+  const outline = courseDetails?.skills?.map((item, index) => {
     return (
       <li key={index} className="my-2">
         {item}

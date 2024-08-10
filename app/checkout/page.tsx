@@ -5,19 +5,18 @@ import Navbar from "../components/navbar";
 import Image from "next/image";
 import checkoutBanner from "../../public/assets/checkout_banner.gif";
 import { useRouter } from "next/navigation";
-import { CourseDetailsInterface } from "../components/types/types";
-import { set } from "zod";
+import {
+  CourseDetailsInterface,
+  UserInterface,
+} from "../components/types/types";
 import { BounceLoader } from "react-spinners";
 
 const CheckOutPage = () => {
   const { data: session, status } = useSession();
-  const [isLogin, setIsLogin] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<string[]>([]);
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>("");
+  const [profile, setProfile] = useState<UserInterface>();
   const router = useRouter();
 
   useEffect(() => {
@@ -28,15 +27,6 @@ const CheckOutPage = () => {
   }, []);
 
   useEffect(() => {
-    const checkIfUserIsLoggedIn = () => {
-      if (status === "authenticated") {
-        setIsLogin(true);
-      } else {
-        setIsLogin(false);
-      }
-    };
-    checkIfUserIsLoggedIn();
-
     const getCourse = async () => {
       try {
         setIsLoading(true);
@@ -59,13 +49,37 @@ const CheckOutPage = () => {
       getCourse();
     }
 
-    const routeToAddPaymentMethod = () => {
-      if (selectedPaymentMethod === "addNewPayment") {
-        router.push("/topup-form");
+    const getProfile = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/profile", {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+        });
+        const data = await response.json();
+        setProfile(data.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    routeToAddPaymentMethod();
-  }, [selectedPaymentMethod, router, status, courseId]);
+    if (session) {
+      getProfile();
+    }
+  }, [courseId, session]);
+
+  const handlePurchase = async () => {
+    if (profile?.balance && courseDetails?.price) {
+      if (Number(profile.balance) < Number(courseDetails.price)) {
+        alert("Insufficient Balance");
+        return;
+      }
+    }
+    // Call API for purchase here...
+  };
 
   if (isLoading) {
     return (
@@ -98,21 +112,7 @@ const CheckOutPage = () => {
             Pay for it with
           </div>
           <div className="py-5 px-3 mx-3 mb-3 flex items-center rounded-md bg-gray-800 text-white h-8">
-            <select
-              className="bg-gray-800 w-full font-nunito"
-              value={selectedPaymentMethod}
-              onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-            >
-              <option value="" className="text-gray-400">
-                Click here to view your payment method...
-              </option>
-              <option value="addNewPayment">Add a new payment method</option>
-              {paymentMethod?.map((method, index) => (
-                <option key={index} value={method}>
-                  {method}
-                </option>
-              ))}
-            </select>
+            Your Balance: Rp {profile?.balance.toLocaleString()}
           </div>
           <div className="text-xs flex items-center px-5 pb-1 text-white">
             By clicking “purchase”, you agree to the Paid Services Terms
@@ -134,11 +134,11 @@ const CheckOutPage = () => {
               Go Back
             </button>
             <button
-              onClick={() => alert("Payment Successful!")}
+              onClick={handlePurchase}
               type="button"
-              className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-sm py-1 text-white font-extrabold"
+              className="rounded-md bg-tertiary text-background bg-fourth px-5 font-nunito text-sm py-1 text-white font-extrabold"
             >
-              Save
+              Purchase
             </button>
           </div>
         </form>

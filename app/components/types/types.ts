@@ -79,7 +79,6 @@ export interface CourseDetailsInterface {
   transactions: object[];
 }
 
-
 export interface UserInterface {
   id: string;
   email: string;
@@ -102,4 +101,13 @@ export interface CourseSidebarInterface {
   materials: string[];
   assignments: string[];
   active: { type: string; index: number };
+}
+
+export interface TransactionInterface {
+  id: string;
+  amount: string;
+  cardNumber: string;
+  expirationDate: string;
+  cvc: string;
+  cardHolderName: string;
 }

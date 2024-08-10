@@ -1,42 +1,53 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SeatudyLogo from "../assets/seatudy-logo";
 import { IoSearch, IoNotificationsOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const Navbar = ({ activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { data: session, status } = useSession();
+  const [isInstructor, setIsInstructor] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const searchParams = new URLSearchParams(window.location.search);
-    const rating = searchParams.get('rating') || undefined;
-    const difficulty = searchParams.get('difficulty') || undefined;
-    const category = searchParams.get('category') || undefined;
-    const queryParams = buildQueryParams(rating, difficulty, category, searchQuery);
+    const rating = searchParams.get("rating") || undefined;
+    const difficulty = searchParams.get("difficulty") || undefined;
+    const category = searchParams.get("category") || undefined;
+    const queryParams = buildQueryParams(
+      rating,
+      difficulty,
+      category,
+      searchQuery
+    );
     if (e.key === "Enter") {
       location.reload();
       router.push(`/all-courses?${queryParams}`);
     }
   };
 
-  const buildQueryParams = (rating?: string, difficulty?: string, category?: string, title?: string) => {
+  const buildQueryParams = (
+    rating?: string,
+    difficulty?: string,
+    category?: string,
+    title?: string
+  ) => {
     const params = new URLSearchParams();
-    
+
     if (rating) {
-      params.set('rating', rating);
+      params.set("rating", rating);
     }
     if (difficulty) {
-      params.set('difficulty', difficulty);
+      params.set("difficulty", difficulty);
     }
     if (category) {
-      params.set('category', category);
+      params.set("category", category);
     }
     if (title) {
-      params.set('title', title);
+      params.set("title", title);
     }
     return params.toString();
   };
@@ -44,6 +55,12 @@ const Navbar = ({ activePage }: NavbarInterface) => {
   const handleNavbarClick = (route: string) => {
     router.push(route);
   };
+
+  useEffect(() => {
+    if (session?.user?.role === "INSTRUCTOR") {
+      setIsInstructor(true);
+    }
+  }, [session]);
 
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
@@ -55,43 +72,50 @@ const Navbar = ({ activePage }: NavbarInterface) => {
           <SeatudyLogo className="h-10 w-10 mx-2" />
           <span className="font-semibold text-2xl mx-2">seatudy</span>
         </div>
-        <div className="flex items-center border border-primary rounded-md ml-10 mx-10 bg-transparent text-sm w-[20rem]">
-          <IoSearch className="text-primary mx-2" />
-          <input
-            className="bg-transparent border-none outline-none w-full py-[0.5rem]"
-            placeholder="What do you want to learn today?"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
-          />
-        </div>
+        {isInstructor === false ? (
+          <div className="flex items-center border border-primary rounded-md ml-10 mx-10 bg-transparent text-sm w-[20rem]">
+            <IoSearch className="text-primary mx-2" />
+            <input
+              className="bg-transparent border-none outline-none w-full py-[0.5rem]"
+              placeholder="What do you want to learn today?"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+            />
+          </div>
+        ) : null}
         <div className="flex items-center">
-          {status === "authenticated" && (
+          {status === "authenticated" &&
+            (isInstructor === false ? (
+              <a
+                href="#"
+                className={`mx-10 font-semibold hover:underline text-md ${
+                  activePage === "My Courses" && "text-fourth"
+                }`}
+              >
+                My Courses
+              </a>
+            ) : null)}
+          {isInstructor === false ? (
             <a
-              href="#"
-              className={`mx-10 font-semibold hover:underline text-md ${
-                activePage === "My Courses" && "text-fourth"
+              onClick={() => handleNavbarClick("/all-courses")}
+              className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                activePage === "All Courses" && "text-fourth"
               }`}
             >
-              My Courses
+              All Courses
             </a>
-          )}
-          <a
-            onClick={() => handleNavbarClick("/all-courses")}
-            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-              activePage === "All Courses" && "text-fourth"
-            }`}
-          >
-            All Courses
-          </a>
-          <a
-            onClick={() => handleNavbarClick("/popular-courses")}
-            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-              activePage === "Popular Courses" && "text-fourth"
-            }`}
-          >
-            Popular Courses
-          </a>
+          ) : null}
+          {isInstructor === false ? (
+            <a
+              onClick={() => handleNavbarClick("/popular-courses")}
+              className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                activePage === "Popular Courses" && "text-fourth"
+              }`}
+            >
+              Popular Courses
+            </a>
+          ) : null}
         </div>
         <div className="flex items-center justify-end ml-auto mr-10">
           {status === "authenticated" && (
