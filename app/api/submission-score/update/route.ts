@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerAuthSession } from "../../auth/[...nextauth]/auth-options";
-import { Role } from "@prisma/client";
+import { NotificationType, Role } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/queries/notification";
 
 export async function POST(req: NextRequest) {
   if (req.method !== "POST") {
@@ -36,6 +37,21 @@ export async function POST(req: NextRequest) {
       where: { id },
       data: { content, grade },
     });
+
+    const assignment = await prisma.assignment.findUnique({
+      where: { id: updatedSubmission.assignmentId },
+      select: { title: true },
+    });
+
+    const student = await prisma.user.findUnique({
+      where: { id: updatedSubmission.studentId },
+      select: { id: true },
+    });
+    if (!student) {
+      return NextResponse.json({ message: "No users found" }, { status: 404 });
+    }
+
+    await createNotification(student.id, `Your submission for ${assignment?.title} has been graded. Your new grade is ${grade}`, NotificationType.ASSIGNMENT_SUBMISSION);
 
     return NextResponse.json(updatedSubmission);
   } catch (error) {
