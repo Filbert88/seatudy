@@ -13,7 +13,7 @@ export default async function AuthLayout({
   }
   return (
     <>
-      <div className="min-h-screen flex flex-col">
+      <div className="w-full min-h-screen bg-[url('/assets/login_bg.png')] bg-cover flex items-center justify-center font-nunito">
         <main>{children}</main>
       </div>
     </>

@@ -2,6 +2,7 @@ import { getServerAuthSession } from "@/app/api/auth/[...nextauth]/auth-options"
 import "../globals.css";
 import { redirect } from "next/navigation";
 import InstructorNavbar from "@/components/instructor-navbar";
+import { Providers } from "../providers";
 
 export default async function DashboardLayout({
   children,
@@ -14,8 +15,10 @@ export default async function DashboardLayout({
   }
   return (
     <main>
-      <InstructorNavbar />
-      {children}
+      <Providers>
+        <InstructorNavbar />
+        {children}
+      </Providers>
     </main>
   );
 }

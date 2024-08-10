@@ -1,4 +1,5 @@
-import "../globals.css";
+import { getServerAuthSession } from "../api/auth/[...nextauth]/auth-options";
+import { redirect } from "next/navigation";
 import StudentNavbar from "@/components/student-navbar";
 import { Providers } from "../providers";
 
@@ -7,6 +8,11 @@ export default async function EntryLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerAuthSession();
+
+  if (session?.user?.role !== "USER" && session) {
+    redirect("/instructor-dashboard");
+  }
   return (
     <>
       <div className="min-h-screen flex flex-col">
