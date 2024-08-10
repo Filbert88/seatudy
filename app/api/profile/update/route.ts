@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
+import { uploadFileToCloudinary } from "@/lib/utils";
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -27,20 +28,44 @@ export const POST = async (req: Request) => {
   }
 
   try {
-    const body = await req.json();
-    const { email, phoneNumber, password, fullName, campus } = body;
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
-    const data: UpdateProfileData = {};
-    if (fullName) data.fullName = fullName;
-    if (email) data.email = email;
-    if (phoneNumber) data.phoneNumber = phoneNumber;
-    if (campus) data.campus = campus;
-    if (password) data.password = await hash(password, 10);
+    const formData = await req.formData();
+    const fullName = formData.get("fullName");
+    const email = formData.get("email");
+    const phoneNumber = formData.get("phoneNumber");
+    const campus = formData.get("campus");
+    const password = formData.get("password") as string;
+
+    const updateData: any = {};
+
+    if (fullName) updateData.fullName = fullName;
+    if (email) updateData.email = email;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
+    if (campus) updateData.campus = campus;
+    if (password) updateData.password = await hash(password, 10);
+
+    let generatedUrl = user.profileUrl;
+    const file = formData.get("file");
+    if (file && file instanceof File) {
+      generatedUrl = await uploadFileToCloudinary(file);
+      updateData.profileUrl = generatedUrl;
+    } else if (file) {
+      return NextResponse.json({ message: "Invalid File Type" }, { status: 400 });
+    }
+    console.log(file);
+    console.log(generatedUrl);
+    console.log(formData);
 
     const updateUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
-        ...data,
+        ...updateData,
         updatedAt: new Date(),
       },
     });

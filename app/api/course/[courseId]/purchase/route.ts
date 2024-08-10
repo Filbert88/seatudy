@@ -1,6 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
-import { TransactionType } from "@prisma/client";
+import { createNotification } from "@/lib/queries/notification";
+import { NotificationType, TransactionType } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
@@ -31,10 +32,6 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
       return NextResponse.json({ message: "Insufficient balance" }, { status: 400 });
     }
 
-    const body = await req.json();
-
-    const { cardNumber, expirationDate, cvc, cardHolderName } = body;
-
     const alredyEnrolled = await prisma.courseEnrollment.findFirst({
       where: {
         userId: session.user.id,
@@ -49,10 +46,6 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
       userId: session.user.id,
       courseId: course.id,
       amount: course.price,
-      cardNumber,
-      expirationDate,
-      cvc,
-      cardHolderName,
       type: TransactionType.PURCHASE,
     };
 
@@ -80,9 +73,11 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
       },
     });
 
+    await createNotification(course.instructorId, `${user.fullName} bought course ${course.title}`, NotificationType.COURSE_PURCHASE);
+
     return NextResponse.json({ message: "Success", data: transaction }, { status: 201 });
   } catch (error) {
-    console.error("Error in GET /api/categories", error);
+    console.error("Error in POST /api/course/[courseId]/purchase", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 };

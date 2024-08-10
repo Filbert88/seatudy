@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerAuthSession } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/queries/notification";
+import { NotificationType } from "@prisma/client";
+
+async function getAssignmentAndInstructor(assignmentId: string) {
+  return prisma.assignment.findUnique({
+    where: { id: assignmentId },
+    select: {
+      title: true,
+      course: {
+        select: {
+          instructor: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
 
 export async function POST(req: NextRequest) {
   if (req.method !== "POST") {
@@ -21,8 +42,7 @@ export async function POST(req: NextRequest) {
     if (!content || !assignmentId) {
       return NextResponse.json(
         {
-          message:
-            "Missing required fields: content and assignmentId are required",
+          message: "Missing required fields: content and assignmentId are required",
         },
         { status: 400 }
       );
@@ -36,6 +56,13 @@ export async function POST(req: NextRequest) {
         grade: null,
       },
     });
+
+    const assignment = await getAssignmentAndInstructor(assignmentId);
+    if (!assignment) {
+      return NextResponse.json({ message: "No instructor found" }, { status: 404 });
+    }
+
+    await createNotification(assignment.course.instructor.id, `New submission from ${session.user.name} for ${assignment.title}`, NotificationType.ASSIGNMENT_SUBMISSION);
 
     return NextResponse.json(submission);
   } catch (error) {
