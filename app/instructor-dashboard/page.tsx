@@ -28,8 +28,12 @@ const InstructorDashboard = () => {
             "Content-Type": "application/json",
           },
         });
-        const data = await response.json();
-        setCourseData(data.data);
+        if (response.ok) {
+          const data = await response.json();
+          setCourseData(data.data);
+        } else {
+          throw new Error("Failed to fetch courses");
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -51,25 +55,47 @@ const InstructorDashboard = () => {
   return (
     <>
       <Navbar />
-      {/* <div className="flex-grow mx-20 my-5">
-        <div className="font-bold text-2xl mb-5">Explore our courses</div>
-        <div className="flex">
-          {courseData.map((course, index) => (
-            <CoursesCard
-              key={index}
-              courseTitle={course.title}
-              totalChapters={course.materials.length}
-              rating={course.averageRating}
-              skills={course.skills}
-              totalEnrolled={course.enrollments.length}
-              difficulty={course.difficulty}
-              thumbnailURL={course.thumbnailUrl}
-              className="mr-5 mb-5"
-              onClick={() => router.push(`/course-detail?id=${course.id}`)}
-            />
-          ))}
-        </div>
-      </div> */}
+      <div className="pt-24 px-8">
+        {courseData.length === 0 ? (
+          <div className="flex flex-col">
+            <div className="flex flex-row justify-between">
+              <div className="text-3xl font-nunito font-extrabold">
+                Currently Active Courses
+              </div>
+              <button
+                className="rounded-md bg-tertiary text-background bg-fourth px-4 py-1 font-nunito text-white font-extrabold"
+                type="button"
+                onClick={() => router.push("/create-courses")}
+              >
+                Create new courses
+              </button>
+            </div>
+            <div className="text-1xl font-nunito font-bold">
+              No courses found
+            </div>
+          </div>
+        ) : (
+          <div className="flex-grow mx-20 my-5">
+            <div className="font-bold text-2xl mb-5">Explore our courses</div>
+            <div className="flex">
+              {courseData.map((course, index) => (
+                <CoursesCard
+                  key={index}
+                  courseTitle={course.title}
+                  totalChapters={course.materials.length}
+                  rating={course.averageRating}
+                  skills={course.skills}
+                  totalEnrolled={course.enrollments.length}
+                  difficulty={course.difficulty}
+                  thumbnailURL={course.thumbnailUrl}
+                  className="mr-5 mb-5"
+                  onClick={() => router.push(`/course-detail?id=${course.id}`)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 };
