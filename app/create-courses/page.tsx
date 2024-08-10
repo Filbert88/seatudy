@@ -11,6 +11,7 @@ const CreateCourse = () => {
   const router = useRouter();
   const [courseTitle, setCourseTitle] = useState<string>("");
   const [courseDescription, setCourseDescription] = useState<string>("");
+  const [courseDifficulty, setCourseDifficulty] = useState<string>("");
 
   useEffect(() => {
     if (status === "authenticated" && session?.user.role !== "INSTRUCTOR") {
@@ -66,9 +67,9 @@ const CreateCourse = () => {
                 <div className="font-semibold text-white mb-2 text-lg">
                   Difficulty:
                 </div>
-                <div className="flex ">
-                  <select className="bg-white text-black rounded-lg h-10 px-2 min-w-[40vh]">
-                    <option>Select branch</option>
+                <div className="flex">
+                  <select className="bg-white text-black rounded-md mx-5 mt-0.5 h-6 px-2 min-w-[20vh]">
+                    <option value="">Select branch</option>
                   </select>
                 </div>
               </div>
