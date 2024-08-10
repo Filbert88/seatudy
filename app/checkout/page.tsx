@@ -74,6 +74,7 @@ const CheckOutPage = () => {
   const handlePurchase = async () => {
     if (profile?.balance && courseDetails?.price) {
       if (Number(profile.balance) < Number(courseDetails.price)) {
+        router.push("/topup-form");
         alert("Insufficient Balance");
         return;
       }
@@ -92,7 +93,7 @@ const CheckOutPage = () => {
         alert("Purchase Successful");
         router.push("/");
       } else {
-        alert(`Purchase Failed: ${data.message}`);
+        alert(`Purchase: ${data.message}`);
         router.push("/");
       }
     } catch (error) {

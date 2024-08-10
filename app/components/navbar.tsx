@@ -5,6 +5,7 @@ import { IoSearch, IoNotificationsOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const Navbar = ({ activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -88,7 +89,7 @@ const Navbar = ({ activePage }: NavbarInterface) => {
           {status === "authenticated" &&
             (isInstructor === false ? (
               <a
-                href="#"
+                onClick={() => handleNavbarClick("/my-courses")}
                 className={`mx-10 font-semibold hover:underline text-md ${
                   activePage === "My Courses" && "text-fourth"
                 }`}
