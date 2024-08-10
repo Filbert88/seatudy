@@ -89,6 +89,7 @@ export interface UserInterface {
   createdAt: any;
   updatedAt: any;
   balance: number;
+  profileUrl: string;
 }
 
 export interface SideBarDataInterface {

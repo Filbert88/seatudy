@@ -1,12 +1,15 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import DummyProfile from "../../public/assets/dummy_icon.jpg";
+import nullProfile from "../../public/assets/null_profile.png";
 import { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
 import { signOut, useSession } from "next-auth/react";
 import { UserInterface } from "../components/types/types";
 import { BounceLoader } from "react-spinners";
+import { set } from "zod";
+import { uploadFileToCloudinary } from "@/lib/utils";
+import { profile } from "console";
 
 const ViewProfilePage = () => {
   const router = useRouter();
@@ -20,6 +23,8 @@ const ViewProfilePage = () => {
   const [password, setPassword] = useState<string>("");
   const [balance, setBalance] = useState<number>();
   const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [profileUrl, setProfileUrl] = useState<string>("");
+  const [profileFile, setProfileFile] = useState<File | null>(null);
   const { data: session, status } = useSession();
 
   const handleTopUp = () => {
@@ -57,6 +62,7 @@ const ViewProfilePage = () => {
             setCampus(data.data.campus ?? "");
             setPassword(data.data.password ?? "");
             setBalance(data.data.balance ?? 0);
+            setProfileUrl(data.data.profileUrl ?? "");
           }
         }
       } catch (error) {
@@ -71,18 +77,18 @@ const ViewProfilePage = () => {
   const handleSave = async () => {
     if (session) {
       try {
+        const formData = new FormData();
+        formData.append("fullName", fullName);
+        formData.append("email", email);
+        formData.append("phoneNumber", phoneNumber ?? "");
+        formData.append("campus", campus);
+        formData.append("password", password);
+        formData.append("file", profileFile ?? profileUrl);
+        formData.append("balance", balance?.toString() ?? "");
+        setIsLoading(true);
         const response = await fetch(`/api/profile/update`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            fullName,
-            email,
-            phoneNumber,
-            campus,
-            password,
-          }),
+          body: formData,
         });
         const data = await response.json();
         if (data) {
@@ -91,6 +97,8 @@ const ViewProfilePage = () => {
       } catch (error) {
         alert("Failed to update profile");
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -107,6 +115,15 @@ const ViewProfilePage = () => {
     router.push("/auth/signin");
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    if (selectedFile) {
+      setProfileFile(selectedFile);
+      setProfileUrl(URL.createObjectURL(selectedFile));
+    }
+    console.log(profileUrl);
+  };
+
   return (
     <>
       <Navbar />
@@ -114,12 +131,22 @@ const ViewProfilePage = () => {
         <div className="flex flex-row space-x-5 px-5 container">
           <div className="flex-shrink-0">
             <Image
-              src={DummyProfile}
+              src={profileUrl.length === 0 ? nullProfile : profileUrl}
               alt="profile"
               width={300}
               height={300}
               className="rounded-full bg-black object-cover"
             />
+            <label className="cursor-pointer bg-transparent py-5 text-gray-700">
+              <span className="font-nunito px-24 font-bold underline">
+                Choose File
+              </span>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
           </div>
           <div className="border border-5 rounded-md w-full bg-white p-10 shadow-lg">
             <div className="bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md mb-5 p-5 text-white">
