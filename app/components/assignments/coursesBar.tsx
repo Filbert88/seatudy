@@ -53,7 +53,9 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
         <div className="text-md font-bold">Forum</div>
         <hr className="border-t-1 border-secondary mb-3 w-full" />
         <button 
-          className="text-sm w-full block text-left p-2 my-2 hover:bg-gray-300"
+          disabled={props.active.type === "forum" && props.active.index === 0}
+          className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "forum" && props.active.index === 0 ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("new-thread", new URLSearchParams(window.location.search).get('id') ?? '', undefined)}
         >
           {"Create a new thread"}
         </button>

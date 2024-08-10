@@ -55,45 +55,39 @@ const InstructorDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="pt-24 px-8">
+      <div className="pt-24">
+        <div className="font-nunito font-extrabold mx-20 flex items-center justify-between mt-5">
+          <div className="text-3xl mr-auto">Currently Active Courses</div>
+          <button
+            className="rounded-md text-background bg-fourth px-4 py-2 h-fit font-nunito text-white font-semibold"
+            type="button"
+            onClick={() => router.push("/create-courses")}
+          >Create a new course
+          </button>
+        </div>
         {courseData.length === 0 ? (
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-between">
-              <div className="text-3xl font-nunito font-extrabold">
-                Currently Active Courses
-              </div>
-              <button
-                className="rounded-md bg-tertiary text-background bg-fourth px-4 py-1 font-nunito text-white font-extrabold"
-                type="button"
-                onClick={() => router.push("/create-courses")}
-              >
-                Create new courses
-              </button>
-            </div>
-            <div className="text-1xl font-nunito font-bold">
-              No courses found
-            </div>
-          </div>
+        <div className="text-2xl font-nunito font-semibold mt-10 mx-20">
+          You have not created any courses yet
+        </div>
         ) : (
-          <div className="flex-grow mx-20 my-5">
-            <div className="font-bold text-2xl mb-5">Explore our courses</div>
-            <div className="flex">
-              {courseData.map((course, index) => (
-                <CoursesCard
-                  key={index}
-                  courseTitle={course.title}
-                  totalChapters={course.materials.length}
-                  rating={course.averageRating}
-                  skills={course.skills}
-                  totalEnrolled={course.enrollments.length}
-                  difficulty={course.difficulty}
-                  thumbnailURL={course.thumbnailUrl}
-                  className="mr-5 mb-5"
-                  onClick={() => router.push(`/course-detail?id=${course.id}`)}
-                />
-              ))}
-            </div>
+        <div className="flex-grow mx-20 my-5">
+          <div className="flex">
+            {courseData.map((course, index) => (
+              <CoursesCard
+                key={index}
+                courseTitle={course.title}
+                totalChapters={course.materials.length}
+                rating={course.averageRating}
+                skills={course.skills}
+                totalEnrolled={course.enrollments.length}
+                difficulty={course.difficulty}
+                thumbnailURL={course.thumbnailUrl}
+                className="mr-5 mb-5"
+                onClick={() => router.push(`/course-detail?id=${course.id}`)}
+              />
+            ))}
           </div>
+        </div>
         )}
       </div>
     </>
