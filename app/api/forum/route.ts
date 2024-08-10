@@ -24,8 +24,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const forum = await prisma.forum.findUnique({
-      where: { courseId },
+    const forum = await prisma.forum.findFirst({
+      where: { courseId: courseId }, 
       include: {
         posts: {
           select: {
