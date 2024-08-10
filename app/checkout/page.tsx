@@ -79,6 +79,28 @@ const CheckOutPage = () => {
       }
     }
     // Call API for purchase here...
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/course/${courseId}/purchase`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Purchase Successful");
+        router.push("/");
+      } else {
+        alert(`Purchase Failed: ${data.message}`);
+        router.push("/");
+      }
+    } catch (error) {
+      alert(`Purchase Failed: ${error}`);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isLoading) {
