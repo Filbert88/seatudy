@@ -26,67 +26,52 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let forum = await prisma.forum.findUnique({
-      where: { courseId },
-      include: {
-        posts: {
-          select: {
-            id: true,       
-            title: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-            user: {
-              select: {
-                id: true,
-                fullName: true,
-              },
-            },
-          },
-        },
-      },
+    let forum = await prisma.forum.findFirst({
+      where: { courseId: courseId },
     });
 
     if (!forum) {
       forum = await prisma.forum.create({
         data: {
-          courseId,
-          posts: {
-            create: {
-              title: postTitle,
-              content: postContent,
-              userId: session.user.id,
-              courseId,
-            },
-          },
-        },
-        include: {
-          posts: true,
+          courseId: courseId,
         },
       });
-    } else {
-      const post = await prisma.forumPost.create({
-        data: {
-          title: postTitle,
-          content: postContent,
-          userId: session.user.id,
-          forumId: forum.id,
-          courseId,
-        },
-      });
-
-      forum.posts.push(post);
     }
 
-    const newPost = forum.posts[forum.posts.length - 1];
+    if (!forum) {
+      return NextResponse.json(
+        {
+          message: "Failed to create or retrieve the forum",
+        },
+        { status: 500 }
+      );
+    }
+
+    const post = await prisma.forumPost.create({
+      data: {
+        title: postTitle,
+        content: postContent,
+        userId: session.user.id,
+        forumId: forum.id,
+        courseId: courseId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+      },
+    });
 
     return NextResponse.json({
       forumId: forum.id,
-      postId: newPost.id,          
-      title: newPost.title,
-      content: newPost.content,
-      createdAt: newPost.createdAt,
-      user: newPost.user,
+      postId: post.id,
+      title: post.title,
+      content: post.content,
+      createdAt: post.createdAt,
+      user: post.user,
     });
   } catch (error) {
     console.error("Error creating forum or forum post:", error);
