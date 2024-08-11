@@ -3,8 +3,13 @@ import Image from "next/image";
 import Instructions from "./instructions";
 import { useState } from "react";
 import { uploadFileToCloudinary } from "@/lib/utils";
+import LoadingBouncer from "../loading";
 
-const Submission = () => {
+interface SubmissionProps {
+  assignmentId: string;
+}
+
+const Submission = ({assignmentId}: SubmissionProps) => {
   const [validate, setValidate] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState<string | null>(null); // buat ngetest doang
@@ -32,6 +37,33 @@ const Submission = () => {
     setValidate(!validate);
   };
 
+  const handleAnswerSubmit = async (url: string) => {
+    try {
+      setUploading(true);
+      const response = await fetch(`/api/submission/create?assignmentId=${assignmentId}`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: url,
+          assignmentId: assignmentId,
+        }),
+      });
+      if (response.ok) {
+        alert("Submission successful!");
+      }
+      else {
+        alert("You can only submit once!");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
+  }
+
   const handleSubmit = async () => {
     if (validate === false) {
       alert("Please agree to the terms and conditions");
@@ -46,17 +78,18 @@ const Submission = () => {
       setUploading(true);
       const uploadedUrl = await uploadFileToCloudinary(file);
       setUrl(uploadedUrl);
+      handleAnswerSubmit(uploadedUrl);
     } catch (err) {
       console.error(err);
     } finally {
       setUploading(false);
-      alert("File uploaded successfully!");
     }
   };
   return (
     <>
+      {uploading && <LoadingBouncer />}
       {/* Information Border*/}
-      <div className="border flex flex-row p-5 items-center min-w-[10vh] max-w-fit">
+      <div className="border border-secondary flex flex-row px-5 py-3 items-center min-w-[10vh] max-w-fit">
         <Image src="/assets/info.png" alt="info" width={40} height={40} />
         <div className="font-nunito font-bold p-5">
           Please upload your file in pdf, png, jpeg, or jpg format
@@ -107,7 +140,7 @@ const Submission = () => {
       </button>
       {url && (
         <div className="mt-4">
-          <h2 className="text-xl font-bold">Uploaded File:</h2>
+          <h2 className="text-md font-semibold">Your submission:</h2>
           <a
             href={url}
             target="_blank"

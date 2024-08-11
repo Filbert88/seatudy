@@ -127,7 +127,7 @@ const AssignmentPage = () => {
                     "No instructions given"}
                 </Instructions>
               )}
-              {showSubmissions && <Submission />}
+              {showSubmissions && <Submission assignmentId={courseData?.assignments?.[index].id!}/>}
             </div>
           </div>
         )}
