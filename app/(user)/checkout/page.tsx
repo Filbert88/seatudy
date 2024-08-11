@@ -100,11 +100,18 @@ const CheckOutPage = () => {
         },
       });
       const data = await response.json();
-      if (data.success) {
+      console.log(data);
+      if (response.ok && data.message === "Success") {
         toast({
           title: "Purchase Successful",
         });
         router.push("/");
+      } else if (data.message === "Already purchased this course") {
+        toast({
+          title: "You have already purchased this course",
+          variant: "destructive", 
+        });
+        router.push("/my-courses"); 
       } else {
         toast({
           title: `Failed to purchase a course`,
@@ -131,7 +138,11 @@ const CheckOutPage = () => {
       <form className="form-content mt-10 min-w-[60vh] rounded-md items-center justify-center bg-third">
         <div className="relative w-full h-48">
           <Image
-            src={courseDetails ? courseDetails?.thumbnailUrl : "/assets/checkout_banner.gif"}
+            src={
+              courseDetails
+                ? courseDetails?.thumbnailUrl
+                : "/assets/checkout_banner.gif"
+            }
             layout="fill"
             objectFit="cover"
             className="rounded-t-md"
