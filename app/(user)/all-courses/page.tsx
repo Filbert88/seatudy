@@ -68,39 +68,35 @@ export default function Home() {
   if (isLoading) {
     return <LoadingBouncer />;
   }
-  
+
   return (
-    <>
-      <div className="flex min-h-screen flex-col bg-primary font-nunito font-bold">
-        <FilterBar route="all-courses" />
-        {!isLoading && (
-          <div className="mt-[7.5rem] ml-[16rem] text-2xl">
-            {searchQuery ? (
-              <div className="mb-5">{`Showing ${results.length} results of "${searchQuery}"`}</div>
-            ) : (
-              <div className="mb-5">All Courses</div>
-            )}
-            <div className="flex flex-wrap">
-              {results.map((course, index) => (
-                <CoursesCard
-                  key={index}
-                  courseTitle={course.title}
-                  totalChapters={course.materials.length}
-                  rating={course.averageRating}
-                  skills={course.skills}
-                  totalEnrolled={course.enrollments.length}
-                  difficulty={course.difficulty}
-                  thumbnailURL={course.thumbnailUrl}
-                  className="mr-5 mb-5"
-                  onClick={() =>
-                    router.push(`/learning-material?id=${course.id}`)
-                  }
-                />
-              ))}
-            </div>
+    <div className="flex min-h-screen flex-col bg-primary font-nunito font-bold">
+      <FilterBar route="all-courses" />
+      {!isLoading && (
+        <div className="mt-[7.5rem] ml-[16rem] text-2xl">
+          {searchQuery ? (
+            <div className="mb-5">{`Showing ${results.length} results of "${searchQuery}"`}</div>
+          ) : (
+            <div className="mb-5">All Courses</div>
+          )}
+          <div className="flex flex-wrap">
+            {results.map((course, index) => (
+              <CoursesCard
+                key={index}
+                courseTitle={course.title}
+                totalChapters={course.materials.length}
+                rating={course.averageRating}
+                skills={course.skills}
+                totalEnrolled={course.enrollments.length}
+                difficulty={course.difficulty}
+                thumbnailURL={course.thumbnailUrl}
+                className="mr-5 mb-5"
+                onClick={() => router.push(`/course-detail?id=${course.id}`)}
+              />
+            ))}
           </div>
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 }

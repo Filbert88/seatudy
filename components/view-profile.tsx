@@ -130,129 +130,125 @@ const ViewProfilePage = () => {
   };
 
   return (
-    <>
-      <div className="bg-primary h-full flex px-5 pb-5 pt-[8rem]">
-        <div className="flex flex-row space-x-5 px-5 container">
-          <div className="flex-shrink-0">
-            <Image
-              src={profileUrl.length === 0 ? "/assets/null_profile.png" : profileUrl}
-              alt="profile"
-              width={300}
-              height={300}
-              className="rounded-full bg-black object-cover"
-            />
-            <label className="cursor-pointer bg-transparent py-5 text-gray-700">
-              <span className="font-nunito px-24 font-bold underline">
-                Choose File
-              </span>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </label>
+    <div className="bg-primary min-h-screen flex px-5 pb-5 pt-[8rem]">
+      <div className="flex flex-row space-x-5 px-5 container">
+        <div className="flex-shrink-0">
+          <Image
+            src={
+              profileUrl.length === 0 ? "/assets/null_profile.png" : profileUrl
+            }
+            alt="profile"
+            width={300}
+            height={300}
+            className="rounded-full bg-black object-cover"
+          />
+          <label className="cursor-pointer bg-transparent py-5 text-gray-700">
+            <span className="font-nunito px-24 font-bold underline">
+              Choose File
+            </span>
+            <input type="file" onChange={handleFileChange} className="hidden" />
+          </label>
+        </div>
+        <div className="border border-5 rounded-md w-full bg-white p-10 shadow-lg">
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md mb-5 p-5 text-white">
+            <h1 className="font-nunito font-bold text-lg">Balance</h1>
+            <h1 className="font-nunito font-bold text-4xl">
+              Rp {balance ?? 0}
+            </h1>
+            <button
+              type="button"
+              onClick={handleTopUp}
+              className="rounded-3xl font-bold bg-cyan-200 mt-5 py-2 px-5 text-black hover:bg-cyan-300"
+            >
+              Top up
+            </button>
           </div>
-          <div className="border border-5 rounded-md w-full bg-white p-10 shadow-lg">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md mb-5 p-5 text-white">
-              <h1 className="font-nunito font-bold text-lg">Balance</h1>
-              <h1 className="font-nunito font-bold text-4xl">
-                Rp {balance ?? 0}
-              </h1>
+          <form>
+            <div className="font-bold">Full Name</div>
+            <div className="form-group pb-3 w-full">
+              <input
+                type="text"
+                id="formFullName"
+                placeholder={
+                  fullName?.length === 0
+                    ? "Enter full name"
+                    : fullName.toString()
+                }
+                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+            </div>
+            <div className="font-bold">Email</div>
+            <div className="form-group pb-3 w-full">
+              <input
+                type="email"
+                id="formEmail"
+                placeholder={email?.length === 0 ? "Enter email" : email}
+                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="font-bold">Phone Number</div>
+            <div className="form-group pb-3 w-full">
+              <input
+                type="number"
+                id="formPhoneNumber"
+                placeholder={
+                  phoneNumber?.toString().length === 0
+                    ? "Enter phone number"
+                    : phoneNumber?.toString()
+                }
+                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                value={phoneNumber ?? ""}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </div>
+            <div className="font-bold">Campus</div>
+            <div className="form-group pb-3 w-full">
+              <input
+                type="text"
+                id="formCampus"
+                placeholder={campus?.length === 0 ? "Enter campus" : campus}
+                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                value={campus}
+                onChange={(e) => setCampus(e.target.value)}
+              />
+            </div>
+            <div className="font-bold">Password</div>
+            <div className="form-group pb-3 w-full">
+              <input
+                type="password"
+                id="formPassword"
+                placeholder={
+                  password?.length === 0 ? "Enter password" : password
+                }
+                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-row">
+              <button
+                onClick={handleSave}
+                type="button"
+                className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
+              >
+                Save
+              </button>
               <button
                 type="button"
-                onClick={handleTopUp}
-                className="rounded-3xl font-bold bg-cyan-200 mt-5 py-2 px-5 text-black hover:bg-cyan-300"
+                className="rounded-md bg-tertiary text-background border-2 border-red-500 px-8 font-nunito text-red-500 font-extrabold my-5 ml-5 py-1"
+                onClick={() => signOut()}
               >
-                Top up
+                Logout
               </button>
             </div>
-            <form>
-              <div className="font-bold">Full Name</div>
-              <div className="form-group pb-3 w-full">
-                <input
-                  type="text"
-                  id="formFullName"
-                  placeholder={
-                    fullName?.length === 0
-                      ? "Enter full name"
-                      : fullName.toString()
-                  }
-                  className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </div>
-              <div className="font-bold">Email</div>
-              <div className="form-group pb-3 w-full">
-                <input
-                  type="email"
-                  id="formEmail"
-                  placeholder={email?.length === 0 ? "Enter email" : email}
-                  className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="font-bold">Phone Number</div>
-              <div className="form-group pb-3 w-full">
-                <input
-                  type="number"
-                  id="formPhoneNumber"
-                  placeholder={
-                    phoneNumber?.toString().length === 0
-                      ? "Enter phone number"
-                      : phoneNumber?.toString()
-                  }
-                  className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
-                  value={phoneNumber ?? ""}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </div>
-              <div className="font-bold">Campus</div>
-              <div className="form-group pb-3 w-full">
-                <input
-                  type="text"
-                  id="formCampus"
-                  placeholder={campus?.length === 0 ? "Enter campus" : campus}
-                  className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
-                  value={campus}
-                  onChange={(e) => setCampus(e.target.value)}
-                />
-              </div>
-              <div className="font-bold">Password</div>
-              <div className="form-group pb-3 w-full">
-                <input
-                  type="password"
-                  id="formPassword"
-                  placeholder={
-                    password?.length === 0 ? "Enter password" : password
-                  }
-                  className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-row">
-                <button
-                  onClick={handleSave}
-                  type="button"
-                  className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="rounded-md bg-tertiary text-background border-2 border-red-500 px-8 font-nunito text-red-500 font-extrabold my-5 ml-5 py-1"
-                  onClick={() => signOut()}
-                >
-                  Logout
-                </button>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
