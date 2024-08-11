@@ -8,7 +8,6 @@ import LoadingBouncer from "../loading";
 
 const InstructorDashboard = () => {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
-  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -73,7 +72,11 @@ const InstructorDashboard = () => {
                   difficulty={course.difficulty}
                   thumbnailURL={course.thumbnailUrl}
                   className="mr-5 mb-5"
-                  onClick={() => router.push(`/course-detail?id=${course.id}`)}
+                  onClick={() =>
+                    router.push(
+                      `/instructor-dashboard/view-submissions?id=${course.id}`
+                    )
+                  }
                 />
               ))}
             </div>
