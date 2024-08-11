@@ -1,5 +1,5 @@
 // components/Instructions.tsx
-import { renderMarkdown } from "../../../lib/markdown";
+import { renderMarkdown } from "@/lib/markdown";
 
 interface InstructionsProps {
   children: string;
