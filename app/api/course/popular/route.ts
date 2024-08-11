@@ -14,7 +14,6 @@ export const GET = async (req: Request) => {
           _count: "desc",
         },
       },
-      take: 10,
       include: {
         enrollments: true,
         materials: true,
@@ -23,7 +22,6 @@ export const GET = async (req: Request) => {
             category: true,
           },
         },
-        transactions: true,
       },
     });
 

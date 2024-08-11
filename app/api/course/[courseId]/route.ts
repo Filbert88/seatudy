@@ -22,8 +22,12 @@ export const GET = async (req: Request, { params }: { params: { courseId: string
             category: true,
           },
         },
+        instructor: {
+          select: {
+            fullName: true,
+          },
+        },
         assignments: true,
-        transactions: true,
       },
     });
 

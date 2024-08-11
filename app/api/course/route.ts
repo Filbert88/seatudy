@@ -46,7 +46,6 @@ export const GET = async (req: Request) => {
             category: true,
           },
         },
-        transactions: true,
       },
     });
 
