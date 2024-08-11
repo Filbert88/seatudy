@@ -12,6 +12,7 @@ const config: Config = {
   theme: {
     extend: {
       ...tokens,
+      ...seatudyPreset,
     },
   },
   plugins: [require("@tailwindcss/aspect-ratio")],
