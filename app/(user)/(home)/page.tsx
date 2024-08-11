@@ -91,9 +91,21 @@ export default function Home() {
         </div>
       )}
 
-      <div className="flex-grow mx-20 my-5">
-        <div className="font-bold text-2xl mb-5 md:text-left text-center">
-          Explore our courses
+      <div className="flex-grow mx-20 my-5 w-fit">
+        <div className="flex items-center mb-5 justify-between">
+          <div className="font-bold text-2xl md:text-left text-center">
+            Explore our courses
+          </div>
+          {courseData.length > 5 && (
+            <div className="text-center ml-auto">
+              <a
+                className="bg-secondary text-sm bg-transparent hover:underline hover:cursor-pointer text-secondary font-semibold py-1 px-3 rounded"
+                onClick={() => router.push("/all-courses")}
+              >
+                See More Courses
+              </a>
+            </div>
+          )}
         </div>
         <div className="flex md:flex-row flex-col md:justify-start justify-center items-center gap-5">
           {courseData.slice(0, 5).map((course, index) => (
@@ -110,16 +122,7 @@ export default function Home() {
             />
           ))}
         </div>
-        {courseData.length > 5 && (
-          <div className="text-center mt-5">
-            <button
-              className="bg-secondary hover:bg-secondary-dark text-white font-bold py-2 px-4 rounded"
-              onClick={() => router.push("/all-courses")}
-            >
-              See More Courses
-            </button>
-          </div>
-        )}
+        
       </div>
     </main>
   );
