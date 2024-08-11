@@ -10,6 +10,7 @@ import {
 import LoadingBouncer from "../all-courses/loading";
 import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import "react-quill/dist/quill.snow.css";
 import "./custom-quill.css";
 
@@ -24,6 +25,7 @@ const ViewForumPage = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
@@ -56,6 +58,10 @@ const ViewForumPage = () => {
       })
       .catch((error) => {
         console.error("Error fetching course data:", error);
+        toast({
+          title: "Failed to load course data",
+          variant: "destructive",
+        });
         setIsLoading(false);
       });
   }, []);
@@ -66,7 +72,10 @@ const ViewForumPage = () => {
 
   const handleSubmit = async () => {
     if (!title || !content) {
-      alert("Please fill in all fields");
+      toast({
+        title: "Please fill in all fields",
+        variant: "destructive",
+      });
       return;
     }
     try {
@@ -75,6 +84,7 @@ const ViewForumPage = () => {
         method: "POST",
         headers: {
           accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           courseId: courseId,
@@ -82,14 +92,23 @@ const ViewForumPage = () => {
           postContent: content,
         }),
       });
-      if (response.status === 200) {
-        alert("Forum thread created successfully");
+      if (response.ok) {
+        toast({
+          title: "Forum thread created successfully",
+        });
         router.push(`/view-forum?id=${courseId}`);
       } else {
-        alert("Error creating forum thread");
+        toast({
+          title: "Error creating forum thread",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Failed to create forum thread",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

@@ -6,9 +6,11 @@ import FilterBar from "@/components/filter-bar";
 import { useEffect, useState } from "react";
 import { CourseInterface } from "@/components/types/types";
 import LoadingBouncer from "@/components/loading";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Home() {
   const router = useRouter();
+  const { toast } = useToast();
   const [results, setResults] = useState<CourseInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
@@ -23,9 +25,22 @@ export default function Home() {
         },
       });
       const data = await response.json();
-      response.status === 200 ? setResults(data.data) : setResults([]);
+
+      if (response.status === 200) {
+        setResults(data.data);
+      } else {
+        setResults([]);
+        toast({
+          title: "Failed to fetch courses",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Failed to fetch courses",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

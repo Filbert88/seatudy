@@ -5,9 +5,7 @@ import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { UserInterface } from "./types/types";
 import { BounceLoader } from "react-spinners";
-import { set } from "zod";
-import { uploadFileToCloudinary } from "@/lib/utils";
-import { profile } from "console";
+import { useToast } from "@/components/ui/use-toast";
 
 const ViewProfilePage = () => {
   const router = useRouter();
@@ -16,35 +14,25 @@ const ViewProfilePage = () => {
   const [userID, setUserID] = useState<string>();
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>();
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [campus, setCampus] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [balance, setBalance] = useState<number>();
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [balance, setBalance] = useState<number>(0);
   const [profileUrl, setProfileUrl] = useState<string>("");
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const allowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];
   const { data: session, status } = useSession();
+  const { toast } = useToast();
 
   const handleTopUp = () => {
     router.push("/topup-form");
   };
 
   useEffect(() => {
-    const checkIfUserIsLoggedIn = () => {
-      if (status === "authenticated") {
-        setIsLogin(true);
-      } else {
-        setIsLogin(false);
-      }
-    };
-    checkIfUserIsLoggedIn();
-
     const fetchUserData = async () => {
-      console.log(userData);
-      try {
-        if (session) {
-          setIsLoading(true);
+      if (status === "authenticated") {
+        setIsLoading(true);
+        try {
           const response = await fetch("/api/profile", {
             method: "GET",
             headers: {
@@ -52,8 +40,8 @@ const ViewProfilePage = () => {
             },
           });
           const data = await response.json();
-          setUserData(data.data);
-          if (!userID) {
+          if (response.ok) {
+            setUserData(data.data);
             setUserID(data.data.id);
             setFullName(session?.user?.name ?? "");
             setEmail(session?.user?.email ?? "");
@@ -62,16 +50,28 @@ const ViewProfilePage = () => {
             setPassword(data.data.password ?? "");
             setBalance(data.data.balance ?? 0);
             setProfileUrl(data.data.profileUrl ?? "");
+          } else {
+            toast({
+              title: "Failed to load profile",
+              variant: "destructive",
+            });
           }
+        } catch (error) {
+          console.error(error);
+          toast({
+            title: "Error fetching profile data",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error(error);
-      } finally {
+      } else {
         setIsLoading(false);
+        router.push("/auth/signin");
       }
     };
     fetchUserData();
-  }, []);
+  }, [status, session]);
 
   const handleSave = async () => {
     if (session) {
@@ -91,16 +91,38 @@ const ViewProfilePage = () => {
           method: "POST",
           body: formData,
         });
-        const data = await response.json();
-        if (data) {
-          alert("Profile updated successfully");
+        if (response.ok) {
+          toast({
+            title: "Profile updated successfully",
+          });
+        } else {
+          toast({
+            title: "Failed to update profile",
+            variant: "destructive",
+          });
         }
       } catch (error) {
-        alert("Failed to update profile");
         console.error(error);
+        toast({
+          title: "Error updating profile",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    if (selectedFile && allowedFileTypes.includes(selectedFile.type)) {
+      setProfileFile(selectedFile);
+      setProfileUrl(URL.createObjectURL(selectedFile));
+    } else {
+      toast({
+        title: "Please upload a file in image format",
+        variant: "destructive",
+      });
     }
   };
 
@@ -111,23 +133,6 @@ const ViewProfilePage = () => {
       </div>
     );
   }
-
-  if (isLogin === false) {
-    router.push("/auth/signin");
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      if (!allowedFileTypes.includes(selectedFile.type)) {
-        alert("Please upload a file in image format");
-        return;
-      }
-      setProfileFile(selectedFile);
-      setProfileUrl(URL.createObjectURL(selectedFile));
-    }
-    console.log(profileUrl);
-  };
 
   return (
     <div className="bg-primary min-h-screen flex px-5 pb-5 pt-[8rem]">
@@ -169,11 +174,7 @@ const ViewProfilePage = () => {
               <input
                 type="text"
                 id="formFullName"
-                placeholder={
-                  fullName?.length === 0
-                    ? "Enter full name"
-                    : fullName.toString()
-                }
+                placeholder="Enter full name"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -184,7 +185,7 @@ const ViewProfilePage = () => {
               <input
                 type="email"
                 id="formEmail"
-                placeholder={email?.length === 0 ? "Enter email" : email}
+                placeholder="Enter email"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -195,11 +196,7 @@ const ViewProfilePage = () => {
               <input
                 type="number"
                 id="formPhoneNumber"
-                placeholder={
-                  phoneNumber?.toString().length === 0
-                    ? "Enter phone number"
-                    : phoneNumber?.toString()
-                }
+                placeholder="Enter phone number"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={phoneNumber ?? ""}
                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -210,7 +207,7 @@ const ViewProfilePage = () => {
               <input
                 type="text"
                 id="formCampus"
-                placeholder={campus?.length === 0 ? "Enter campus" : campus}
+                placeholder="Enter campus"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={campus}
                 onChange={(e) => setCampus(e.target.value)}
@@ -221,9 +218,7 @@ const ViewProfilePage = () => {
               <input
                 type="password"
                 id="formPassword"
-                placeholder={
-                  password?.length === 0 ? "Enter password" : password
-                }
+                placeholder="Enter password"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

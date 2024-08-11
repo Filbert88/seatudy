@@ -8,12 +8,14 @@ import {
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
 import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
 
 const ViewAssignmentPage = () => {
   const router = useRouter();
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
+  const { toast } = useToast();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -31,9 +33,20 @@ const ViewAssignmentPage = () => {
           },
         });
         const data = await response.json();
-        setCourseDetails(data.data);
+        if (response.ok) {
+          setCourseDetails(data.data);
+        } else {
+          toast({
+            title: "Failed to load course details",
+            variant: "destructive",
+          });
+        }
       } catch (error) {
         console.error(error);
+        toast({
+          title: "An error occurred",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -41,11 +54,7 @@ const ViewAssignmentPage = () => {
     if (courseId) {
       fetchCourse();
     }
-  }, [courseId]);
-
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
+  }, [courseId, toast]);
 
   const handleDelete = async (assignmentId: string) => {
     try {
@@ -56,20 +65,33 @@ const ViewAssignmentPage = () => {
           accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({assignmentId})
-      })
+        body: JSON.stringify({ assignmentId }),
+      });
       const data = await response.json();
-      console.log(data);
-      if(data.message === "Success"){
+      if (data.message === "Success") {
+        toast({
+          title: "Assignment deleted successfully",
+        });
         window.location.reload();
-        alert("Assignment deleted successfully");
+      } else {
+        toast({
+          title: "Error deleting assignment",
+          variant: "destructive",
+        });
       }
-    }catch(error){
-      alert("Error deleting assignment");
+    } catch (error) {
       console.error(error);
-    }finally{
+      toast({
+        title: "An error occurred while deleting the assignment",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  if (isLoading) {
+    return <LoadingBouncer />;
   }
 
   return (
@@ -100,13 +122,21 @@ const ViewAssignmentPage = () => {
           </div>
         ) : (
           courseDetails?.assignments.map((assignment) => (
-            <div key={assignment.id} className="bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]">
+            <div
+              key={assignment.id}
+              className="bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]"
+            >
               <div className="flex justify-between">
                 <div className="font-nunito text-2xl font-extrabold">
                   {assignment.title}
                 </div>
                 <div className="flex">
-                  <button className="hover:bg-gray-100 rounded-lg" onClick={() => router.push(`edit-assignments?id=${assignment.id}`)}>
+                  <button
+                    className="hover:bg-gray-100 rounded-lg"
+                    onClick={() =>
+                      router.push(`edit-assignments?id=${assignment.id}`)
+                    }
+                  >
                     <Image
                       src={pencil_icon}
                       alt="edit"
@@ -114,7 +144,10 @@ const ViewAssignmentPage = () => {
                       height={10}
                     />
                   </button>
-                  <button className="hover:bg-gray-100 rounded-lg" onClick={() => handleDelete(assignment.id)}>
+                  <button
+                    className="hover:bg-gray-100 rounded-lg"
+                    onClick={() => handleDelete(assignment.id)}
+                  >
                     <Image
                       src={delete_icon}
                       alt="delete"

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { uploadFileToCloudinary } from "@/lib/utils";
+import { uploadFileToCloudinary } from "@/lib/cloudinary";
 
 const FileUploadForm: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);

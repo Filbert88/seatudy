@@ -2,12 +2,14 @@
 import LoadingBouncer from "@/components/loading";
 import { NotificationInterface } from "@/components/types/types";
 import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const NotificationPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [notifications, setNotifications] = useState<NotificationInterface[]>(
     []
   );
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -19,25 +21,41 @@ const NotificationPage = () => {
           },
         });
         const data = await response.json();
-        setNotifications(data.data);
         if (!response.ok) {
           throw new Error(data.message);
         }
-        console.log(data.data);
+        setNotifications(data.data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
+        toast({
+          title: "Failed to load notifications",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
     fetchNotifications();
-  }, []);
+  }, [toast]);
 
-  console.log(notifications);
   return (
     <div className="pt-24 px-32 font-nunito font-extrabold text-2xl">
-      {isLoading && <LoadingBouncer />}
-      <h1>Notifications</h1>
+      {isLoading ? (
+        <LoadingBouncer />
+      ) : (
+        <>
+          <h1>Notifications</h1>
+          {notifications.length > 0 ? (
+            <ul>
+              {notifications.map((notification) => (
+                <li key={notification.id}>{notification.message}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No notifications found</p>
+          )}
+        </>
+      )}
     </div>
   );
 };

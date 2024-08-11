@@ -8,7 +8,7 @@ import {
   UserInterface,
 } from "@/components/types/types";
 import LoadingBouncer from "./loading";
-import banner from "../../../public/assets/checkout_banner.gif";
+import { useToast } from "@/components/ui/use-toast";
 
 const CheckOutPage = () => {
   const { data: session, status } = useSession();
@@ -17,6 +17,7 @@ const CheckOutPage = () => {
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
   const [profile, setProfile] = useState<UserInterface>();
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -39,6 +40,10 @@ const CheckOutPage = () => {
         setCourseDetails(data.data);
       } catch (error) {
         console.error(error);
+        toast({
+          title: "Failed to load course details",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -61,6 +66,10 @@ const CheckOutPage = () => {
         setProfile(data.data);
       } catch (error) {
         console.error(error);
+        toast({
+          title: "Failed to load profile",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -74,7 +83,10 @@ const CheckOutPage = () => {
     if (profile?.balance && courseDetails?.price) {
       if (Number(profile.balance) < Number(courseDetails.price)) {
         router.push("/topup-form");
-        alert("Insufficient Balance");
+        toast({
+          title: "Insufficient Balance",
+          variant: "destructive",
+        });
         return;
       }
     }
@@ -89,14 +101,22 @@ const CheckOutPage = () => {
       });
       const data = await response.json();
       if (data.success) {
-        alert("Purchase Successful");
+        toast({
+          title: "Purchase Successful",
+        });
         router.push("/");
       } else {
-        alert(`Purchase: ${data.message}`);
+        toast({
+          title: `Failed to purchase a course`,
+          variant: "destructive",
+        });
         router.push("/");
       }
     } catch (error) {
-      alert(`Purchase Failed: ${error}`);
+      toast({
+        title: `Failed to purchase a course`,
+        variant: "destructive",
+      });
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -111,7 +131,7 @@ const CheckOutPage = () => {
       <form className="form-content mt-10 min-w-[60vh] rounded-md items-center justify-center bg-third">
         <div className="relative w-full h-48">
           <Image
-            src={courseDetails ? courseDetails?.thumbnailUrl : banner}
+            src={courseDetails ? courseDetails?.thumbnailUrl : "/assets/checkout_banner.gif"}
             layout="fill"
             objectFit="cover"
             className="rounded-t-md"

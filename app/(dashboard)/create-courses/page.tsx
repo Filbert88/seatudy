@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import LoadingBouncer from "./loading";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
 
 const CreateCourse = () => {
   const { data: session, status } = useSession();
@@ -18,6 +19,7 @@ const CreateCourse = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [syllabus, setSyllabus] = useState<string>("");
   const [skills, setSkills] = useState<string>("");
+  const { toast } = useToast();
 
   const handleSubmit = async () => {
     if (
@@ -26,7 +28,10 @@ const CreateCourse = () => {
       !courseDifficulty ||
       !coursePrice
     ) {
-      alert("Please fill in all fields");
+      toast({
+        title: "All fields are required",
+        variant: "destructive",
+      });
       return;
     }
     try {
@@ -54,13 +59,23 @@ const CreateCourse = () => {
         body: f,
       });
       if (response.status === 201) {
-        alert("Course created successfully");
+        toast({
+          title: "Course created successfully",
+        });
         router.push("/instructor-dashboard");
       } else {
-        alert("Error creating course");
+        toast({
+          title: "Error creating course",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +94,7 @@ const CreateCourse = () => {
       router.push("/");
     }
     setIsLoading(false);
-  }, []);
+  }, [status, session, router]);
 
   if (isLoading) {
     return <LoadingBouncer />;
