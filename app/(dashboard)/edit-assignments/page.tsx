@@ -1,10 +1,85 @@
 "use client"
 
-import { useState } from "react";
+import LoadingBouncer from "@/components/loading";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const EditAssignmentPage = () => {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [assignmentId, setAssignmentId] = useState<string>("");
     const [assignmentTitle, setAssignmentTitle] = useState<string>("");
     const [assignmentDescription, setAssignmentDescription] = useState<string>("");
+
+    useEffect(() => {
+        const id = new URLSearchParams(window.location.search).get("id");
+        if (id) {
+            setAssignmentId(id);
+        }
+
+        const fetchAssignment = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch(`/api/assignment/${assignmentId}`, {
+                    method: "GET",
+                    headers: {
+                        accept: "application/json"
+                    },
+                })
+                const data = await response.json();
+                setAssignmentTitle(data.data.title);
+                setAssignmentDescription(data.data.description);
+            }
+            catch (error) {
+                alert("Error fetching assignment");
+                console.error(error);
+                router.push("/instructor-dashboard")
+            }
+            finally {
+                setIsLoading(false);
+            }
+        }
+        if(assignmentId){
+            fetchAssignment();
+        }
+    }, [assignmentId]);
+
+    const handleChanges = async () => {
+        if (!assignmentTitle || !assignmentDescription) {
+            alert("Please fill in all fields");
+            return;
+        }
+        try{
+            setIsLoading(true);
+            const response = await fetch(`/api/assignment/${assignmentId}/update`, {
+                method: "POST",
+                headers: {
+                    accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    title: assignmentTitle,
+                    description: assignmentDescription,
+                }),
+            })
+            const data = await response.json();
+            console.log(data);
+            if(data.message === "Success"){
+                alert("Assignment updated successfully");
+                router.back();
+            }
+        }catch(error){
+            alert("Error updating assignment");
+            console.error(error);
+        }
+        finally{
+            setIsLoading(false);
+        }
+    }
+
+    if(isLoading){
+        return <LoadingBouncer/>
+    }
 
     return (
         <div className = "pt-32 px-12">
@@ -18,7 +93,7 @@ const EditAssignmentPage = () => {
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
-                placeholder="Enter assignment title.."
+                placeholder="Enter new assignment's title.."
                 className="p-3 rounded-md bg-white w-full h-8"
                 value={assignmentTitle}
                 onChange={(e) => setAssignmentTitle(e.target.value)}
@@ -29,14 +104,14 @@ const EditAssignmentPage = () => {
         </div>
             <div className="form-group pb-5 w-full">
               <textarea
-                placeholder="Enter assignment title.."
+                placeholder="Enter new assignment's descriptions.."
                 className="p-3 rounded-md bg-white w-full h-40"
                 value={assignmentDescription}
                 onChange={(e) => setAssignmentDescription(e.target.value)}
               />
             </div>
         </form>
-        <button type = "button" className = "flex items-center justify-center text-white font-nunito font-bold bg-fourth rounded-md max-w-40 px-1 py-1">
+        <button onClick = {handleChanges} type = "button" className = "flex items-center justify-center text-white font-nunito font-bold bg-fourth rounded-md max-w-40 px-1 py-1">
             Save Changes
         </button>
         </div>
