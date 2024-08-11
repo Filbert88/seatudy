@@ -174,7 +174,7 @@ const ViewProfilePage = () => {
                     ? "Enter full name"
                     : fullName.toString()
                 }
-                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
@@ -185,7 +185,7 @@ const ViewProfilePage = () => {
                 type="email"
                 id="formEmail"
                 placeholder={email?.length === 0 ? "Enter email" : email}
-                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -200,7 +200,7 @@ const ViewProfilePage = () => {
                     ? "Enter phone number"
                     : phoneNumber?.toString()
                 }
-                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={phoneNumber ?? ""}
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
@@ -211,7 +211,7 @@ const ViewProfilePage = () => {
                 type="text"
                 id="formCampus"
                 placeholder={campus?.length === 0 ? "Enter campus" : campus}
-                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={campus}
                 onChange={(e) => setCampus(e.target.value)}
               />
@@ -224,7 +224,7 @@ const ViewProfilePage = () => {
                 placeholder={
                   password?.length === 0 ? "Enter password" : password
                 }
-                className="p-3 rounded-md bg-slate-300 text-black w-full h-8"
+                className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
