@@ -86,122 +86,120 @@ const CreateCourse = () => {
   }
 
   return (
-    <>
-      <div className="pt-24 px-16 font-nunito">
-        <div className="flex flex-col items-start justify-start">
-          <div className="flex font-nunito font-bold text-3xl">
-            Creating a new course
-          </div>
-          <div className="bg-secondary rounded-md p-5 my-5 min-w-[50rem]">
-            <form className="form-content items-center justify-center">
-              <div className="font-semibold text-white mb-2 text-lg">
-                Course Title
+    <div className="pt-24 px-16 font-nunito">
+      <div className="flex flex-col items-start justify-start">
+        <div className="flex font-nunito font-bold text-3xl">
+          Creating a new course
+        </div>
+        <div className="bg-secondary rounded-md p-5 my-5 min-w-[50rem]">
+          <form className="form-content items-center justify-center">
+            <div className="font-semibold text-white mb-2 text-lg">
+              Course Title
+            </div>
+            <div className="form-group pb-5 w-full">
+              <input
+                type="text"
+                placeholder="Enter course title.."
+                className="p-3 rounded-md bg-white w-full h-8"
+                value={courseTitle}
+                onChange={(e) => setCourseTitle(e.target.value)}
+              />
+            </div>
+            <div className="font-semibold text-white mb-2 text-lg">
+              Description
+            </div>
+            <div className="form-group pb-5 w-full">
+              <textarea
+                placeholder="Enter a short description.."
+                className="p-3 rounded-md bg-white w-full min-h-25"
+                value={courseDescription}
+                onChange={(e) => setCourseDescription(e.target.value)}
+              />
+            </div>
+            <div className="font-semibold text-white mb-2 text-lg">
+              Syllabus
+            </div>
+            <div className="form-group pb-5 w-full">
+              <input
+                type="text"
+                placeholder="Separate with comma.."
+                className="p-3 rounded-md bg-white w-full h-8"
+                value={syllabus}
+                onChange={(e) => setSyllabus(e.target.value)}
+              />
+            </div>
+            <div className="font-semibold text-white mb-2 text-lg">
+              Developed skills
+            </div>
+            <div className="form-group pb-5 w-full">
+              <input
+                type="text"
+                placeholder="Separate with comma.."
+                className="p-3 rounded-md bg-white w-full h-8"
+                value={skills}
+                onChange={(e) => setSkills(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-row items-center mb-5">
+              <div className="font-semibold text-white text-lg">
+                Difficulty:
               </div>
-              <div className="form-group pb-5 w-full">
-                <input
-                  type="text"
-                  placeholder="Enter course title.."
-                  className="p-3 rounded-md bg-white w-full h-8"
-                  value={courseTitle}
-                  onChange={(e) => setCourseTitle(e.target.value)}
+              <select
+                className="bg-white text-black rounded-md ml-5 px-2 py-1"
+                onChange={(e) => setCourseDifficulty(e.target.value)}
+              >
+                <option value="BEGINNER">Beginner</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="ADVANCED">Advanced</option>
+              </select>
+            </div>
+            <label className="text-white border-2 border-dashed py-10 rounded-md flex flex-col items-center w-80">
+              {thumbnailUrl.length > 0 ? (
+                <Image
+                  src={thumbnailUrl}
+                  alt="Thumbnail"
+                  width={160}
+                  height={90}
+                  className="object-cover"
                 />
-              </div>
-              <div className="font-semibold text-white mb-2 text-lg">
-                Description
-              </div>
-              <div className="form-group pb-5 w-full">
-                <textarea
-                  placeholder="Enter a short description.."
-                  className="p-3 rounded-md bg-white w-full min-h-25"
-                  value={courseDescription}
-                  onChange={(e) => setCourseDescription(e.target.value)}
-                />
-              </div>
-              <div className="font-semibold text-white mb-2 text-lg">
-                Syllabus
-              </div>
-              <div className="form-group pb-5 w-full">
-                <input
-                  type="text"
-                  placeholder="Separate with comma.."
-                  className="p-3 rounded-md bg-white w-full h-8"
-                  value={syllabus}
-                  onChange={(e) => setSyllabus(e.target.value)}
-                />
-              </div>
-              <div className="font-semibold text-white mb-2 text-lg">
-                Developed skills
-              </div>
-              <div className="form-group pb-5 w-full">
-                <input
-                  type="text"
-                  placeholder="Separate with comma.."
-                  className="p-3 rounded-md bg-white w-full h-8"
-                  value={skills}
-                  onChange={(e) => setSkills(e.target.value)}
-                />
-              </div>
-              <div className="flex flex-row items-center mb-5">
-                <div className="font-semibold text-white text-lg">
-                  Difficulty:
+              ) : (
+                <div className="mx-3 items-center flex flex-col">
+                  <FaRegImage className="text-2xl mb-2" />
+                  <span>Select a thumbnail file</span>
                 </div>
-                <select
-                  className="bg-white text-black rounded-md ml-5 px-2 py-1"
-                  onChange={(e) => setCourseDifficulty(e.target.value)}
-                >
-                  <option value="BEGINNER">Beginner</option>
-                  <option value="INTERMEDIATE">Intermediate</option>
-                  <option value="ADVANCED">Advanced</option>
-                </select>
-              </div>
-              <label className="text-white border-2 border-dashed py-10 rounded-md flex flex-col items-center w-80">
-                {thumbnailUrl.length > 0 ? (
-                  <Image
-                    src={thumbnailUrl}
-                    alt="Thumbnail"
-                    width={160}
-                    height={90}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="mx-3 items-center flex flex-col">
-                    <FaRegImage className="text-2xl mb-2" />
-                    <span>Select a thumbnail file</span>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  placeholder="Select a thumbnail file"
-                />
-              </label>
-              <div className="font-semibold text-white mb-2 text-lg mt-5">
-                Price
-              </div>
-              <div className="form-group pb-5 w-full">
-                <input
-                  type="text"
-                  placeholder="Enter a course price in IDR.. (Type only the number)"
-                  className="p-3 rounded-md bg-white w-full h-8"
-                  value={coursePrice}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "");
-                    setCoursePrice(val);
-                  }}
-                />
-              </div>
-            </form>
-            <button
-              onClick={handleSubmit}
-              className="bg-fourth text-white py-2 px-5 font-semibold w-fit rounded-md mt-5"
-            >
-              Create course
-            </button>
-          </div>
+              )}
+              <input
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                placeholder="Select a thumbnail file"
+              />
+            </label>
+            <div className="font-semibold text-white mb-2 text-lg mt-5">
+              Price
+            </div>
+            <div className="form-group pb-5 w-full">
+              <input
+                type="text"
+                placeholder="Enter a course price in IDR.. (Type only the number)"
+                className="p-3 rounded-md bg-white w-full h-8"
+                value={coursePrice}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  setCoursePrice(val);
+                }}
+              />
+            </div>
+          </form>
+          <button
+            onClick={handleSubmit}
+            className="bg-fourth text-white py-2 px-5 font-semibold w-fit rounded-md mt-5"
+          >
+            Create course
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
