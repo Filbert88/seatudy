@@ -6,6 +6,9 @@ import {
   AssignmentSubmissionInterface,
   SubmissionInterface,
 } from "@/components/types/types";
+import pencil_icon from "../../../../public/assets/edit_icon.png";
+import delete_icon from "../../../../public/assets/trash_icon.png";
+import Image from "next/image";
 
 const ViewSubmissionsPage = () => {
   const router = useRouter();
@@ -47,7 +50,7 @@ const ViewSubmissionsPage = () => {
   }
 
   return (
-    <div className="px-72 pt-24">
+    <div className="px-72 pt-24 bg-primary w-screen h-screen">
       <div className="font-nunito text-4xl font-bold">
         Introduction to Numerical Programming
       </div>
@@ -57,7 +60,37 @@ const ViewSubmissionsPage = () => {
       >
         Create new task
       </button>
-      {submissions === undefined ? (
+      <div className="flex flex-col">
+        <button>
+          <div className="bg-white rounded-md shadow-md p-5 my-5">
+            <div className="flex justify-between">
+              <div className="font-nunito text-2xl font-extrabold">
+                Deep Convolutional Neural Network
+              </div>
+              <div className="flex">
+                <button>
+                  <Image src={pencil_icon} alt="edit" width={30} height={10} />
+                </button>
+                <button>
+                  <Image
+                    src={delete_icon}
+                    alt="delete"
+                    width={30}
+                    height={10}
+                  />
+                </button>
+              </div>
+            </div>
+            <div className="font-nunito text-base font-semibold">
+              We are going to implement a deep convolutional neural network
+            </div>
+            <div className="font-nunito text-sm items-end justify-end flex font-semibold">
+              29 June 2021
+            </div>
+          </div>
+        </button>
+      </div>
+      {/* {submissions === undefined ? (
         <div className="font-nunito text-2xl font-semibold">
           No Submissions yet... :(
         </div>
@@ -79,14 +112,11 @@ const ViewSubmissionsPage = () => {
               {submission.assignment.description}
             </div>
             <div className="font-nunito text-lg font-semibold">
-              {submission.student.fullName}
-            </div>
-            <div className="font-nunito text-lg font-semibold">
               {submission.createdAt}
             </div>
           </div>
         ))
-      )}
+      )} */}
     </div>
   );
 };
