@@ -38,7 +38,35 @@ const CreateAssignmentsPage = () => {
     }
   }, [courseId]);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("title", assignmentTitle);
+    formData.append("description", assignmentDescription);
+    formData.append("dueDateOffset", assignmentDuration ? assignmentDuration.toString() : "");
+    formData.append("courseId", courseId);
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/course/${courseDetails?.id}/assignment/create`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+        body: formData,
+      });
+      if(response.ok){
+        alert("Assignment created successfully");
+        setAssignmentTitle("");
+        setAssignmentDescription("");
+        setAssignmentDuration(0);
+      }
+    }catch(error){
+      alert("Error in creating assignment");
+      console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="pt-24 px-16 font-nunito">
       <div className="flex flex-col items-start justify-start">
