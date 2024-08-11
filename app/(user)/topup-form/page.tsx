@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import visaIcon from "../../public/assets/visa_icon.png";
-import mastercardIcon from "../../public/assets/mastercard_icon.png";
-import amexIcon from "../../public/assets/amex_icon.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -140,21 +137,21 @@ const TopUpFormPage = () => {
             <div className="flex justify-start">Card Number</div>
             <div className="flex flex-row space-x-4 ">
               <Image
-                src={visaIcon}
+                src="/assets/visa_icon.png"
                 alt="Visa Icon"
                 className="fit flex justify-end"
                 width={20}
                 height={20}
               />
               <Image
-                src={mastercardIcon}
+                src="/assets/mastercard_icon.png"
                 alt="mastercard Icon"
                 className="fit flex justify-end"
                 width={20}
                 height={20}
               />
               <Image
-                src={amexIcon}
+                src="/assets/amex_icon.png"
                 alt="amex Icon"
                 className="fit flex justify-end"
                 width={20}

@@ -1,8 +1,5 @@
 "use client";
 import Image from "next/image";
-import InfoIcon from "../../../public/assets/info.png";
-import FileIcon from "../../../public/assets/File.png";
-import CheckedIcon from "../../../public/assets/checked.png";
 import Instructions from "./instructions";
 import { useState } from "react";
 import { uploadFileToCloudinary } from "@/lib/utils";
@@ -60,7 +57,7 @@ const Submission = () => {
     <>
       {/* Information Border*/}
       <div className="border flex flex-row p-5 items-center min-w-[10vh] max-w-fit">
-        <Image src={InfoIcon} alt="info" width={40} height={40} />
+        <Image src="/assets/info.png" alt="info" width={40} height={40} />
         <div className="font-nunito font-bold p-5">
           Please upload your file in pdf, png, jpeg, or jpg format
         </div>
@@ -72,9 +69,9 @@ const Submission = () => {
       </div>
       <div className="border-2 flex flex-col max-w-fit px-60 py-20 border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
         {file == null ? (
-          <Image src={FileIcon} alt="file" width={80} height={80} />
+          <Image src="/assets/File.png" alt="file" width={80} height={80} />
         ) : (
-          <Image src={CheckedIcon} alt="checked" width={80} height={80} />
+          <Image src="/assets/checked.png" alt="checked" width={80} height={80} />
         )}
         <div className="flex flex-row">
           <div className="font-nunito font-bold pr-1 py-5">
