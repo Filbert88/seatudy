@@ -76,7 +76,7 @@ export interface CourseDetailsInterface {
   enrollments: object[];
   materials: MaterialInterface[];
   categories: object[];
-  assignments: AssignmentInterface[]
+  assignments: AssignmentInterface[];
   transactions: object[];
 }
 
@@ -123,10 +123,10 @@ export interface ForumPostInterface {
   user: {
     id: string;
     fullName: string;
-  }
+  };
   _count: {
     comments: number;
-  }
+  };
 }
 
 export interface AssignmentSubmissionInterface {
@@ -163,6 +163,20 @@ export interface ForumCommentInterface {
   updatedAt: string;
   user: {
     id: string;
-    fullName: string
-  }
+    fullName: string;
+  };
+}
+
+enum NotificationType {
+  ASSIGNMENT_SUBMISSION,
+  COURSE_PURCHASE,
+}
+
+export interface NotificationInterface {
+  id: string;
+  userId: string;
+  message: string;
+  type: NotificationType;
+  createdAt: string;
+  read: boolean;
 }

@@ -109,7 +109,10 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
         <div className="flex items-center justify-end ml-auto mr-10">
           {status === "authenticated" && (
             <>
-              <IoNotificationsOutline className="text-primary mx-2 h-6 w-6" />
+              <IoNotificationsOutline
+                className="text-primary mx-2 h-6 w-6 hover:cursor-pointer"
+                onClick={() => router.push("/notification-page")}
+              />
               <div
                 onClick={() => router.push("/view-profile")}
                 className="hover:cursor-pointer ml-5 flex items-center"
