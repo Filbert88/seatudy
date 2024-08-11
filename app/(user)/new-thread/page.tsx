@@ -16,9 +16,9 @@ import "./custom-quill.css";
 import LoadingBouncer from "../all-courses/loading";
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
+import { useRouter } from "next/navigation";
 
 const ViewForumPage = () => {
-  const [index, setIndex] = useState<number>(0);
   const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseData, setCourseData] = useState<CourseInterface>();
@@ -28,40 +28,11 @@ const ViewForumPage = () => {
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-
-  const postCourse = async (
-    materialTitle: string,
-    pdfUrl: string,
-    courseId: string
-  ) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("/api/course/material/create", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-        },
-        body: JSON.stringify({
-          courseId: courseId,
-          title: materialTitle,
-          url: pdfUrl,
-        }),
-      });
-      if (response.status !== 200) {
-        console.error("Failed to post course");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const router = useRouter();
 
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
-    const index = param.get("index");
-    setIndex(parseInt(index ?? "0"));
     setCourseId(id);
     setIsLoading(true);
 
@@ -94,17 +65,11 @@ const ViewForumPage = () => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log("Updated sideBarData:", sideBarData);
-  }, [sideBarData]);
-
   const handleContentChange = (value: string) => {
     setContent(value);
   };
 
   const handleSubmit = async () => {
-    // postCourse("Restful web API", "https://res.cloudinary.com/dl2cqncwz/raw/upload/v1723290929/kdjps8r1rg5ozec9il8u.pdf", "a64c60f6-ba19-496a-9d6e-707f0d3b4513");
-    // return;
     if (!title || !content) {
       alert("Please fill in all fields");
       return;
@@ -124,6 +89,7 @@ const ViewForumPage = () => {
       });
       if (response.status === 200) {
         alert("Forum thread created successfully");
+        router.push(`/view-forum?id=${courseId}`);
       } else {
         alert("Error creating forum thread");
       }
@@ -169,7 +135,7 @@ const ViewForumPage = () => {
                 value={content}
                 onChange={handleContentChange}
                 className="h-full"
-                style={{ height: "calc(30vh - 40px)" }} // Adjust the height to account for the toolbar
+                style={{ height: "calc(30vh - 40px)" }}
               />
             </div>
             <div>
