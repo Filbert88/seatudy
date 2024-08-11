@@ -47,6 +47,31 @@ const ViewSubmissionsPage = () => {
     return <LoadingBouncer />;
   }
 
+  const handleDelete = async (assignmentId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/assignment/delete`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({assignmentId})
+      })
+      const data = await response.json();
+      console.log(data);
+      if(data.message === "Success"){
+        window.location.reload();
+        alert("Assignment deleted successfully");
+      }
+    }catch(error){
+      alert("Error deleting assignment");
+      console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="px-72 pt-24 bg-primary w-screen h-screen">
       <div className="font-nunito text-4xl font-bold">
@@ -60,9 +85,9 @@ const ViewSubmissionsPage = () => {
         Create new task
       </button>
       <div className="flex flex-col">
-        {courseDetails?.assignments === undefined ? (
+        {courseDetails?.assignments.length === 0 ? (
           <div className="font-nunito text-2xl font-semibold">
-            No Submissions yet... :(
+            No Assignments yet... :(
           </div>
         ) : (
           courseDetails?.assignments.map((assignment) => (
@@ -82,7 +107,7 @@ const ViewSubmissionsPage = () => {
                           height={10}
                         />
                       </button>
-                      <button>
+                      <button type = "button" onClick={() => handleDelete(assignment.id)}>
                         <Image
                           src={delete_icon}
                           alt="delete"
