@@ -76,6 +76,7 @@ export interface CourseDetailsInterface {
   enrollments: object[];
   materials: MaterialInterface[];
   categories: object[];
+  assignments: AssignmentInterface[]
   transactions: object[];
 }
 

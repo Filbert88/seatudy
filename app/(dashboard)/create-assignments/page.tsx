@@ -1,6 +1,7 @@
 "use client";
 import { CourseDetailsInterface } from "@/components/types/types";
 import { useEffect, useState } from "react";
+import LoadingBouncer from "../../(user)/all-courses/loading";
 
 const CreateAssignmentsPage = () => {
   const [courseId, setCourseId] = useState<string>("");
@@ -38,7 +39,45 @@ const CreateAssignmentsPage = () => {
     }
   }, [courseId]);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("title", assignmentTitle);
+    formData.append("description", assignmentDescription);
+    formData.append("dueDateOffset", assignmentDuration ? assignmentDuration.toString() : "");
+    formData.append("courseId", courseId);
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/assignment/create`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+        body: JSON.stringify({
+          title: assignmentTitle,
+          description: assignmentDescription,
+          dueDateOffset: assignmentDuration,
+          courseId: courseId,
+        })
+      });
+      if(response.ok){
+        alert("Assignment created successfully");
+        setAssignmentTitle("");
+        setAssignmentDescription("");
+        setAssignmentDuration(0);
+      }
+      console.log(response);
+    }catch(error){
+      alert("Error in creating assignment");
+      console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
+  };
+
+  if(isLoading){
+    return <LoadingBouncer />;
+  }
+
   return (
     <div className="pt-24 px-16 font-nunito">
       <div className="flex flex-col items-start justify-start">

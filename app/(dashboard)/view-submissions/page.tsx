@@ -3,9 +3,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import LoadingBouncer from "../../(user)/all-courses/loading";
 import {
-  AssignmentSubmissionInterface,
   CourseDetailsInterface,
-  SubmissionInterface,
 } from "@/components/types/types";
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
@@ -13,10 +11,6 @@ import Image from "next/image";
 
 const ViewSubmissionsPage = () => {
   const router = useRouter();
-  const [submissions, setSubmissions] = useState<SubmissionInterface[]>([]);
-  const [assignmentSubmissions, setAssignmentSubmissions] = useState<
-    AssignmentSubmissionInterface[]
-  >([]);
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
@@ -26,24 +20,6 @@ const ViewSubmissionsPage = () => {
     if (id) {
       setCourseId(id);
     }
-
-    const fetchSubmissions = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/submission?courseId=${courseId}`, {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-          },
-        });
-        const data = await response.json();
-        setSubmissions(data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
     const fetchCourse = async () => {
       try {
@@ -63,13 +39,37 @@ const ViewSubmissionsPage = () => {
       }
     };
     if (courseId) {
-      fetchSubmissions();
       fetchCourse();
     }
   }, [courseId]);
 
   if (isLoading) {
     return <LoadingBouncer />;
+  }
+
+  const handleDelete = async (assignmentId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/assignment/delete`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({assignmentId})
+      })
+      const data = await response.json();
+      console.log(data);
+      if(data.message === "Success"){
+        window.location.reload();
+        alert("Assignment deleted successfully");
+      }
+    }catch(error){
+      alert("Error deleting assignment");
+      console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -85,21 +85,21 @@ const ViewSubmissionsPage = () => {
         Create new task
       </button>
       <div className="flex flex-col">
-        {submissions === undefined ? (
+        {courseDetails?.assignments.length === 0 ? (
           <div className="font-nunito text-2xl font-semibold">
-            No Submissions yet... :(
+            No Assignments yet... :(
           </div>
         ) : (
-          submissions.map((submission) => (
-            <div key={submission.id}>
+          courseDetails?.assignments.map((assignment) => (
+            <div key={assignment.id}>
               <button>
-                <div className="bg-white rounded-md shadow-md p-5 my-5">
+                <div className="bg-white rounded-md shadow-md p-5 my-5 min-w-[140vh]">
                   <div className="flex justify-between">
                     <div className="font-nunito text-2xl font-extrabold">
-                      {submission?.assignment.title}
+                      {assignment.title}
                     </div>
                     <div className="flex">
-                      <button>
+                      <button type = "button" onClick={() => router.push(`edit-assignments?id=${assignment.id}`)}>
                         <Image
                           src={pencil_icon}
                           alt="edit"
@@ -107,7 +107,7 @@ const ViewSubmissionsPage = () => {
                           height={10}
                         />
                       </button>
-                      <button>
+                      <button type = "button" onClick={() => handleDelete(assignment.id)}>
                         <Image
                           src={delete_icon}
                           alt="delete"
@@ -118,10 +118,10 @@ const ViewSubmissionsPage = () => {
                     </div>
                   </div>
                   <div className="font-nunito text-base font-semibold flex">
-                    {submission?.assignment.description}
+                    {assignment.description}
                   </div>
                   <div className="font-nunito text-sm items-end justify-end flex font-semibold">
-                    {submission?.assignment.dueDateOffset}
+                    {assignment.dueDateOffset} days left
                   </div>
                 </div>
               </button>
