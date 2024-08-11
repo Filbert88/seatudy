@@ -40,10 +40,17 @@ const CreateAssignmentsPage = () => {
   }, [courseId]);
 
   const handleSubmit = async () => {
+    if (!assignmentTitle || !assignmentDescription || !assignmentDuration) {
+      alert("Please fill all the fields"); // @filbert88 tolong ganti alert ini dengan toast
+      return;
+    }
     const formData = new FormData();
     formData.append("title", assignmentTitle);
     formData.append("description", assignmentDescription);
-    formData.append("dueDateOffset", assignmentDuration ? assignmentDuration.toString() : "");
+    formData.append(
+      "dueDateOffset",
+      assignmentDuration ? assignmentDuration.toString() : ""
+    );
     formData.append("courseId", courseId);
     try {
       setIsLoading(true);
@@ -57,24 +64,24 @@ const CreateAssignmentsPage = () => {
           description: assignmentDescription,
           dueDateOffset: assignmentDuration,
           courseId: courseId,
-        })
+        }),
       });
-      if(response.ok){
+      if (response.ok) {
         alert("Assignment created successfully");
         setAssignmentTitle("");
         setAssignmentDescription("");
         setAssignmentDuration(0);
       }
       console.log(response);
-    }catch(error){
+    } catch (error) {
       alert("Error in creating assignment");
       console.error(error);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
 
-  if(isLoading){
+  if (isLoading) {
     return <LoadingBouncer />;
   }
 
