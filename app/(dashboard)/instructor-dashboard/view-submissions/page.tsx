@@ -81,7 +81,7 @@ const ViewSubmissionsPage = () => {
                 </button>
               </div>
             </div>
-            <div className="font-nunito text-base font-semibold">
+            <div className="font-nunito text-base font-semibold flex">
               We are going to implement a deep convolutional neural network
             </div>
             <div className="font-nunito text-sm items-end justify-end flex font-semibold">
