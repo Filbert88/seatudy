@@ -46,12 +46,17 @@ const CreateAssignmentsPage = () => {
     formData.append("courseId", courseId);
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/course/${courseDetails?.id}/assignment/create`, {
+      const response = await fetch(`/api/assignment/create`, {
         method: "POST",
         headers: {
           accept: "application/json",
         },
-        body: formData,
+        body: JSON.stringify({
+          title: assignmentTitle,
+          description: assignmentDescription,
+          dueDateOffset: assignmentDuration,
+          courseId: courseId,
+        })
       });
       if(response.ok){
         alert("Assignment created successfully");
@@ -59,6 +64,7 @@ const CreateAssignmentsPage = () => {
         setAssignmentDescription("");
         setAssignmentDuration(0);
       }
+      console.log(response);
     }catch(error){
       alert("Error in creating assignment");
       console.error(error);
