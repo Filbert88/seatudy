@@ -1,6 +1,7 @@
 "use client";
 import { CourseDetailsInterface } from "@/components/types/types";
 import { useEffect, useState } from "react";
+import LoadingBouncer from "../../(user)/all-courses/loading";
 
 const CreateAssignmentsPage = () => {
   const [courseId, setCourseId] = useState<string>("");
@@ -72,6 +73,10 @@ const CreateAssignmentsPage = () => {
       setIsLoading(false);
     }
   };
+
+  if(isLoading){
+    return <LoadingBouncer />;
+  }
 
   return (
     <div className="pt-24 px-16 font-nunito">
