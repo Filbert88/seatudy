@@ -71,7 +71,7 @@ const InstructorDashboard = () => {
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
                 className="mr-5 mb-5"
-                onClick={() => router.push(`/view-submissions?id=${course.id}`)}
+                onClick={() => router.push(`/view-assignments?id=${course.id}`)}
               />
             ))}
           </div>

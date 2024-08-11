@@ -1,47 +1,50 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import SeatudyLogo from "./assets/seatudy-logo";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
 import { useSession } from "next-auth/react";
 
 const InstructorNavbar = ({ activePage }: NavbarInterface) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleNavbarClick = (route: string) => {
-    router.push(route);
+    const id = new URLSearchParams(window.location.search).get("id");
+    router.push(route + "?id=" + id);
   };
+
 
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
         <div
-          className="flex items-center hover:cursor-pointer"
+          className="flex items-center hover:cursor-pointer mr-10"
           onClick={() => handleNavbarClick("/")}
         >
           <SeatudyLogo className="h-10 w-10 mx-2" />
           <span className="font-semibold text-2xl mx-2">seatudy</span>
         </div>
         <div className="flex items-center">
-          {status === "authenticated" && (
+          {(status === "authenticated" && !pathname.includes("instructor-dashboard") && !pathname.includes("view-submissions")) && (
             <>
               <a
-                onClick={() => handleNavbarClick("/instructor-dashboard")}
+                onClick={() => handleNavbarClick("/view-materials")}
                 className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  activePage === "Dashboard" && "text-fourth"
+                  pathname.includes('view-materials') && "text-fourth"
                 }`}
               >
-                Dashboard
+                Materials
               </a>
               <a
-                onClick={() => handleNavbarClick("/manage-courses")}
+                onClick={() => handleNavbarClick("/view-assignments")}
                 className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  activePage === "Manage Courses" && "text-fourth"
+                  pathname.includes('view-assignments') && "text-fourth"
                 }`}
               >
-                Manage Courses
+                Assignments
               </a>
             </>
           )}

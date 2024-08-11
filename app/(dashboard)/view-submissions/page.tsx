@@ -1,9 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { RiDownload2Line } from "react-icons/ri";
 import LoadingBouncer from "../../(user)/all-courses/loading";
 import {
   CourseDetailsInterface,
+  SubmissionDataInterface,
 } from "@/components/types/types";
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
@@ -13,7 +15,7 @@ const ViewSubmissionsPage = () => {
   const router = useRouter();
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
+  const [submissionData, setSubmissionData] = useState<SubmissionDataInterface[]>([]);
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -21,17 +23,17 @@ const ViewSubmissionsPage = () => {
       setCourseId(id);
     }
 
-    const fetchCourse = async () => {
+    const fetchSubmission = async (courseId: string) => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/course/${courseId}`, {
+        const response = await fetch(`/api/submission?courseId=${courseId}`, {
           method: "GET",
           headers: {
             accept: "application/json",
           },
         });
         const data = await response.json();
-        setCourseDetails(data.data);
+        setSubmissionData(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -39,7 +41,7 @@ const ViewSubmissionsPage = () => {
       }
     };
     if (courseId) {
-      fetchCourse();
+      fetchSubmission(courseId);
     }
   }, [courseId]);
 
@@ -72,59 +74,37 @@ const ViewSubmissionsPage = () => {
     }
   }
 
+  const handleSubmissionClick = (submissionId: string) => {
+    // router.push(`/view-submissions?id=${assignmentId}`);
+  }
+
   return (
-    <div className="px-72 pt-24 bg-primary w-screen h-screen">
-      <div className="font-nunito text-4xl font-bold">
-        {courseDetails?.title}
+    <div className="px-10 pt-28 bg-primary w-screen h-screen">
+      <div className="font-nunito text-3xl font-bold">
+        {"Submissions"}
       </div>
-      <button
-        onClick={() => router.push(`/create-assignments?id=${courseId}`)}
-        type="button"
-        className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2"
-      >
-        Create new task
-      </button>
       <div className="flex flex-col">
-        {courseDetails?.assignments.length === 0 ? (
+        {submissionData.length === 0 ? (
           <div className="font-nunito text-2xl font-semibold">
-            No Assignments yet... :(
+            {"Submission list is empty"}
           </div>
         ) : (
-          courseDetails?.assignments.map((assignment) => (
-            <div key={assignment.id}>
-              <button>
-                <div className="bg-white rounded-md shadow-md p-5 my-5 min-w-[140vh]">
-                  <div className="flex justify-between">
-                    <div className="font-nunito text-2xl font-extrabold">
-                      {assignment.title}
-                    </div>
-                    <div className="flex">
-                      <button type = "button" onClick={() => router.push(`edit-assignments?id=${assignment.id}`)}>
-                        <Image
-                          src={pencil_icon}
-                          alt="edit"
-                          width={30}
-                          height={10}
-                        />
-                      </button>
-                      <button type = "button" onClick={() => handleDelete(assignment.id)}>
-                        <Image
-                          src={delete_icon}
-                          alt="delete"
-                          width={30}
-                          height={10}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="font-nunito text-base font-semibold flex">
-                    {assignment.description}
-                  </div>
-                  <div className="font-nunito text-sm items-end justify-end flex font-semibold">
-                    {assignment.dueDateOffset} days left
-                  </div>
+          submissionData.map((submission) => (
+            <div key={submission.id} onClick={() => handleSubmissionClick(submission.id)} className="bg-white hover:cursor-pointer hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]">
+              <div className="flex justify-between items-center">
+                <div className="font-nunito text-xl font-bold w-[40%] whitespace-nowrap">
+                  {submission.student.fullName}
                 </div>
-              </button>
+                <div className="font-nunito text-xl font-semibold">
+                  {submission.assignment.title}
+                </div>
+                <div className="flex ml-auto">
+                  <a className="hover:bg-gray-100 rounded-lg mr-2" href={submission.content} target="_blank">
+                    <RiDownload2Line size={30} />
+                  </a>
+                  <input type="text" className="border border-grays rounded-md py-1 px-3 w-[5rem]"/>
+                </div>
+              </div>
             </div>
           ))
         )}
