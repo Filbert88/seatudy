@@ -109,9 +109,9 @@ const CheckOutPage = () => {
       } else if (data.message === "Already purchased this course") {
         toast({
           title: "You have already purchased this course",
-          variant: "destructive", 
+          variant: "destructive",
         });
-        router.push("/my-courses"); 
+        router.push("/my-courses");
       } else {
         toast({
           title: `Failed to purchase a course`,
@@ -143,8 +143,8 @@ const CheckOutPage = () => {
                 ? courseDetails?.thumbnailUrl
                 : "/assets/checkout_banner.gif"
             }
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{ objectFit: "cover" }}
             className="rounded-t-md"
             alt="Course Image"
           />
