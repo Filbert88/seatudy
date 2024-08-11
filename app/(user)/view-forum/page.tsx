@@ -204,6 +204,7 @@ const ViewForumPage = () => {
                       onClick={() => {
                         setPostId(post.id);
                         setCommentFieldValue("");
+                        getCommentData(post.id);
                       }}
                       className="flex pl-2 mt-2 mb-1 items-center hover:cursor-pointer w-fit">
                       <FaAngleDown/>
