@@ -152,3 +152,16 @@ export interface SubmissionInterface {
   assignment: AssignmentSubmissionInterface;
   student: StudentSubmissionInterface;
 }
+
+export interface ForumCommentInterface {
+  id: string;
+  content: string;
+  postId: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    fullName: string
+  }
+}
