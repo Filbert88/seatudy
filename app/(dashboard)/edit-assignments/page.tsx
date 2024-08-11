@@ -84,7 +84,7 @@ const EditAssignmentPage = () => {
     return (
         <div className = "pt-32 px-12">
         <h1 className = "font-nunito font-bold text-3xl mb-4">Editing an Assignment</h1>
-        <hr className = "border-t-4 border-secondary w-full"/>
+        <hr className = "border-t-2 border-grays w-full"/>
         <div className = "flex flex-col my-5">
         <form className = "form-content items-center justify-center">
         <div className="font-semibold text-black mb-1 text-lg">
@@ -111,7 +111,7 @@ const EditAssignmentPage = () => {
               />
             </div>
         </form>
-        <button onClick = {handleChanges} type = "button" className = "flex items-center justify-center text-white font-nunito font-bold bg-fourth rounded-md max-w-40 px-1 py-1">
+        <button onClick={handleChanges} className ="flex items-center justify-center text-white font-nunito font-semibold bg-fourth rounded-md w-fit px-5 py-2 hover:shadow-md">
             Save Changes
         </button>
         </div>

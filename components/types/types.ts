@@ -180,3 +180,18 @@ export interface NotificationInterface {
   createdAt: string;
   read: boolean;
 }
+
+export interface SubmissionDataInterface {
+  id: string;
+  content: string;
+  createdAt: string;
+  assignmentId: string;
+  studentId: string;
+  grade: number;
+  assignment: AssignmentSubmissionInterface;
+  student: {
+    id: string;
+    fullName: string;
+    email: string;
+  }
+}

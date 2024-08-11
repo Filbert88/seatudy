@@ -7,7 +7,7 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
   const router = useRouter();
 
   const handleButtonClick = (section: string, courseId: string, index: any) => {
-    location.reload();
+    // location.reload();
     router.push(`/${section}?id=${courseId}${index === undefined ? "" : "&index=" + index}`);
   };
 
@@ -42,7 +42,7 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
   };
   return (
     <>
-      <div className="fixed top-20 mx-5 my-5 min-w-[13rem] font-nunito left-0 text-secondary">
+      <div className="fixed top-20 mx-5 my-5 max-w-[13rem] min-w-[13rem] font-nunito left-0 text-secondary">
         <div className="text-lg font-bold mb-5">{props.title}</div>
         <div className="text-md font-bold">Course Materials</div>
         <hr className="border-t-1 border-secondary mb-3 w-full" />
