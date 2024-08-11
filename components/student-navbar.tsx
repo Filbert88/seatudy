@@ -81,7 +81,7 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
             <>
               <a
                 onClick={() => handleNavbarClick("/my-courses")}
-                className={`mx-10 font-semibold hover:underline text-md ${
+                className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
                   activePage === "My Courses" && "text-fourth"
                 }`}
               >

@@ -12,7 +12,7 @@ const CreateCourse = () => {
   const router = useRouter();
   const [courseTitle, setCourseTitle] = useState<string>("");
   const [courseDescription, setCourseDescription] = useState<string>("");
-  const [courseDifficulty, setCourseDifficulty] = useState<string>("");
+  const [courseDifficulty, setCourseDifficulty] = useState<string>("BEGINNER");
   const [coursePrice, setCoursePrice] = useState<string>("");
   const [courseThumbnail, setCourseThumbnail] = useState<File | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
@@ -20,8 +20,6 @@ const CreateCourse = () => {
   const [skills, setSkills] = useState<string>("");
 
   const handleSubmit = async () => {
-    // postCourse("Restful web API", "https://res.cloudinary.com/dl2cqncwz/raw/upload/v1723290929/kdjps8r1rg5ozec9il8u.pdf", "a64c60f6-ba19-496a-9d6e-707f0d3b4513");
-    // return;
     if (
       !courseTitle ||
       !courseDescription ||

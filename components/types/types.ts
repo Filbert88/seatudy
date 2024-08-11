@@ -113,6 +113,21 @@ export interface TransactionInterface {
   cardHolderName: string;
 }
 
+export interface ForumPostInterface {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    fullName: string;
+  }
+  _count: {
+    comments: number;
+  }
+}
+
 export interface AssignmentSubmissionInterface {
   id: string;
   title: string;
