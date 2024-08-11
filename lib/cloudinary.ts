@@ -5,7 +5,7 @@ export async function uploadFileToCloudinary(file: File) {
   console.log(file);
 
   try {
-    const response = await fetch("http://localhost:3000/api/signature");
+    const response = await fetch("/api/signature");
     const data = await response.json();
     console.log("data di utils.ts", data);
 

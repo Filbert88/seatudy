@@ -105,7 +105,7 @@ const CheckOutPage = () => {
         toast({
           title: "Purchase Successful",
         });
-        router.push("/");
+        router.push("/my-courses");
       } else if (data.message === "Already purchased this course") {
         toast({
           title: "You have already purchased this course",
