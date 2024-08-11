@@ -21,16 +21,55 @@ const TopUpFormPage = () => {
 
   const router = useRouter();
 
-  const handleInputPhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-    setCardNumber(phoneNumber);
-  };
-
   useEffect(() => {
     if (status === "authenticated") {
       setIsLoading(false);
     }
   }, [status]);
+
+  const formatCardNumber = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    return cleanValue.length > 19 ? cleanValue.slice(0, 19) : cleanValue;
+  };
+
+  const formatCardDate = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    const formattedValue =
+      cleanValue.length > 2
+        ? `${cleanValue.slice(0, 2)}/${cleanValue.slice(2)}`
+        : cleanValue;
+    return formattedValue.length > 5
+      ? formattedValue.slice(0, 5)
+      : formattedValue;
+  };
+
+  const formatCardCVC = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    return cleanValue.length > 3 ? cleanValue.slice(0, 3) : cleanValue;
+  };
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value.replace(/\D/g, "");
+    if (input.length <= 19) {
+      setCardNumber(formatCardNumber(input));
+    }
+  };
+
+  const handleCardDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardDate(formatCardDate(e.target.value));
+  };
+
+  const handleCardCVCChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardCVC(formatCardCVC(e.target.value));
+  };
+
+  const handleCardNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardName(e.target.value);
+  };
+
+  const handleNominalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNominals(parseInt(e.target.value));
+  };
 
   const addTransactionData = async () => {
     let isVisa = /^4\d{12}(\d{3})?$/;
@@ -150,7 +189,7 @@ const TopUpFormPage = () => {
             placeholder="Enter a card number..."
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardNumber}
-            onChange={handleInputPhoneNumber}
+            onChange={handleCardNumberChange}
           />
         </div>
         <div className="font-bold">Expiration Date</div>
@@ -161,7 +200,7 @@ const TopUpFormPage = () => {
             placeholder="MM/YY"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardDate}
-            onChange={(e) => setCardDate(e.target.value)}
+            onChange={handleCardDateChange}
           />
         </div>
         <div className="font-bold">CVC</div>
@@ -172,7 +211,7 @@ const TopUpFormPage = () => {
             placeholder="Security Code"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardCVC}
-            onChange={(e) => setCardCVC(e.target.value)}
+            onChange={handleCardCVCChange}
           />
         </div>
         <div className="font-bold">Name on the card</div>
@@ -183,7 +222,7 @@ const TopUpFormPage = () => {
             placeholder="Name"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardName}
-            onChange={(e) => setCardName(e.target.value)}
+            onChange={handleCardNameChange}
           />
         </div>
         <div className="font-bold">Nominals (IDR)</div>
@@ -194,7 +233,7 @@ const TopUpFormPage = () => {
             placeholder="Enter Nominals"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={nominals}
-            onChange={(e) => setNominals(parseInt(e.target.value))}
+            onChange={handleNominalsChange}
           />
         </div>
         <div className="flex flex-row justify-end space-x-4 pt-5">
