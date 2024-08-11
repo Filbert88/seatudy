@@ -191,7 +191,6 @@ model ForumComment {
   userId     String
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @default(now())
-  @@unique([content, postId, userId])  
 }
 
 model Notification {

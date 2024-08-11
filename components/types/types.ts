@@ -154,18 +154,21 @@ export interface SubmissionInterface {
   student: StudentSubmissionInterface;
 }
 
+export interface UserInterfaces {
+  id: string;
+  fullName: string;
+}
+
 export interface ForumCommentInterface {
   id: string;
-  content: string;
   postId: string;
-  userId: string;
+  content: string;
   createdAt: string;
-  updatedAt: string;
-  user: {
-    id: string;
-    fullName: string;
-  };
+  updatedAt?: string;
+  userId: string;
+  user: UserInterfaces;
 }
+
 
 enum NotificationType {
   ASSIGNMENT_SUBMISSION,
