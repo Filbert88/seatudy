@@ -11,10 +11,11 @@ import {
   getCourses,
   getSideBarDataFromLocalStorage,
 } from "@/components/worker/local-storage-handler";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./custom-quill.css";
 import LoadingBouncer from "../all-courses/loading";
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 import { useRouter } from "next/navigation";
 
 const ViewForumPage = () => {
