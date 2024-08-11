@@ -44,7 +44,6 @@ const ViewForumPage = () => {
 
   const getCommentData = async (postId: string) => {
     try {
-      setIsLoading(true);
       const response = await fetch(`/api/forum/forum-comment?postId=${postId}`, {
         method: "GET",
         headers: {
@@ -58,8 +57,6 @@ const ViewForumPage = () => {
       setCommentData(data);
     } catch (error) {
       console.error("Error fetching forum data:", error);
-    } finally {
-      setIsLoading(false);
     }
   }
 
