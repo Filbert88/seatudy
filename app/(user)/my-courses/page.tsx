@@ -53,37 +53,35 @@ const MyCoursesPage = () => {
     return <LoadingBouncer />;
   }
   return (
-    <>
-      <div className="pt-24 px-16">
-        <div className="flex-grow mx-20 my-5">
-          <div className="font-bold text-3xl mb-5">Your Course</div>
-          <div className="flex">
-            {courseData.length > 0 ? (
-              courseData.map((course, index) => (
-                <CoursesCard
-                  key={index}
-                  courseTitle={course.title}
-                  totalChapters={course.materials.length}
-                  rating={course.averageRating}
-                  skills={course.skills}
-                  totalEnrolled={course.enrollments.length}
-                  difficulty={course.difficulty}
-                  thumbnailURL={course.thumbnailUrl}
-                  className="mr-5 mb-5"
-                  onClick={() =>
-                    router.push(`/learning-material?id=${course.id}`)
-                  }
-                />
-              ))
-            ) : (
-              <div className="font-semibold text-2xl text-gray-800 flex">
-                You havent enrolled in any course yet... :(
-              </div>
-            )}
-          </div>
+    <div className="pt-24 px-16">
+      <div className="flex-grow mx-20 my-5">
+        <div className="font-bold text-3xl mb-5">Your Course</div>
+        <div className="flex">
+          {courseData.length > 0 ? (
+            courseData.map((course, index) => (
+              <CoursesCard
+                key={index}
+                courseTitle={course.title}
+                totalChapters={course.materials.length}
+                rating={course.averageRating}
+                skills={course.skills}
+                totalEnrolled={course.enrollments.length}
+                difficulty={course.difficulty}
+                thumbnailURL={course.thumbnailUrl}
+                className="mr-5 mb-5"
+                onClick={() =>
+                  router.push(`/learning-material?id=${course.id}`)
+                }
+              />
+            ))
+          ) : (
+            <div className="font-semibold text-2xl text-gray-800 flex">
+              You havent enrolled in any course yet... :(
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

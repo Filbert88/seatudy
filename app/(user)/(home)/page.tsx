@@ -114,7 +114,7 @@ export default function Home() {
           <div className="text-center mt-5">
             <button
               className="bg-secondary hover:bg-secondary-dark text-white font-bold py-2 px-4 rounded"
-              onClick={() => router.push("/courses")}
+              onClick={() => router.push("/all-courses")}
             >
               See More Courses
             </button>

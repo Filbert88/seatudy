@@ -67,9 +67,7 @@ const CoursesDetailPage = () => {
   }, [courseId, courseDetailUrl, status]);
 
   if (isLoading) {
-    return (
-      <LoadingBouncer />
-    );
+    return <LoadingBouncer />;
   }
 
   if (!courseDetails) {
@@ -91,11 +89,11 @@ const CoursesDetailPage = () => {
   return (
     <>
       <div className="bg-secondary px-40 pt-20 pb-5">
-        <h1 className="font-nunito font-bold text-4xl mx-5 pt-10 text-primary">
+        <h1 className="font-nunito font-bold text-4xl mx-5 pt-10 text-primary max-w-[100vh]">
           {courseDetails.title}
         </h1>
         <div className="flex flex-row w-[50%]">
-          <p className="font-nunito font-bold text-lg text-primary mx-5 py-5">
+          <p className="font-nunito font-bold text-lg text-primary mx-5 py-5 max-w-[100vh]">
             {courseDetails.description}
           </p>
         </div>
