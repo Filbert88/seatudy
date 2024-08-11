@@ -112,3 +112,28 @@ export interface TransactionInterface {
   cvc: string;
   cardHolderName: string;
 }
+
+export interface AssignmentSubmissionInterface {
+  id: string;
+  title: string;
+  description: string;
+  dueDateOffset: number;
+  courseId: string;
+}
+
+export interface StudentSubmissionInterface {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
+export interface SubmissionInterface {
+  id: string;
+  content: string;
+  createdAt: string;
+  assignmentId: string;
+  studentId: string;
+  grade: number;
+  assignment: AssignmentSubmissionInterface;
+  student: StudentSubmissionInterface;
+}
