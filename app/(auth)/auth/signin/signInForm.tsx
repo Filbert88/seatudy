@@ -35,9 +35,18 @@ const SigninForm: React.FC = () => {
         password,
       });
       if (response?.error) {
+        let errorMessage = "Login failed";
+        try {
+          const parsedError = JSON.parse(response.error);
+          if (parsedError?.message) {
+            errorMessage = parsedError.message;
+          }
+        } catch {
+          errorMessage = response.error;
+        }
         toast({
           title: "Login failed",
-          description: response.error,
+          description: errorMessage,
           variant: "destructive",
         });
       } else {
