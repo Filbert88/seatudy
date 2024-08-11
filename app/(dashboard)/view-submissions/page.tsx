@@ -99,7 +99,7 @@ const ViewSubmissionsPage = () => {
                       {assignment.title}
                     </div>
                     <div className="flex">
-                      <button>
+                      <button type = "button" onClick={() => router.push(`edit-assignments/${assignment.id}`)}>
                         <Image
                           src={pencil_icon}
                           alt="edit"
