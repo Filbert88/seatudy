@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import SeatudyLogo from "@/components/assets/seatudy-logo";
 import CoursesCard from "@/components/courses-card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CourseInterface } from "@/components/types/types";
 import LoadingBouncer from "../all-courses/loading";
 
@@ -14,6 +14,7 @@ interface HomeProps {
 export default function Home({ initialCourseData, session }: HomeProps) {
   const [courseData, setCourseData] =
     useState<CourseInterface[]>(initialCourseData);
+  const [myCourseData, setMyCourseData] = useState<CourseInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -28,6 +29,35 @@ export default function Home({ initialCourseData, session }: HomeProps) {
   if (isLoading) {
     <LoadingBouncer />;
   }
+
+  useEffect(() => {
+    const fetchMyCourses = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/course/my-course", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setMyCourseData(data.data);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMyCourses();
+
+    // Remove course that user already enrolled
+    const filteredCourseData = courseData.filter(
+      (course) => !myCourseData.find((myCourse) => myCourse.id === course.id)
+    );
+    setCourseData(filteredCourseData);
+  }, [courseData, myCourseData]);
 
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
@@ -84,13 +114,18 @@ export default function Home({ initialCourseData, session }: HomeProps) {
               totalEnrolled={course.enrollments.length}
               difficulty={course.difficulty}
               thumbnailURL={course.thumbnailUrl}
-              className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-not-allowed": ""}`}
+              className={`mr-5 mb-5 ${
+                course.materials.length === 0
+                  ? "opacity-60 hover:cursor-not-allowed"
+                  : ""
+              }`}
               onClick={() => {
                 if (course.materials.length > 0) {
-                  router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                  // router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                  router.push(`/course-detail?id=${course.id}`);
                 }
-              }
-            }/>
+              }}
+            />
           ))}
         </div>
         <div className="text-center mt-5">
