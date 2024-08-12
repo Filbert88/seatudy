@@ -119,44 +119,44 @@ const CreateAssignmentsPage = () => {
   }
 
   return (
-    <div className="pt-24 px-16 font-nunito">
-      <div className="flex flex-col items-start justify-start">
+    <div className="pt-28 px-16 font-nunito text-secondary">
+      <div className="flex flex-col items-center">
         <div className="flex font-nunito font-bold text-3xl">
           Course: {courseDetails?.title}
         </div>
-        <div className="bg-secondary rounded-md p-5 my-5 min-w-[50rem]">
+        <div className="bg-white shadow-md p-5 my-5 min-w-[50rem]">
           <form className="form-content items-center justify-center">
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Assignment&apos;s Title
             </div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
                 placeholder="Enter assignment's title.."
-                className="p-3 rounded-md bg-white w-full h-8"
+                className="p-3 border border-grays rounded-md w-full h-8"
                 value={assignmentTitle}
                 onChange={(e) => setAssignmentTitle(e.target.value)}
               />
             </div>
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Description
             </div>
             <div className="form-group pb-5 w-full">
               <textarea
                 placeholder="Enter a short description.."
-                className="p-3 rounded-md bg-white w-full min-h-25"
+                className="p-3 border border-grays rounded-md w-full min-h-25"
                 value={assignmentDescription}
                 onChange={(e) => setAssignmentDescription(e.target.value)}
               />
             </div>
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Duration (days)
             </div>
             <div className="form-group pb-5 w-full">
               <input
                 type="number"
                 placeholder="Enter assignment's duration.."
-                className="p-3 rounded-md bg-white w-full h-8"
+                className="p-3 rounded-md border border-grays w-full h-8"
                 value={assignmentDuration ?? ""}
                 onChange={(e) => setAssignmentDuration(Number(e.target.value))}
               />
@@ -164,7 +164,7 @@ const CreateAssignmentsPage = () => {
           </form>
           <button
             onClick={handleSubmit}
-            className="bg-fourth text-white py-1 px-12 font-semibold w-fit rounded-md mt-5"
+            className="bg-fourth text-white py-2 px-10 hover:shadow-md font-semibold w-fit rounded-md mt-5"
           >
             Upload Assignment
           </button>

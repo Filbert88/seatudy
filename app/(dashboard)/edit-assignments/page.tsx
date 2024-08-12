@@ -105,30 +105,30 @@ const EditAssignmentPage = () => {
   }
 
   return (
-    <div className="pt-32 px-12">
+    <div className="pt-32 px-12 text-secondary">
       <h1 className="font-nunito font-bold text-3xl mb-4">
         Editing an Assignment
       </h1>
       <hr className="border-t-2 border-grays w-full" />
       <div className="flex flex-col my-5">
         <form className="form-content items-center justify-center">
-          <div className="font-semibold text-black mb-1 text-lg">Title</div>
+          <div className="font-semibold text-secondary mb-1 text-lg">Title</div>
           <div className="form-group pb-5 w-full">
             <input
               type="text"
               placeholder="Enter new assignment's title.."
-              className="p-3 rounded-md bg-white w-full h-8"
+              className="p-3 rounded-md border border-grays min-w-[40%] h-8"
               value={assignmentTitle}
               onChange={(e) => setAssignmentTitle(e.target.value)}
             />
           </div>
-          <div className="font-semibold text-black mb-1 text-lg">
+          <div className="font-semibold text-secondary mb-1 text-lg">
             Description
           </div>
           <div className="form-group pb-5 w-full">
             <textarea
               placeholder="Enter new assignment's descriptions.."
-              className="p-3 rounded-md bg-white w-full h-40"
+              className="p-3 rounded-md border border-grays min-w-[40%] h-40"
               value={assignmentDescription}
               onChange={(e) => setAssignmentDescription(e.target.value)}
             />
