@@ -25,6 +25,14 @@ export interface MaterialInterface {
   url: string;
   createdAt: string;
   updatedAt: string;
+  accesses: AccessesInterface[];
+}
+
+export interface AccessesInterface {
+  id: string;
+  userId: string;
+  courseMaterialId: string;
+  accessedAt: string;
 }
 
 export interface AssignmentInterface {
@@ -33,6 +41,23 @@ export interface AssignmentInterface {
   title: string;
   description: string;
   dueDateOffset: number;
+  course: AssignmentCourseInterface;
+  submissions: AsgSubmissionInterface[];
+}
+
+export interface AssignmentCourseInterface {
+  id: string;
+  title: string;
+  description: string;
+  syllabus: string[];
+  thumbnailUrl: string;
+  skills: string[];
+  instructorId: string;
+  createdAt: string;
+  updatedAt: string;
+  averageRating: number;
+  difficulty: string;
+  price: string;
 }
 
 export interface NavbarInterface {
@@ -99,15 +124,16 @@ export interface UserInterface {
 }
 
 export interface SideBarDataInterface {
-  materialData: string[];
-  assignmentData: string[];
+  materialData: MaterialInterface[];
+  assignmentData: AssignmentInterface[];
+  titleData: string;
 }
 
 export interface CourseSidebarInterface {
   title: string;
-  materials: string[];
-  assignments: string[];
-  active: { type: string; index: number };
+  materials: MaterialInterface[];
+  assignments: AssignmentInterface[];
+  active: { type: string; id: string };
 }
 
 export interface TransactionInterface {
@@ -134,12 +160,21 @@ export interface ForumPostInterface {
   };
 }
 
-export interface AssignmentSubmissionInterface {
+export interface AsgSubmissionInterface {
   id: string;
   title: string;
   description: string;
   dueDateOffset: number;
   courseId: string;
+}
+
+export interface AssignmentSubmissionInterface {
+  id: string;
+  title: string;
+  content: string;
+  dueDateOffset: number;
+  courseId: string;
+  grade: number | null;
 }
 
 export interface StudentSubmissionInterface {

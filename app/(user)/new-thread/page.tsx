@@ -21,7 +21,7 @@ const ViewForumPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseData, setCourseData] = useState<CourseInterface>();
   const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
-  const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
+  const [isThreadAvailable, setIsThreadAvailable] = useState<boolean>(true);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const router = useRouter();
@@ -37,33 +37,30 @@ const ViewForumPage = () => {
 
     if (sideBarDataFromLocalStorage) {
       setSideBarData(sideBarDataFromLocalStorage);
+      setIsLoading(false);
     }
-
-    getCourses(id)
+    else {
+      console.log("Fetching course data from server");
+      getCourses(id)
       .then((data) => {
-        setCourseData(data);
-        if (!sideBarDataFromLocalStorage) {
-          const newSideBarData = {
-            materialData: data.materials.map((material: any) => material.title),
-            assignmentData: data.assignments.map(
-              (assignment: any) => assignment.title
-            ),
-          };
-          setSideBarData(newSideBarData);
-        }
-        if (data.materials.length === 0) {
-          setIsMaterialAvailable(false);
-        }
-        setIsLoading(false);
+        const newSideBarData = {
+          materialData: data.materials,
+          assignmentData: data.assignments,
+          titleData: data.title,
+        };
+        setSideBarData(newSideBarData);
       })
       .catch((error) => {
         console.error("Error fetching course data:", error);
+        setIsThreadAvailable(false);
         toast({
-          title: "Failed to load course data",
+          title: "Course not found",
           variant: "destructive",
         });
+      }).finally(() => {
         setIsLoading(false);
       });
+    }
   }, []);
 
   const handleContentChange = (value: string) => {
@@ -123,7 +120,7 @@ const ViewForumPage = () => {
         title={courseData?.title || ""}
         materials={sideBarData?.materialData || []}
         assignments={sideBarData?.assignmentData || []}
-        active={{ type: "forum", index: 0 }}
+        active={{ type: "forum", id: "new-thread" }}
       />
       {!isLoading && (
         <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">

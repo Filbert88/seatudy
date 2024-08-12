@@ -1,41 +1,42 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CourseSidebarInterface } from "../types/types";
+import { AssignmentInterface, CourseSidebarInterface, MaterialInterface } from "../types/types";
 
 const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
 
   const router = useRouter();
 
-  const handleButtonClick = (section: string, courseId: string, index: any) => {
-    // location.reload();
-    router.push(`/${section}?id=${courseId}${index === undefined ? "" : "&index=" + index}`);
+  const handleButtonClick = (section: string, courseId: string, materialId: any, assignmentId: any) => {
+    window.location.reload();
+    router.push(`/${section}?id=${courseId}${materialId === undefined ? "" : "&materialId=" + materialId}
+    ${assignmentId === undefined ? "" : "&assignmentId=" + assignmentId}`);
   };
 
-  const listMaterials = (materials: string[]) => {
+  const listMaterials = (materials: MaterialInterface[]) => {
     return materials.map((item, index) => {
       return (
         <button
           key={index}
-          disabled={props.active.type === "materials" && props.active.index === index}
-          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "materials" && props.active.index === index ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
-          onClick={() => handleButtonClick("learning-material", new URLSearchParams(window.location.search).get('id') ?? '', index.toString())}
+          disabled={props.active.type === "materials" && props.active.id === item.id}
+          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "materials" && props.active.id === item.id ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("learning-material", item.courseId, item.id, undefined)}
         >
-          {item}
+          {item.title}
         </button>
       );
     });
   };
 
-  const listAssignments = (assignments: string[]) => {
+  const listAssignments = (assignments: AssignmentInterface[]) => {
     return assignments.map((item, index) => {
       return (
         <button
           key={index}
-          disabled={props.active.type === "assignments" && props.active.index === index}
-          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "assignments" && props.active.index === index ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
-          onClick={() => handleButtonClick("view-assignment", new URLSearchParams(window.location.search).get('id') ?? '', index.toString())}
+          disabled={props.active.type === "assignments" && props.active.id === item.id}
+          className={`block text-left w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "assignments" && props.active.id === item.id ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("view-assignment", item.courseId, undefined, item.id)}
         >
-          {item}
+          {item.title}
         </button>
       );
     });
@@ -53,16 +54,16 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
         <div className="text-md font-bold">Forum</div>
         <hr className="border-t-1 border-secondary mb-3 w-full" />
         <button 
-          disabled={props.active.type === "forum" && props.active.index === 0}
-          className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "forum" && props.active.index === 0 ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
-          onClick={() => handleButtonClick("new-thread", new URLSearchParams(window.location.search).get('id') ?? '', undefined)}
+          disabled={props.active.type === "forum" &&  props.active.id === "new-thread"}
+          className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "forum" && props.active.id === "new-thread" ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("new-thread", new URLSearchParams(window.location.search).get('id') ?? '', undefined, undefined)}
         >
           {"Create a new thread"}
         </button>
         <button 
-          disabled={props.active.type === "forum" && props.active.index === 1}
-          className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "forum" && props.active.index === 1 ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
-          onClick={() => handleButtonClick("view-forum", new URLSearchParams(window.location.search).get('id') ?? '', undefined)}
+          disabled={props.active.type === "forum" && props.active.id === "view-forum"}
+          className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "forum" && props.active.id === "view-forum" ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
+          onClick={() => handleButtonClick("view-forum", new URLSearchParams(window.location.search).get('id') ?? '', undefined, undefined)}
         >
           {"View all discussions"}
         </button>
