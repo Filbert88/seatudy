@@ -2,6 +2,7 @@
 import { CourseDetailsInterface } from "@/components/types/types";
 import { useEffect, useState } from "react";
 import LoadingBouncer from "../../(user)/all-courses/loading";
+import { useToast } from "@/components/ui/use-toast";
 
 const CreateAssignmentsPage = () => {
   const [courseId, setCourseId] = useState<string>("");
@@ -11,12 +12,14 @@ const CreateAssignmentsPage = () => {
   const [assignmentDescription, setAssignmentDescription] =
     useState<string>("");
   const [assignmentDuration, setAssignmentDuration] = useState<number>();
+  const { toast } = useToast();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
     if (id) {
       setCourseId(id);
     }
+
     const fetchCourse = async () => {
       try {
         setIsLoading(true);
@@ -27,33 +30,51 @@ const CreateAssignmentsPage = () => {
           },
         });
         const data = await response.json();
-        setCourseDetails(data.data);
+        if (response.ok) {
+          setCourseDetails(data.data);
+        } else {
+          toast({
+            title: "Failed to load course details",
+            variant: "destructive",
+          });
+        }
       } catch (error) {
         console.error(error);
+        toast({
+          title: "An error occurred while fetching the course details",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
+
     if (courseId) {
       fetchCourse();
     }
-  }, [courseId]);
+  }, [courseId, toast]);
 
   const handleSubmit = async () => {
     if (!assignmentTitle || !assignmentDescription || !assignmentDuration) {
-      alert("Please fill all the fields"); // @filbert88 tolong ganti alert ini dengan toast
+      toast({
+        title: "All fields are required",
+        variant: "destructive",
+      });
       return;
     }
-    const formData = new FormData();
-    formData.append("title", assignmentTitle);
-    formData.append("description", assignmentDescription);
-    formData.append(
-      "dueDateOffset",
-      assignmentDuration ? assignmentDuration.toString() : ""
-    );
-    formData.append("courseId", courseId);
+
     try {
       setIsLoading(true);
+
+      const formData = new FormData();
+      formData.append("title", assignmentTitle);
+      formData.append("description", assignmentDescription);
+      formData.append(
+        "dueDateOffset",
+        assignmentDuration ? assignmentDuration.toString() : ""
+      );
+      formData.append("courseId", courseId);
+
       const response = await fetch(`/api/assignment/create`, {
         method: "POST",
         headers: {
@@ -66,22 +87,34 @@ const CreateAssignmentsPage = () => {
           courseId: courseId,
         }),
       });
+
       if (response.ok) {
-        alert("Assignment created successfully");
+        toast({
+          title: "Assignment created successfully",
+        });
         setAssignmentTitle("");
         setAssignmentDescription("");
         setAssignmentDuration(0);
+      } else {
+        const data = await response.json();
+        toast({
+          title: "Failed to create assignment",
+          description: data.message || "Please try again later.",
+          variant: "destructive",
+        });
       }
-      console.log(response);
     } catch (error) {
-      alert("Error in creating assignment");
       console.error(error);
+      toast({
+        title: "An error occurred",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isLoading) {
+  if  (isLoading)  {
     return <LoadingBouncer />;
   }
 
@@ -117,14 +150,14 @@ const CreateAssignmentsPage = () => {
               />
             </div>
             <div className="font-semibold text-white mb-2 text-lg">
-              Duration (day)
+              Duration (days)
             </div>
             <div className="form-group pb-5 w-full">
               <input
                 type="number"
                 placeholder="Enter assignment's duration.."
                 className="p-3 rounded-md bg-white w-full h-8"
-                value={assignmentDuration}
+                value={assignmentDuration || ""}
                 onChange={(e) => setAssignmentDuration(Number(e.target.value))}
               />
             </div>

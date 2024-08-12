@@ -2,8 +2,9 @@
 import Image from "next/image";
 import Instructions from "./instructions";
 import { useState } from "react";
-import { uploadFileToCloudinary } from "@/lib/utils";
+import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import LoadingBouncer from "../loading";
+import { useToast } from "@/components/ui/use-toast";
 import { FiUpload } from "react-icons/fi";
 import { GrDocumentVerified } from "react-icons/gr";
 
@@ -11,26 +12,31 @@ interface SubmissionProps {
   assignmentId: string;
 }
 
-const Submission = ({assignmentId}: SubmissionProps) => {
+const Submission = ({ assignmentId }: SubmissionProps) => {
   const [validate, setValidate] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [url, setUrl] = useState<string | null>(null); // buat ngetest doang
+  const [url, setUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
   const allowedFileTypes = [
     "application/pdf",
     "image/jpeg",
     "image/png",
     "image/jpg",
   ];
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type)) {
         setFile(selectedFile);
       } else {
-        alert("Please upload a file in pdf or image format");
-        console.log(selectedFile.type);
-        console.log(allowedFileTypes);
+        toast({
+          title: "Invalid file type",
+          description: "Please upload a file in pdf, png, jpeg, or jpg format",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -54,28 +60,46 @@ const Submission = ({assignmentId}: SubmissionProps) => {
         }),
       });
       if (response.ok) {
-        alert("Submission successful!");
-      }
-      else {
-        alert("You can only submit once!");
+        toast({
+          title: "Submission successful",
+        });
+      } else {
+        toast({
+          title: "Submission failed",
+          description: "You can only submit once!",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
     } finally {
       setUploading(false);
     }
-  }
+  };
 
   const handleSubmit = async () => {
-    if (validate === false) {
-      alert("Please agree to the terms and conditions");
+    if (!validate) {
+      toast({
+        title: "Terms not accepted",
+        description: "Please agree to the terms and conditions",
+        variant: "destructive",
+      });
       return;
     }
-    if (file === null) {
-      alert("Please upload a file");
+    if (!file) {
+      toast({
+        title: "No file uploaded",
+        description: "Please upload a file",
+        variant: "destructive",
+      });
       return;
     }
-    // Submit the file to Cloudinary (sync with Filbert)
+
     try {
       setUploading(true);
       const uploadedUrl = await uploadFileToCloudinary(file);
@@ -83,14 +107,19 @@ const Submission = ({assignmentId}: SubmissionProps) => {
       handleAnswerSubmit(uploadedUrl);
     } catch (err) {
       console.error(err);
+      toast({
+        title: "File upload failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
     } finally {
       setUploading(false);
     }
   };
+
   return (
     <>
       {uploading && <LoadingBouncer />}
-      {/* Information Border*/}
       <div className="border border-secondary flex flex-row px-5 py-3 items-center min-w-[10vh] max-w-fit">
         <Image src="/assets/info.png" alt="info" width={40} height={40} />
         <div className="font-nunito font-bold p-5">
@@ -98,7 +127,6 @@ const Submission = ({assignmentId}: SubmissionProps) => {
         </div>
       </div>
 
-      {/* Submission Form */}
       <div className="font-nunito pt-5 pb-2">
         Upload your project file down below:
       </div>

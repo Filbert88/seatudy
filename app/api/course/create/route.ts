@@ -1,7 +1,7 @@
 import { DifficultyLevel, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { uploadFileToCloudinary } from "@/lib/utils";
+import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import { authOptions } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 

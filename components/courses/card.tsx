@@ -44,8 +44,8 @@ const Card: React.FC<Props> = (props) => {
           <div className="relative w-full h-48">
             <Image
               src={props.thumbnailUrl || "/assets/dummyCourse.png"}
-              layout="fill"
-              objectFit="cover"
+              fill
+              style={{ objectFit: "cover" }}
               className="rounded-t-md"
               alt="Course Image"
             />

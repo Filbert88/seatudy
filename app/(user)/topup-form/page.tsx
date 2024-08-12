@@ -7,6 +7,7 @@ import { TransactionInterface } from "@/components/types/types";
 import { BounceLoader } from "react-spinners";
 import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
 import { SiAmericanexpress } from "react-icons/si";
+import { useToast } from "@/components/ui/use-toast";
 
 const TopUpFormPage = () => {
   const [cardNumber, setCardNumber] = useState<string>("");
@@ -16,10 +17,9 @@ const TopUpFormPage = () => {
   const [nominals, setNominals] = useState<number>();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [transactionData, setTransactionData] =
-    useState<TransactionInterface>();
-
+  const [transactionData, setTransactionData] = useState<TransactionInterface>();
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -82,9 +82,12 @@ const TopUpFormPage = () => {
       cardDate === "" ||
       cardCVC === "" ||
       cardName === "" ||
-      nominals === 0
+      !nominals
     ) {
-      alert("Please fill all the fields!");
+      toast({
+        title: "Please fill all the fields!",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -94,34 +97,49 @@ const TopUpFormPage = () => {
       !isMastercard.test(cardNumber) &&
       !isAmex.test(cardNumber)
     ) {
-      alert("Invalid card number!");
+      toast({
+        title: "Invalid card number!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #3: Check if the expiration date is valid
     let isDate = /^\d{2}\/\d{2}$/;
     if (!isDate.test(cardDate)) {
-      alert("Invalid expiration date!");
+      toast({
+        title: "Invalid expiration date!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #4: Check if the CVC is valid
     let isCVC = /^\d{3}$/;
     if (!isCVC.test(cardCVC)) {
-      alert("Invalid CVC!");
+      toast({
+        title: "Invalid CVC!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #5: Check if the nominals is valid
     if (nominals === 0) {
-      alert("Invalid Nominals!");
+      toast({
+        title: "Invalid Nominals!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #6: Check if the name is valid
     let isName = /^[a-zA-Z\s]*$/;
     if (!isName.test(cardName)) {
-      alert("Invalid Name!");
+      toast({
+        title: "Invalid Name!",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -145,14 +163,18 @@ const TopUpFormPage = () => {
         if (response.ok) {
           const data = await response.json();
           setTransactionData(data);
-          console.log(transactionData);
-          alert("Payment method has been added successfully!");
+          toast({
+            title: "Payment method has been added successfully!",
+          });
           router.push("/view-profile");
         }
       }
     } catch (error) {
-      alert("Error in POST /api/topup");
-      console.error("Error in POST /api/topup", error);
+      toast({
+        title: "Error adding a payment method",
+        variant: "destructive",
+      });
+      console.error("Error adding a payment method", error);
     } finally {
       setIsLoading(false);
     }

@@ -8,6 +8,7 @@ import {
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
 import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
 import { PiNotePencilBold, PiTrashBold } from "react-icons/pi";
 
 const ViewMaterialsPage = () => {
@@ -15,6 +16,7 @@ const ViewMaterialsPage = () => {
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
+  const { toast } = useToast();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -32,9 +34,20 @@ const ViewMaterialsPage = () => {
           },
         });
         const data = await response.json();
-        setCourseDetails(data.data);
+        if (response.ok) {
+          setCourseDetails(data.data);
+        } else {
+          toast({
+            title: "Failed to load course details",
+            variant: "destructive",
+          });
+        }
       } catch (error) {
         console.error(error);
+        toast({
+          title: "An error occurred",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -42,11 +55,7 @@ const ViewMaterialsPage = () => {
     if (courseId) {
       fetchCourse();
     }
-  }, [courseId]);
-
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
+  }, [courseId, toast]);
 
   const handleDelete = async (materialId: string) => {
     try {
@@ -57,20 +66,33 @@ const ViewMaterialsPage = () => {
           accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({materialId})
-      })
+        body: JSON.stringify({ materialId }),
+      });
       const data = await response.json();
-      console.log(data);
-      if (data.message === "Success"){
+      if (data.message === "Success") {
+        toast({
+          title: "Material deleted successfully",
+        });
         window.location.reload();
-        alert("Material deleted successfully");
+      } else {
+        toast({
+          title: "Error deleting material",
+          variant: "destructive",
+        });
       }
-    }catch(error){
-      alert("Error deleting material");
+    } catch (error) {
       console.error(error);
-    }finally{
+      toast({
+        title: "An error occurred while deleting the material",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  if (isLoading) {
+    return <LoadingBouncer />;
   }
 
   return (
@@ -92,16 +114,25 @@ const ViewMaterialsPage = () => {
           </div>
         ) : (
           courseDetails?.materials.map((material) => (
-            <div key={material.id} className="bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]">
+            <div
+              key={material.id}
+              className="bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]"
+            >
               <div className="flex justify-between">
                 <div className="font-nunito text-2xl font-bold">
                   {material.title}
                 </div>
                 <div className="flex">
-                  <button className="hover:bg-gray-100 rounded-lg p-1 mr-1" onClick={() => router.push(`edit-materials?id=${material.id}`)}>
+                  <button
+                    className="hover:bg-gray-100 rounded-lg p-1 mr-1"
+                    onClick={() => router.push(`edit-materials?id=${material.id}`)}
+                  >
                     <PiNotePencilBold size={30} />
                   </button>
-                  <button className="hover:bg-gray-100 rounded-lg p-1" onClick={() => handleDelete(material.id)}>
+                  <button
+                    className="hover:bg-gray-100 rounded-lg p-1"
+                    onClick={() => handleDelete(material.id)}
+                  >
                     <PiTrashBold size={30}/>
                   </button>
                 </div>

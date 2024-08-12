@@ -1,16 +1,17 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { BounceLoader } from "react-spinners";
 import SeatudyLogo from "@/components/assets/seatudy-logo";
+import { useToast } from "@/components/ui/use-toast";
 
 const SigninForm: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -20,7 +21,10 @@ const SigninForm: React.FC = () => {
 
   const handleLoginClick = async () => {
     if (email === "" || password === "") {
-      alert("Please fill in all fields");
+      toast({
+        title: "Please fill in all fields",
+        variant: "destructive",
+      });
       return;
     }
     try {
@@ -31,13 +35,34 @@ const SigninForm: React.FC = () => {
         password,
       });
       if (response?.error) {
-        alert(response.error);
+        let errorMessage = "Login failed";
+        try {
+          const parsedError = JSON.parse(response.error);
+          if (parsedError?.message) {
+            errorMessage = parsedError.message;
+          }
+        } catch {
+          errorMessage = response.error;
+        }
+        toast({
+          title: "Login failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
       } else {
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
         router.push("/");
         router.refresh();
       }
     } catch (err) {
-      alert("An error occurred. Please try again.");
+      toast({
+        title: "An error occurred",
+        description: "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

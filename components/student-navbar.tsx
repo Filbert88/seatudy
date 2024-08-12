@@ -5,7 +5,6 @@ import { IoSearch, IoNotificationsOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { NavbarInterface } from "./types/types";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 
 const StudentNavbar = ({ activePage }: NavbarInterface) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,33 +77,31 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
         </div>
         <div className="flex items-center">
           {status === "authenticated" && (
-            <>
-              <a
-                onClick={() => handleNavbarClick("/my-courses")}
-                className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  activePage === "My Courses" && "text-fourth"
-                }`}
-              >
-                My Courses
-              </a>
-              <a
-                onClick={() => handleNavbarClick("/all-courses")}
-                className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  activePage === "All Courses" && "text-fourth"
-                }`}
-              >
-                All Courses
-              </a>
-              <a
-                onClick={() => handleNavbarClick("/popular-courses")}
-                className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  activePage === "Popular Courses" && "text-fourth"
-                }`}
-              >
-                Popular Courses
-              </a>
-            </>
+            <a
+              onClick={() => handleNavbarClick("/my-courses")}
+              className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                activePage === "My Courses" && "text-fourth"
+              }`}
+            >
+              My Courses
+            </a>
           )}
+          <a
+            onClick={() => handleNavbarClick("/all-courses")}
+            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+              activePage === "All Courses" && "text-fourth"
+            }`}
+          >
+            All Courses
+          </a>
+          <a
+            onClick={() => handleNavbarClick("/popular-courses")}
+            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+              activePage === "Popular Courses" && "text-fourth"
+            }`}
+          >
+            Popular Courses
+          </a>
         </div>
         <div className="flex items-center justify-end ml-auto mr-10">
           {status === "authenticated" && (

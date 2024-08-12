@@ -5,12 +5,14 @@ import CoursesCard from "@/components/courses-card";
 import { useEffect, useState } from "react";
 import { BounceLoader } from "react-spinners";
 import { CourseInterface } from "@/components/types/types";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Home() {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleLoginClick = () => {
     router.push("/auth/signin");
@@ -29,10 +31,21 @@ export default function Home() {
           accept: "application/json",
         },
       });
-      const data = await response.json();
-      setCourseData(data.data);
+      if (response.ok) {
+        const data = await response.json();
+        setCourseData(data.data);
+      } else {
+        toast({
+          title: "Failed to fetch popular courses",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Error fetching courses",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

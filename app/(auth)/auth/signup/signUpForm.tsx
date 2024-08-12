@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import SeatudyLogo from "@/components/assets/seatudy-logo";
 import { BounceLoader } from "react-spinners";
+import { useToast } from "@/components/ui/use-toast";
 
 const userSchema = z
   .object({
@@ -42,12 +43,12 @@ const SignupForm: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-
   const [errors, setErrors] = useState<Partial<z.ZodFormattedError<FormData>>>(
     {}
   );
 
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -66,42 +67,55 @@ const SignupForm: React.FC = () => {
 
   const handleSubmit = async () => {
     const validation = userSchema.safeParse(formData);
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
     if (!validation.success) {
       setErrors(validation.error.format());
-    } else {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
+      toast({
+        title: "Validation error",
+        description: "Please check your input and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Signup successful",
+          description: "You can now sign in with your new account.",
         });
-
+        router.push("/auth/signin");
+      } else {
         const data = await response.json();
-
-        if (response.ok) {
-          router.push("/auth/signin");
-        } else {
-          console.error(data.message);
-        }
-      } catch (err) {
-        console.error("An error occurred:", err);
-        alert("An error occurred. Please try again later.");
-      } finally {
-        setIsLoading(false);
+        toast({
+          title: "Signup failed",
+          description: data.message || "An error occurred. Please try again.",
+          variant: "destructive",
+        });
       }
+    } catch (err) {
+      console.error("An error occurred:", err);
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handlePhoneNumberField = (value: any) => {
+  const handlePhoneNumberField = (value: string) => {
     const phoneNumber = value.replace(/\D/g, ""); // Remove non-numeric characters
-    setFormData({ ...formData, phoneNumber: phoneNumber });
+    setFormData({ ...formData, phoneNumber });
   };
 
   return (
