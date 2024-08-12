@@ -46,13 +46,13 @@ const NotificationPage = () => {
         <>
           <h1>Notifications</h1>
           {notifications.length > 0 ? (
-            <ul>
+            <ul className = "font-nunito font-bold text-1xl">
               {notifications.map((notification) => (
-                <li key={notification.id}>{notification.message}</li>
+                <li key={notification.id} className = {`${notification.read ? "bg-slate-500" : "bg-white"} rounded-md my-2 py-3 px-3`}>{notification.message}</li>
               ))}
             </ul>
           ) : (
-            <p>No notifications found</p>
+            <p className = "font-nunito text-lg font-semibold">No notifications found</p>
           )}
         </>
       )}
