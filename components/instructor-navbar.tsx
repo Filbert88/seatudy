@@ -28,7 +28,10 @@ const InstructorNavbar = ({ activePage }: NavbarInterface) => {
           <span className="font-semibold text-2xl mx-2">seatudy</span>
         </div>
         <div className="flex items-center">
-          {(status === "authenticated" && !pathname.includes("instructor-dashboard") && !pathname.includes("view-submissions")) && (
+          {(status === "authenticated" && 
+          !pathname.includes("instructor-dashboard") && 
+          !pathname.includes("view-submissions") &&
+          !pathname.includes("create-courses")) && (
             <>
               <a
                 onClick={() => handleNavbarClick("/view-materials")}

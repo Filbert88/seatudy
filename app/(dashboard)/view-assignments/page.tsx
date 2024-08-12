@@ -132,7 +132,7 @@ const ViewAssignmentPage = () => {
                 <div className="font-nunito text-2xl font-extrabold">
                   {assignment.title}
                 </div>
-                <div className="flex">
+                <div className="flex text-grays">
                   <button
                     className="hover:bg-gray-100 rounded-lg mr-1 p-1"
                     onClick={() =>

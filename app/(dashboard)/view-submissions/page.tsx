@@ -99,7 +99,7 @@ const ViewSubmissionsPage = () => {
                   {submission.assignment.title}
                 </div>
                 <div className="flex ml-auto">
-                  <a className="hover:bg-gray-100 rounded-lg mr-2" href={submission.content} target="_blank">
+                  <a className="hover:bg-gray-100 text-grays rounded-lg mr-2" href={submission.content} target="_blank">
                     <RiDownload2Line size={30} />
                   </a>
                   <input type="text" className="border border-grays rounded-md py-1 px-3 w-[5rem]"/>

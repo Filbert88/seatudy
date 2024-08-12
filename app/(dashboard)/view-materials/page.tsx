@@ -68,8 +68,7 @@ const ViewMaterialsPage = () => {
         },
         body: JSON.stringify({ materialId }),
       });
-      const data = await response.json();
-      if (data.message === "Success") {
+      if (response.ok) {
         toast({
           title: "Material deleted successfully",
         });
@@ -122,7 +121,7 @@ const ViewMaterialsPage = () => {
                 <div className="font-nunito text-2xl font-bold">
                   {material.title}
                 </div>
-                <div className="flex">
+                <div className="flex text-grays">
                   <button
                     className="hover:bg-gray-100 rounded-lg p-1 mr-1"
                     onClick={() => router.push(`edit-materials?id=${material.id}`)}
