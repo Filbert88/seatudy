@@ -237,7 +237,7 @@ const ViewProfilePage = () => {
               <input
                 type="password"
                 id="formPassword"
-                placeholder="Enter password"
+                placeholder="Enter your current or new password"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
