@@ -3,7 +3,7 @@ import { NotificationInterface } from "@/components/types/types";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import { useState } from "react";
-import LoadingBouncer from "./loading";
+import LoadingBouncer from "../loading";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
 import { BsDot } from "react-icons/bs";
 
