@@ -242,10 +242,11 @@ export interface SubmissionDataInterface {
 export interface StudentEnrollmentInterface {
   id: string;
   userId: string;
-  // fullName: string;
-  // progress: number;
-  // profileUrl: string;
   courseId: string;
   createdAt: string;
   updatedAt: string;
+  user: {
+    fullName: string;
+  }
+  progress: {progressPct: string}[];
 }
