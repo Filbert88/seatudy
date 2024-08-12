@@ -68,10 +68,12 @@ const MyCoursesPage = () => {
                 totalEnrolled={course.enrollments.length}
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
-                className="mr-5 mb-5"
-                onClick={() =>
-                  router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`)
-                }
+                className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-not-allowed": ""}`}
+                onClick={() => {
+                  if (course.materials.length > 0) {
+                    router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                  }
+                }}
               />
             ))
           ) : (

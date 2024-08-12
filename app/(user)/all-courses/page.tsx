@@ -105,7 +105,7 @@ export default function Home() {
                 totalEnrolled={course.enrollments.length}
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
-                className="mr-5 mb-5"
+                className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-default": ""}`}
                 onClick={() => router.push(`/course-detail?id=${course.id}`)}
               />
             ))}
