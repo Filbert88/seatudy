@@ -50,7 +50,7 @@ const ViewProfilePage = () => {
             setEmail(session?.user?.email ?? "");
             setPhoneNumber(data.data.phoneNumber ?? "");
             setCampus(data.data.campus ?? "");
-            setPassword(data.data.password ?? "");
+            setPassword("");
             setBalance(data.data.balance ?? 0);
             setProfileUrl(data.data.profileUrl ?? "");
           } else {
@@ -77,6 +77,13 @@ const ViewProfilePage = () => {
   }, [status, session]);
 
   const handleSave = async () => {
+    if(!fullName || !email || !campus || !password) {
+      toast({
+        title: "Please fill all fields",
+        variant: "destructive",
+      });
+      return;
+    }
     if (session) {
       try {
         const formData = new FormData();
