@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { CourseInterface } from "@/components/types/types";
 import CoursesCard from "@/components/courses-card";
@@ -60,9 +59,9 @@ const InstructorDashboard = () => {
       ) : (
         <div className="flex-grow mx-20 my-5">
           <div className="flex">
-            {courseData.map((course, index) => (
+            {courseData.map((course) => (
               <CoursesCard
-                key={index}
+                key={course.id}
                 courseTitle={course.title}
                 totalChapters={course.materials.length}
                 rating={course.averageRating}
