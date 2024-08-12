@@ -203,3 +203,13 @@ export interface SubmissionDataInterface {
     email: string;
   }
 }
+
+export interface StudentEnrollmentInterface {
+  id: string;
+  userId: string;
+  // fullName: string;
+  // progress: number;
+  courseId: string;
+  createdAt: string;
+  updatedAt: string;
+}
