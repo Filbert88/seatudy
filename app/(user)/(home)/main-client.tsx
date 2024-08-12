@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import SeatudyLogo from "@/components/assets/seatudy-logo";
 import CoursesCard from "@/components/courses-card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CourseInterface } from "@/components/types/types";
 import LoadingBouncer from "../all-courses/loading";
 
@@ -14,6 +14,7 @@ interface HomeProps {
 export default function Home({ initialCourseData, session }: HomeProps) {
   const [courseData, setCourseData] =
     useState<CourseInterface[]>(initialCourseData);
+  const [myCourseData, setMyCourseData] = useState<CourseInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -25,8 +26,55 @@ export default function Home({ initialCourseData, session }: HomeProps) {
     router.push("/auth/signup");
   };
 
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  useEffect(() => {
+    const fetchMyCourses = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/course/my-course", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setMyCourseData(data.data);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMyCourses();
+  }, []);
+
+  useEffect(() => {
+    if (
+      courseData &&
+      myCourseData &&
+      courseData.length > 0 &&
+      myCourseData.length > 0
+    ) {
+      // Filter out courses the user is already enrolled in
+      const filteredCourseData = courseData.filter(
+        (course) => !myCourseData.some((myCourse) => myCourse.id === course.id)
+      );
+      setCourseData(filteredCourseData);
+    }
+  }, [myCourseData]); // eslint-disable-line
+
   if (isLoading) {
-    <LoadingBouncer />;
+    return <LoadingBouncer />;
   }
 
   return (
@@ -51,18 +99,18 @@ export default function Home({ initialCourseData, session }: HomeProps) {
                 <span className="font-bold text-3xl">seatudy</span>
               </div>
               <div className="flex flex-col md:flex-row p-3 justify-center md:justify-start items-center">
-                <a
+                <button
                   onClick={handleRegisterClick}
-                  className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4 mb-3 md:mb-0"
+                  className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4 mb-3 md:mb-0 hover:bg-white hover:text-black"
                 >
                   Join for free
-                </a>
-                <a
+                </button>
+                <button
                   onClick={handleLoginClick}
-                  className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4"
+                  className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4 hover:bg-transparent hover:text-white hover:border"
                 >
                   I have an account
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -84,13 +132,18 @@ export default function Home({ initialCourseData, session }: HomeProps) {
               totalEnrolled={course.enrollments.length}
               difficulty={course.difficulty}
               thumbnailURL={course.thumbnailUrl}
-              className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-not-allowed": ""}`}
+              className={`mr-5 mb-5 ${
+                course.materials.length === 0
+                  ? "opacity-60 hover:cursor-not-allowed"
+                  : ""
+              }`}
               onClick={() => {
                 if (course.materials.length > 0) {
-                  router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                  // router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                  router.push(`/course-detail?id=${course.id}`);
                 }
-              }
-            }/>
+              }}
+            />
           ))}
         </div>
         <div className="text-center mt-5">

@@ -16,7 +16,6 @@ const InstructorNavbar = ({ activePage }: NavbarInterface) => {
     router.push(route + "?id=" + id);
   };
 
-
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
@@ -28,36 +27,42 @@ const InstructorNavbar = ({ activePage }: NavbarInterface) => {
           <span className="font-semibold text-2xl mx-2">seatudy</span>
         </div>
         <div className="flex items-center">
-          {(status === "authenticated" && 
-          !pathname.includes("instructor-dashboard") && 
-          !pathname.includes("view-submissions") &&
-          !pathname.includes("create-courses")) && (
-            <>
-              <a
-                onClick={() => handleNavbarClick("/view-materials")}
-                className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  pathname.includes('view-materials') && "text-fourth"
-                }`}
-              >
-                Materials
-              </a>
-              <a
-                onClick={() => handleNavbarClick("/view-assignments")}
-                className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
-                  pathname.includes('view-assignments') && "text-fourth"
-                }`}
-              >
-                Assignments
-              </a>
-            </>
-          )}
+          {status === "authenticated" &&
+            !pathname.includes("instructor-dashboard") &&
+            !pathname.includes("view-submissions") &&
+            !pathname.includes("create-courses") &&
+            !pathname.includes("instructor-notification-page") && (
+              <>
+                <a
+                  onClick={() => handleNavbarClick("/view-materials")}
+                  className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                    pathname.includes("view-materials") && "text-fourth"
+                  }`}
+                >
+                  Materials
+                </a>
+                <a
+                  onClick={() => handleNavbarClick("/view-assignments")}
+                  className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                    pathname.includes("view-assignments") && "text-fourth"
+                  }`}
+                >
+                  Assignments
+                </a>
+              </>
+            )}
         </div>
         <div className="flex items-center justify-end ml-auto mr-10">
           {status === "authenticated" && (
             <>
-              <IoNotificationsOutline className="text-primary mx-2 h-6 w-6 hover:cursor-pointer" onClick={() => router.push("/instructor-notification-page")}/>
+              <IoNotificationsOutline
+                className="text-primary mx-2 h-6 w-6 hover:cursor-pointer"
+                onClick={() => router.push("/instructor-notification-page")}
+              />
               <div
-                onClick={() => router.push("/instructor-dashboard/view-profile")}
+                onClick={() =>
+                  router.push("/instructor-dashboard/view-profile")
+                }
                 className="hover:cursor-pointer ml-5 flex items-center"
               >
                 <div className="mr-4 text-md">{session?.user?.name}</div>

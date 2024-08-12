@@ -14,6 +14,7 @@ export default function Home() {
   const [results, setResults] = useState<CourseInterface[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
+  const [myCourseData, setMyCourseData] = useState<CourseInterface[]>([]);
 
   const getCourses = async (params: string) => {
     try {
@@ -71,14 +72,50 @@ export default function Home() {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const rating = searchParams.get("rating") || undefined;
-    const difficulty = searchParams.get("difficulty") || undefined;
-    const category = searchParams.get("category") || undefined;
-    const title = searchParams.get("title") || undefined;
+    const rating = searchParams.get("rating") ?? undefined;
+    const difficulty = searchParams.get("difficulty") ?? undefined;
+    const category = searchParams.get("category") ?? undefined;
+    const title = searchParams.get("title") ?? undefined;
     setSearchQuery(title);
     const queryParams = buildQueryParams(rating, difficulty, category, title);
     getCourses(queryParams);
-  }, []);
+
+    const fetchMyCourses = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/course/my-course", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setMyCourseData(data.data);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchMyCourses();
+  }, []); // eslint-disable-line
+
+  useEffect(() => {
+    if (
+      results &&
+      myCourseData &&
+      results.length > 0 &&
+      myCourseData.length > 0
+    ) {
+      // Filter out courses the user is already enrolled in
+      const filteredCourseData = results.filter(
+        (course) => !myCourseData.some((myCourse) => myCourse.id === course.id)
+      );
+      setResults(filteredCourseData);
+    }
+  }, [myCourseData]); // eslint-disable-line
 
   if (isLoading) {
     return <LoadingBouncer />;
@@ -105,7 +142,11 @@ export default function Home() {
                 totalEnrolled={course.enrollments.length}
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
-                className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-default": ""}`}
+                className={`mr-5 mb-5 ${
+                  course.materials.length === 0
+                    ? "opacity-60 hover:cursor-default"
+                    : ""
+                }`}
                 onClick={() => router.push(`/course-detail?id=${course.id}`)}
               />
             ))}
