@@ -30,35 +30,6 @@ export default function Home({ initialCourseData, session }: HomeProps) {
     <LoadingBouncer />;
   }
 
-  useEffect(() => {
-    const fetchMyCourses = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/course/my-course", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setMyCourseData(data.data);
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchMyCourses();
-
-    // Remove course that user already enrolled
-    const filteredCourseData = courseData.filter(
-      (course) => !myCourseData.find((myCourse) => myCourse.id === course.id)
-    );
-    setCourseData(filteredCourseData);
-  }, [courseData, myCourseData]);
-
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
       {session ? (
