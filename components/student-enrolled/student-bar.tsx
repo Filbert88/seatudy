@@ -6,9 +6,6 @@ interface StudentBarProps {
     students: StudentEnrollmentInterface[];
 }
 
-
-
-
 const StudentBar:React.FC<StudentBarProps> = ({students = []}) => {
     const autoFormatName = (name: string) => {
         const nameArr = name.split(" ");
