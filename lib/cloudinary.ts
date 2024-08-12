@@ -4,8 +4,13 @@ export async function uploadFileToCloudinary(file: File) {
   }
   console.log(file);
 
+  const baseUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_PRODUCTION_URL
+
   try {
-    const response = await fetch("/api/signature");
+    const response = await fetch(`${baseUrl}/api/signature`);
     const data = await response.json();
     console.log("data di utils.ts", data);
 
