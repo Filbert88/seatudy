@@ -3,13 +3,12 @@ import { useRouter } from "next/navigation";
 import SeatudyLogo from "@/components/assets/seatudy-logo";
 import CoursesCard from "@/components/courses-card";
 import { useState } from "react";
-import { BounceLoader } from "react-spinners";
 import { CourseInterface } from "@/components/types/types";
 import LoadingBouncer from "../all-courses/loading";
 
 interface HomeProps {
   initialCourseData: CourseInterface[];
-  session: any; 
+  session: any;
 }
 
 export default function Home({ initialCourseData, session }: HomeProps) {
@@ -26,9 +25,10 @@ export default function Home({ initialCourseData, session }: HomeProps) {
     router.push("/auth/signup");
   };
 
-  if(isLoading){
-    <LoadingBouncer />
+  if (isLoading) {
+    <LoadingBouncer />;
   }
+
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
       {session ? (
@@ -74,7 +74,7 @@ export default function Home({ initialCourseData, session }: HomeProps) {
           Explore our courses
         </div>
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center place-items-center lg:place-items-start">
-          {courseData.slice(0, 5).map((course, index) => (
+          {courseData.map((course, index) => (
             <CoursesCard
               key={index}
               courseTitle={course.title}
@@ -88,16 +88,14 @@ export default function Home({ initialCourseData, session }: HomeProps) {
             />
           ))}
         </div>
-        {courseData.length > 5 && (
-          <div className="text-center mt-5">
-            <button
-              className="bg-secondary hover:bg-secondary-dark text-white font-bold py-2 px-4 rounded"
-              onClick={() => router.push("/all-courses")}
-            >
-              See More Courses
-            </button>
-          </div>
-        )}
+        <div className="text-center mt-5">
+          <button
+            className="bg-secondary hover:bg-secondary-dark text-white font-bold py-2 px-4 rounded"
+            onClick={() => router.push("/all-courses")}
+          >
+            See More Courses
+          </button>
+        </div>
       </div>
     </main>
   );
