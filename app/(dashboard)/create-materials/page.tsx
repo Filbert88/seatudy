@@ -7,11 +7,8 @@ import { FiUpload } from "react-icons/fi";
 import { GrDocumentVerified } from "react-icons/gr";
 import { useRouter } from "next/navigation";
 
-interface SubmissionProps {
-  assignmentId: string;
-}
 
-const CreateMaterial = ({assignmentId}: SubmissionProps) => {
+const CreateMaterial = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState<string>("");
