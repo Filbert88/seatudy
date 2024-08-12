@@ -60,6 +60,10 @@ export interface MaterialInterface {
   updatedAt: string;
 }
 
+export interface instructorInterface {
+  fullName: string;
+}
+
 export interface CourseDetailsInterface {
   id: string;
   title: string;
@@ -78,6 +82,7 @@ export interface CourseDetailsInterface {
   categories: object[];
   assignments: AssignmentInterface[];
   transactions: object[];
+  instructor: instructorInterface;
 }
 
 export interface UserInterface {
@@ -197,4 +202,15 @@ export interface SubmissionDataInterface {
     fullName: string;
     email: string;
   }
+}
+
+export interface StudentEnrollmentInterface {
+  id: string;
+  userId: string;
+  // fullName: string;
+  // progress: number;
+  // profileUrl: string;
+  courseId: string;
+  createdAt: string;
+  updatedAt: string;
 }

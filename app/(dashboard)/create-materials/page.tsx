@@ -6,13 +6,14 @@ import Instructions from "@/components/assignments/instructions";
 import { FiUpload } from "react-icons/fi";
 import { GrDocumentVerified } from "react-icons/gr";
 import { useRouter } from "next/navigation";
-
+import { useToast } from "@/components/ui/use-toast";
 
 const CreateMaterial = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState<string>("");
   const [courseId, setCourseId] = useState<string>("");
+  const { toast } = useToast();
   const allowedFileTypes = [
     "application/pdf",
   ];
@@ -32,7 +33,10 @@ const CreateMaterial = () => {
       if (allowedFileTypes.includes(selectedFile.type)) {
         setFile(selectedFile);
       } else {
-        alert("Please upload a file in pdf or image format");
+        toast({
+          title: "Invalid file type",
+          variant: "destructive",
+        })
         console.log(selectedFile.type);
         console.log(allowedFileTypes);
       }
@@ -55,7 +59,9 @@ const CreateMaterial = () => {
         }),
       });
       if (response.ok) {
-        alert("Successfully created material!");
+        toast({
+          title: "Material uploaded successfully",
+        })
         router.push(`view-materials?id=${courseId}`);
       }
       else {

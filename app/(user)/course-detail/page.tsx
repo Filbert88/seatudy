@@ -13,7 +13,6 @@ const CoursesDetailPage = () => {
   const [courseId, setCourseId] = useState<string>("");
   const { data: session, status } = useSession();
   const courseDetailUrl = `/api/course/${courseId}`;
-  const [instructorName, setInstructorName] = useState<string>("");
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -53,17 +52,6 @@ const CoursesDetailPage = () => {
       }
     };
     checkIfUserIsLoggedIn();
-
-    if (courseDetails) {
-      const instructorId = courseDetails.instructorId;
-      const fetchInstructorName = async () => {
-        const name = await getInstructorNamebyId(instructorId);
-        if (name) {
-          setInstructorName(name);
-        }
-      };
-      fetchInstructorName();
-    }
   }, [courseId, courseDetailUrl, status]);
 
   if (isLoading) {
@@ -99,11 +87,11 @@ const CoursesDetailPage = () => {
         </div>
         <div className="flex flex-row font-bold text-primary space-x-20 mx-5">
           <p>Difficulty: {courseDetails.difficulty}</p>
-          <p>Instructor: {instructorName}</p>
+          <p>Instructor: {courseDetails.instructor.fullName}</p>
         </div>
       </div>
-      <div className="flex md:flex-row flex-col-reverse">
-        <div className=" border-black border-2 px-5 py-4 m-5 ml-[25vh] w-full order-2 md:order-1">
+      <div className="flex md:flex-row flex-col-reverse px-40">
+        <div className=" border-black border-2 px-5 py-4 m-5 w-full order-2 md:order-1">
           <h1 className="font-nunito font-bold text-2xl">
             What you’ll learn from this course
           </h1>

@@ -10,6 +10,7 @@ import { BsDot } from "react-icons/bs";
 const InstructorNotificationPage = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [notifications, setNotifications] = useState<NotificationInterface[]>([]);
+    const [viewRead, setRead] = useState<boolean>(false);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -37,11 +38,10 @@ const InstructorNotificationPage = () => {
           }
         };
         fetchNotifications();
-      }, [toast]);
+      }, [toast, setNotifications, setRead]);
 
       const handleMarkAsRead = async (id: string) => {
         try{
-          setIsLoading(true);
           const response = await fetch(`/api/notification/read`, {
             method: "POST",
             headers: {
@@ -53,6 +53,18 @@ const InstructorNotificationPage = () => {
           if (!response.ok) {
             throw new Error(data.message);
           }
+          else{
+            const updatedNotifications = notifications.map((notification) => {
+              if (notification.id === id) {
+                return {
+                  ...notification,
+                  read: true,
+                };
+              }
+              return notification;
+            });
+            setNotifications(updatedNotifications);
+          }
         }
         catch (error) {
           console.error(error);
@@ -61,30 +73,32 @@ const InstructorNotificationPage = () => {
             variant: "destructive",
           });
         }
-        finally {
-          setIsLoading(false);
-        }
       }
 
     return (
         <div className = "pt-24 px-16 font-nunito">
             {isLoading ? (<LoadingBouncer />) : (
                 <>
+                <div className = "flex flex-row justify-between">
                     <h1 className = "text-2xl font-bold">Notifications</h1>
+                    <button onClick = {() => setRead(!viewRead)} className = "bg-primary text-black px-5 py-2 rounded-md font-nunito font-bold">{viewRead ? "View Unread Message" : "View All Message"}</button>
+                </div>
                     {notifications.length > 0 ? (
                         <ul className = "font-nunito font-bold text-1xl">
                             {notifications.map((notification) => (
                                 <div key={notification.id}>
-                                  {notification.read ? (
-                                    <div className = "bg-white text-black flex flex-row justify-between rounded-md my-2 py-3 px-3">
+                                  { (viewRead || !notification.read) ? (
+                                    <div className = {`${notification.read === false ? "bg-white" : "bg-slate-50 text-grays"} text-black flex flex-row justify-between rounded-md my-2 py-3 px-3`}>
                                     <div className = "flex flex-row">
                                       <div className = "mt-1">{notification.message}</div>
-                                      <BsDot className = "text-red-500 size-8"/>
+                                      {notification.read === false ? (<BsDot className = "text-red-500 size-8"/>):null}
                                     </div>
+                                    {notification.read === false ? (
                                       <div className = "flex flex-row hover:cursor-pointer hover:bg-slate-100 rounded-md p-1" onClick={() => handleMarkAsRead(notification.id)}>
                                         <MdOutlineMarkEmailRead className = "mr-3 my-1"/>
                                         <div className = "text-black">Mark as read</div>
                                       </div>
+                                    ):null}
                                     </div>
                                   ) : null}
                                 </div>

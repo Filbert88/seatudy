@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import LoadingBouncer from "../../(user)/all-courses/loading";
 import {
   CourseDetailsInterface,
+  StudentEnrollmentInterface,
 } from "@/components/types/types";
 import { useToast } from "@/components/ui/use-toast";
 import { PiNotePencilBold, PiTrashBold } from "react-icons/pi";
+import StudentBar from "@/components/student-enrolled/student-bar";
 
 const ViewMaterialsPage = () => {
   const router = useRouter();
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
+  const [students, setStudents] = useState<StudentEnrollmentInterface[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -33,6 +36,7 @@ const ViewMaterialsPage = () => {
         const data = await response.json();
         if (response.ok) {
           setCourseDetails(data.data);
+          setStudents(data.data.enrollments);
         } else {
           toast({
             title: "Failed to load course details",
@@ -92,6 +96,8 @@ const ViewMaterialsPage = () => {
   }
 
   return (
+    <>
+    {courseDetails && <StudentBar students={students}/>}
     <div className="px-[24rem] pt-28 bg-primary w-screen h-screen">
       <div className="font-nunito text-3xl font-bold">
         {courseDetails?.title}
@@ -141,6 +147,7 @@ const ViewMaterialsPage = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

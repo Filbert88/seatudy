@@ -50,7 +50,7 @@ const ViewProfilePage = () => {
             setEmail(session?.user?.email ?? "");
             setPhoneNumber(data.data.phoneNumber ?? "");
             setCampus(data.data.campus ?? "");
-            setPassword(data.data.password ?? "");
+            setPassword("");
             setBalance(data.data.balance ?? 0);
             setProfileUrl(data.data.profileUrl ?? "");
           } else {
@@ -77,6 +77,13 @@ const ViewProfilePage = () => {
   }, [status, session]);
 
   const handleSave = async () => {
+    if(!fullName || !email || !campus || !password) {
+      toast({
+        title: "Please fill all fields",
+        variant: "destructive",
+      });
+      return;
+    }
     if (session) {
       try {
         const formData = new FormData();
@@ -230,7 +237,7 @@ const ViewProfilePage = () => {
               <input
                 type="password"
                 id="formPassword"
-                placeholder="Enter password"
+                placeholder="Enter your current or new password"
                 className="p-3 rounded-md bg-primary text-black w-full h-8"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
