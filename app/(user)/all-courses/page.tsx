@@ -72,10 +72,10 @@ export default function Home() {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const rating = searchParams.get("rating") || undefined;
-    const difficulty = searchParams.get("difficulty") || undefined;
-    const category = searchParams.get("category") || undefined;
-    const title = searchParams.get("title") || undefined;
+    const rating = searchParams.get("rating") ?? undefined;
+    const difficulty = searchParams.get("difficulty") ?? undefined;
+    const category = searchParams.get("category") ?? undefined;
+    const title = searchParams.get("title") ?? undefined;
     setSearchQuery(title);
     const queryParams = buildQueryParams(rating, difficulty, category, title);
     getCourses(queryParams);
@@ -100,7 +100,7 @@ export default function Home() {
       }
     };
     fetchMyCourses();
-  }, []);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (
@@ -115,7 +115,7 @@ export default function Home() {
       );
       setResults(filteredCourseData);
     }
-  }, [myCourseData]);
+  }, [myCourseData]); // eslint-disable-line
 
   if (isLoading) {
     return <LoadingBouncer />;

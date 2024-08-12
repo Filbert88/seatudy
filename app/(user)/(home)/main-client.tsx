@@ -26,10 +26,6 @@ export default function Home({ initialCourseData, session }: HomeProps) {
     router.push("/auth/signup");
   };
 
-  if (isLoading) {
-    <LoadingBouncer />;
-  }
-
   // JANGAN DISATUIN PLS PLS PLS!!!!
   // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
   // JANGAN DISATUIN PLS PLS PLS!!!!
@@ -75,7 +71,11 @@ export default function Home({ initialCourseData, session }: HomeProps) {
       );
       setCourseData(filteredCourseData);
     }
-  }, [myCourseData]);
+  }, [myCourseData]); // eslint-disable-line
+
+  if (isLoading) {
+    return <LoadingBouncer />;
+  }
 
   return (
     <main className="flex min-h-screen flex-col bg-primary font-nunito">
@@ -99,18 +99,18 @@ export default function Home({ initialCourseData, session }: HomeProps) {
                 <span className="font-bold text-3xl">seatudy</span>
               </div>
               <div className="flex flex-col md:flex-row p-3 justify-center md:justify-start items-center">
-                <a
+                <button
                   onClick={handleRegisterClick}
-                  className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4 mb-3 md:mb-0"
+                  className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4 mb-3 md:mb-0 hover:bg-white hover:text-black"
                 >
                   Join for free
-                </a>
-                <a
+                </button>
+                <button
                   onClick={handleLoginClick}
-                  className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4"
+                  className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4 hover:bg-transparent hover:text-white hover:border"
                 >
                   I have an account
-                </a>
+                </button>
               </div>
             </div>
           </div>

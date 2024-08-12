@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { CourseInterface } from "@/components/types/types";
 import CoursesCard from "@/components/courses-card";

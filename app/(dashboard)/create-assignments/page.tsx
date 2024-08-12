@@ -114,7 +114,7 @@ const CreateAssignmentsPage = () => {
     }
   };
 
-  if  (isLoading)  {
+  if (isLoading) {
     return <LoadingBouncer />;
   }
 
@@ -157,7 +157,7 @@ const CreateAssignmentsPage = () => {
                 type="number"
                 placeholder="Enter assignment's duration.."
                 className="p-3 rounded-md bg-white w-full h-8"
-                value={assignmentDuration || ""}
+                value={assignmentDuration ?? ""}
                 onChange={(e) => setAssignmentDuration(Number(e.target.value))}
               />
             </div>
