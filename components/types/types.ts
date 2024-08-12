@@ -209,6 +209,7 @@ export interface StudentEnrollmentInterface {
   userId: string;
   // fullName: string;
   // progress: number;
+  // profileUrl: string;
   courseId: string;
   createdAt: string;
   updatedAt: string;
