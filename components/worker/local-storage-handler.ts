@@ -28,7 +28,7 @@ export const getSideBarDataFromLocalStorage = (courseId: any) => {
     const title = localStorage.getItem('title');
     const materialData: MaterialInterface[] = materialDataString ? JSON.parse(materialDataString) : [];
     const assignmentData: AssignmentInterface[] = assignmentDataString ? JSON.parse(assignmentDataString) : [];
-    const titleData: string = title ? title : '';
+    const titleData: string = title ?? '';
     return {materialData, assignmentData, titleData};
   }
   else {

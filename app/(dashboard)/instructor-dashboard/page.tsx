@@ -59,9 +59,9 @@ const InstructorDashboard = () => {
       ) : (
         <div className="flex-grow mx-20 my-5">
           <div className="flex">
-            {courseData.map((course, index) => (
+            {courseData.map((course) => (
               <CoursesCard
-                key={index}
+                key={course.id}
                 courseTitle={course.title}
                 totalChapters={course.materials.length}
                 rating={course.averageRating}

@@ -6,8 +6,7 @@ import {
   CourseDetailsInterface,
   StudentEnrollmentInterface,
 } from "@/components/types/types";
-import { PiNotePencilBold } from "react-icons/pi";
-import { PiTrashBold } from "react-icons/pi";
+import { PiNotePencilBold , PiTrashBold } from "react-icons/pi";
 import { useToast } from "@/components/ui/use-toast";
 import StudentBar from "@/components/student-enrolled/student-bar";
 

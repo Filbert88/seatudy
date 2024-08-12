@@ -1,10 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
-import React from "react";
 import PdfViewer from "@/components/pdf-viewer";
 import {
-  CourseInterface,
   MaterialInterface,
   SideBarDataInterface,
 } from "@/components/types/types";
@@ -13,8 +11,6 @@ import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/
 import { useToast } from "@/components/ui/use-toast";
 
 const MaterialsPage = () => {
-  const [materialId, setMaterialId] = useState<string | null>();
-  const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [materialData, setMaterialData] = useState<MaterialInterface>();
   const [sideBarData, setSideBarData] = useState<
@@ -55,9 +51,7 @@ const MaterialsPage = () => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
     const materialId = param.get("materialId");
-    setMaterialId(materialId);
     if (id) {
-      setCourseId(id);
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
       if (sideBarDataFromLocalStorage) {
         setSideBarData(sideBarDataFromLocalStorage);
@@ -100,10 +94,10 @@ const MaterialsPage = () => {
       <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
         {isMaterialAvailable ? (
           <CoursesBar
-            title={sideBarData?.titleData || ""}
+            title={sideBarData?.titleData ?? ""}
             materials={sideBarData?.materialData || []}
             assignments={sideBarData?.assignmentData || []}
-            active={{ type: "materials", id: materialData?.id || "" }}
+            active={{ type: "materials", id: materialData?.id ?? "" }}
           />
         ) : (
           <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
