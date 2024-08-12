@@ -12,7 +12,6 @@ interface SubmissionProps {
 }
 
 const CreateMaterial = ({assignmentId}: SubmissionProps) => {
-  const [validate, setValidate] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState<string>("");
