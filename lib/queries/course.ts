@@ -51,7 +51,7 @@ async function getEnrolledUser(courseId: string) {
 async function getCoursesInfo(): Promise<CourseInterface[]> {
   try {
     const courses = await prisma.course.findMany({
-      take: 5,
+      take: 8,
       include: {
         enrollments: true,
         materials: true,
@@ -64,7 +64,7 @@ async function getCoursesInfo(): Promise<CourseInterface[]> {
       },
     });
 
-    return JSON.parse(JSON.stringify(courses)); // Use stringify and parse to handle serialization
+    return JSON.parse(JSON.stringify(courses)); 
   } catch (error) {
     console.error("Error retrieving courses:", error);
     throw error;
