@@ -58,6 +58,7 @@ const CoursesDetailPage = () => {
       const instructorId = courseDetails.instructorId;
       const fetchInstructorName = async () => {
         const name = await getInstructorNamebyId(instructorId);
+        console.log(name);
         if (name) {
           setInstructorName(name);
         }
@@ -99,7 +100,7 @@ const CoursesDetailPage = () => {
         </div>
         <div className="flex flex-row font-bold text-primary space-x-20 mx-5">
           <p>Difficulty: {courseDetails.difficulty}</p>
-          <p>Instructor: {instructorName}</p>
+          <p>Instructor: {courseDetails.instructor.fullName}</p>
         </div>
       </div>
       <div className="flex md:flex-row flex-col-reverse">
