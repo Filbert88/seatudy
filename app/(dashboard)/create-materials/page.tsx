@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { uploadFileToCloudinary } from "@/lib/utils";
+import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import LoadingBouncer from "../loading";
 import Instructions from "@/components/assignments/instructions";
 import { FiUpload } from "react-icons/fi";
@@ -12,7 +12,6 @@ interface SubmissionProps {
 }
 
 const CreateMaterial = ({assignmentId}: SubmissionProps) => {
-  const [validate, setValidate] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState<string>("");
@@ -83,7 +82,7 @@ const CreateMaterial = ({assignmentId}: SubmissionProps) => {
     }
     try {
       setIsLoading(true);
-      await uploadFileToCloudinary(file).then((uploadedUrl) => {
+      await uploadFileToCloudinary(file).then((uploadedUrl: string) => {
         handleCreateMaterial(uploadedUrl);
       });
     } catch (err) {

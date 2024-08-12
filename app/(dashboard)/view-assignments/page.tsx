@@ -5,9 +5,6 @@ import LoadingBouncer from "../../(user)/all-courses/loading";
 import {
   CourseDetailsInterface,
 } from "@/components/types/types";
-import pencil_icon from "../../../public/assets/edit_icon.png";
-import delete_icon from "../../../public/assets/trash_icon.png";
-import Image from "next/image";
 import { PiNotePencilBold } from "react-icons/pi";
 import { PiTrashBold } from "react-icons/pi";
 import { useToast } from "@/components/ui/use-toast";
@@ -132,7 +129,7 @@ const ViewAssignmentPage = () => {
                 <div className="font-nunito text-2xl font-extrabold">
                   {assignment.title}
                 </div>
-                <div className="flex">
+                <div className="flex text-grays">
                   <button
                     className="hover:bg-gray-100 rounded-lg mr-1 p-1"
                     onClick={() =>

@@ -19,7 +19,19 @@ const CreateCourse = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [syllabus, setSyllabus] = useState<string>("");
   const [skills, setSkills] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const { toast } = useToast();
+
+  
+  const formatNumberWithCommas = (number: string) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handlePriceChange = (e: any) => {
+    let val = e.target.value.replace(/\D/g, "");
+    val = formatNumberWithCommas(val);
+    setCoursePrice(val);
+  };
 
   const handleSubmit = async () => {
     if (
@@ -45,11 +57,8 @@ const CreateCourse = () => {
       syllabus.split(",").forEach((item) => f.append("syllabus", item.trim()));
       skills.split(",").forEach((item) => f.append("skills", item.trim()));
       f.append("difficulty", courseDifficulty);
-      f.append("price", coursePrice);
-      f.append(
-        "categoryNames",
-        JSON.stringify(["Programming", "Web Development"])
-      );
+      f.append("price", coursePrice.replace(/,/g, ""));
+      category.split(",").forEach((item) => f.append("categoryNames", item.trim().toLowerCase()));
 
       const response = await fetch("/api/course/create", {
         method: "POST",
@@ -101,8 +110,8 @@ const CreateCourse = () => {
   }
 
   return (
-    <div className="pt-24 px-16 font-nunito">
-      <div className="flex flex-col items-start justify-start">
+    <div className="pt-28 px-16 font-nunito">
+      <div className="flex flex-col items-center justify-start">
         <div className="flex font-nunito font-bold text-3xl">
           Creating a new course
         </div>
@@ -191,18 +200,25 @@ const CreateCourse = () => {
               />
             </label>
             <div className="font-semibold text-white mb-2 text-lg mt-5">
+              Category
+            </div>
+            <input
+              type="text"
+              className="p-3 rounded-md bg-white w-full h-8"
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Separate with comma.."
+            />
+            <div className="font-semibold text-white mb-2 text-lg mt-5">
               Price
             </div>
-            <div className="form-group pb-5 w-full">
+            <div className="form-group pb-5 w-full flex items-center">
+              <div className="text-primary font-semibold text-lg mr-3">Rp </div>
               <input
                 type="text"
-                placeholder="Enter a course price in IDR.. (Type only the number)"
+                placeholder="Enter course price.."
                 className="p-3 rounded-md bg-white w-full h-8"
                 value={coursePrice}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "");
-                  setCoursePrice(val);
-                }}
+                onChange={handlePriceChange}
               />
             </div>
           </form>
