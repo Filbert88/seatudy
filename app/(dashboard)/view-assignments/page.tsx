@@ -8,6 +8,8 @@ import {
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
 import Image from "next/image";
+import { PiNotePencilBold } from "react-icons/pi";
+import { PiTrashBold } from "react-icons/pi";
 
 const ViewAssignmentPage = () => {
   const router = useRouter();
@@ -106,21 +108,11 @@ const ViewAssignmentPage = () => {
                   {assignment.title}
                 </div>
                 <div className="flex">
-                  <button className="hover:bg-gray-100 rounded-lg" onClick={() => router.push(`edit-assignments?id=${assignment.id}`)}>
-                    <Image
-                      src={pencil_icon}
-                      alt="edit"
-                      width={30}
-                      height={10}
-                    />
+                  <button className="hover:bg-gray-100 rounded-lg mr-1 p-1" onClick={() => router.push(`edit-assignments?id=${assignment.id}`)}>
+                    <PiNotePencilBold size={30} />
                   </button>
-                  <button className="hover:bg-gray-100 rounded-lg" onClick={() => handleDelete(assignment.id)}>
-                    <Image
-                      src={delete_icon}
-                      alt="delete"
-                      width={30}
-                      height={10}
-                    />
+                  <button className="hover:bg-gray-100 rounded-lg p-1" onClick={() => handleDelete(assignment.id)}>
+                    <PiTrashBold size={30}/>
                   </button>
                 </div>
               </div>

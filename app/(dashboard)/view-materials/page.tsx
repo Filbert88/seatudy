@@ -8,6 +8,7 @@ import {
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
 import Image from "next/image";
+import { PiNotePencilBold, PiTrashBold } from "react-icons/pi";
 
 const ViewMaterialsPage = () => {
   const router = useRouter();
@@ -97,21 +98,11 @@ const ViewMaterialsPage = () => {
                   {material.title}
                 </div>
                 <div className="flex">
-                  <button className="hover:bg-gray-100 rounded-lg" onClick={() => router.push(`edit-materials?id=${material.id}`)}>
-                    <Image
-                      src={pencil_icon}
-                      alt="edit"
-                      width={30}
-                      height={10}
-                    />
+                  <button className="hover:bg-gray-100 rounded-lg p-1 mr-1" onClick={() => router.push(`edit-materials?id=${material.id}`)}>
+                    <PiNotePencilBold size={30} />
                   </button>
-                  <button className="hover:bg-gray-100 rounded-lg" onClick={() => handleDelete(material.id)}>
-                    <Image
-                      src={delete_icon}
-                      alt="delete"
-                      width={30}
-                      height={10}
-                    />
+                  <button className="hover:bg-gray-100 rounded-lg p-1" onClick={() => handleDelete(material.id)}>
+                    <PiTrashBold size={30}/>
                   </button>
                 </div>
               </div>
