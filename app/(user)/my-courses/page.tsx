@@ -70,13 +70,13 @@ const MyCoursesPage = () => {
                 thumbnailURL={course.thumbnailUrl}
                 className="mr-5 mb-5"
                 onClick={() =>
-                  router.push(`/learning-material?id=${course.id}`)
+                  router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`)
                 }
               />
             ))
           ) : (
             <div className="font-semibold text-2xl text-gray-800 flex">
-              You havent enrolled in any course yet... :(
+              {"Let's get started by purchasing your first course!"}
             </div>
           )}
         </div>

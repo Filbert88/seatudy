@@ -31,7 +31,7 @@ const ViewForumPage = ({ session }: { session: any }) => {
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
-  const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
+  const [isForumAvailable, setIsForumAvailable] = useState<boolean>(true);
   const [isPosting, setIsPosting] = useState<boolean>(false); // Separate loading state for posting
 
   const { toast } = useToast();
@@ -207,33 +207,30 @@ const ViewForumPage = ({ session }: { session: any }) => {
 
     if (sideBarDataFromLocalStorage) {
       setSideBarData(sideBarDataFromLocalStorage);
+      setIsLoading(false);
     }
-
-    getCourses(id)
+    else {
+      console.log("Fetching course data from server");
+      getCourses(id)
       .then((data) => {
-        setCourseData(data);
-        if (!sideBarDataFromLocalStorage) {
-          const newSideBarData = {
-            materialData: data.materials.map((material: any) => material.title),
-            assignmentData: data.assignments.map(
-              (assignment: any) => assignment.title
-            ),
-          };
-          setSideBarData(newSideBarData);
-        }
-        if (data.materials.length === 0) {
-          setIsMaterialAvailable(false);
-        }
-        setIsLoading(false);
+        const newSideBarData = {
+          materialData: data.materials,
+          assignmentData: data.assignments,
+          titleData: data.title,
+        };
+        setSideBarData(newSideBarData);
       })
       .catch((error) => {
         console.error("Error fetching course data:", error);
+        setIsForumAvailable(false);
         toast({
-          title: "Failed to load course data",
+          title: "Course not found",
           variant: "destructive",
         });
+      }).finally(() => {
         setIsLoading(false);
       });
+    }
   }, []);
 
   if (isLoading) {
@@ -246,9 +243,9 @@ const ViewForumPage = ({ session }: { session: any }) => {
           title={courseData?.title || ""}
           materials={sideBarData?.materialData || []}
           assignments={sideBarData?.assignmentData || []}
-          active={{ type: "forum", index: 1 }}
+          active={{ type: "forum", id: "view-forum" }}
         />
-        {!isLoading && isMaterialAvailable && (
+        {!isLoading && isForumAvailable && (
           <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20">
             <div className="my-5 font-nunito font-bold text-3xl">
               {`Forum Discussions`}
