@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "npx prisma generate && next build",
     "start": "next start",
+    "export": "next export",
     "lint": "next lint",
     "seed": "npx tsx prisma/seed.tsx",
     "db:studio": "npx prisma studio"
@@ -39,6 +40,7 @@
     "react-spinners": "^0.14.1",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
+    "serve": "^14.2.3",
     "tailwind-merge": "^2.5.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"
