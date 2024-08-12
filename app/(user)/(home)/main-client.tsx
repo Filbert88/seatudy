@@ -84,8 +84,13 @@ export default function Home({ initialCourseData, session }: HomeProps) {
               totalEnrolled={course.enrollments.length}
               difficulty={course.difficulty}
               thumbnailURL={course.thumbnailUrl}
-              onClick={() => router.push(`/course-detail?id=${course.id}`)}
-            />
+              className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-not-allowed": ""}`}
+              onClick={() => {
+                if (course.materials.length > 0) {
+                  router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                }
+              }
+            }/>
           ))}
         </div>
         <div className="text-center mt-5">
