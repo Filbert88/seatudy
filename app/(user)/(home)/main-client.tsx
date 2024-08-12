@@ -30,6 +30,14 @@ export default function Home({ initialCourseData, session }: HomeProps) {
     <LoadingBouncer />;
   }
 
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
+  // JANGAN DISATUIN PLS PLS PLS!!!!
+  // JANGAN DISENTUH TERUNTUK SIAPA SAJA YANG MEMBACA INI!!
   useEffect(() => {
     const fetchMyCourses = async () => {
       try {
