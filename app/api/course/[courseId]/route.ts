@@ -15,7 +15,20 @@ export const GET = async (req: Request, { params }: { params: { courseId: string
         id: courseId,
       },
       include: {
-        enrollments: true,
+        enrollments: {
+          include: {
+            user: {
+              select: {
+                fullName: true,
+              },
+            },
+            progress: {
+              select: {
+                progressPct: true,
+              },
+            },
+          },
+        },
         materials: true,
         categories: {
           include: {
