@@ -3,6 +3,7 @@ import { CourseDetailsInterface } from "@/components/types/types";
 import { useEffect, useState } from "react";
 import LoadingBouncer from "../../(user)/all-courses/loading";
 import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const CreateAssignmentsPage = () => {
   const [courseId, setCourseId] = useState<string>("");
@@ -13,6 +14,7 @@ const CreateAssignmentsPage = () => {
     useState<string>("");
   const [assignmentDuration, setAssignmentDuration] = useState<number>();
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -92,9 +94,7 @@ const CreateAssignmentsPage = () => {
         toast({
           title: "Assignment created successfully",
         });
-        setAssignmentTitle("");
-        setAssignmentDescription("");
-        setAssignmentDuration(0);
+        router.back();
       } else {
         const data = await response.json();
         toast({

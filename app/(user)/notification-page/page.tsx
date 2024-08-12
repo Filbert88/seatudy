@@ -15,6 +15,7 @@ const InstructorNotificationPage = () => {
     useEffect(() => {
         const fetchNotifications = async () => {
           try {
+            setIsLoading(true);
             const response = await fetch(`/api/notification`, {
               method: "GET",
               headers: {
@@ -24,6 +25,11 @@ const InstructorNotificationPage = () => {
             const data = await response.json();
             if (!response.ok) {
               throw new Error(data.message);
+            }
+            else{
+              toast({
+                title: "Notifications loaded successfully",
+              })
             }
             setNotifications(data.data);
           } catch (error) {
