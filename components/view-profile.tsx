@@ -6,6 +6,8 @@ import { signOut, useSession } from "next-auth/react";
 import { UserInterface } from "./types/types";
 import { BounceLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
+import { IoPersonCircleSharp } from "react-icons/io5";
+import React, { useRef } from 'react';
 
 const ViewProfilePage = () => {
   const router = useRouter();
@@ -21,6 +23,7 @@ const ViewProfilePage = () => {
   const [profileUrl, setProfileUrl] = useState<string>("");
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const allowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session, status } = useSession();
   const { toast } = useToast();
 
@@ -135,42 +138,51 @@ const ViewProfilePage = () => {
   }
 
   return (
-    <div className="bg-primary min-h-screen flex px-5 pb-5 pt-[8rem]">
-      <div className="flex flex-row space-x-5 px-5 container">
-        <div className="flex-shrink-0">
-          <Image
-            src={
-              profileUrl.length === 0 ? "/assets/null_profile.png" : profileUrl
-            }
-            alt="profile"
-            width={300}
-            height={300}
-            className="rounded-full bg-black object-cover"
-          />
-          <label className="cursor-pointer bg-transparent py-5 text-gray-700">
-            <span className="font-nunito px-24 font-bold underline">
-              Choose File
-            </span>
-            <input type="file" onChange={handleFileChange} className="hidden" />
-          </label>
-        </div>
+    <div className="bg-primary min-h-screen flex pt-[8rem] justify-center font-nunito">
+      <div className="flex flex-row container h-fit">
         <div className="border border-5 rounded-md w-full bg-white p-10 shadow-lg">
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 rounded-md mb-5 p-5 text-white">
-            <h1 className="font-nunito font-bold text-lg">Balance</h1>
-            <h1 className="font-nunito font-bold text-4xl">
+          <div className="bg-gradient-to-r from-cyan-600 to-blue-500 rounded-md mb-5 p-5 text-white flex justify-between">
+            <div>
+            <h1 className="font-bold text-xl mb-2">Your Balance</h1>
+            <h1 className="font-bold text-4xl ">
               Rp {balance ?? 0}
             </h1>
             <button
               type="button"
               onClick={handleTopUp}
-              className="rounded-3xl font-bold bg-cyan-200 mt-5 py-2 px-5 text-black hover:bg-cyan-300"
+              className="rounded-lg font-bold bg-primary mt-5 py-2 px-5 text-secondary hover:opacity-50"
             >
               Top up
             </button>
+            </div>
+            <div className="ml-auto">
+              {!profileUrl.length ?
+                <IoPersonCircleSharp size={150} className="text-gray-300 hover:cursor-pointer hover:opacity-50 w-full" onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.click();
+                  }
+                }} />
+                :
+              <div className="hover:cursor-pointer hover:opacity-50 aspect-w-16 aspect-h-16 relative w-[150px] h-[150px]" onClick={() => {
+                if (fileInputRef.current) {
+                  fileInputRef.current.click();
+                }
+              }} >
+                <Image
+                  src={profileUrl}
+                  alt="profile"
+                  fill
+                  style={{ objectFit: "cover" }}
+                  className="rounded-full"
+                />
+              </div>
+              }
+              <input type="file" onChange={handleFileChange} className="hidden" ref={fileInputRef} />
+            </div>
           </div>
           <form>
-            <div className="font-bold">Full Name</div>
-            <div className="form-group pb-3 w-full">
+            <div className="font-bold mb-1">Full Name</div>
+            <div className="form-group mb-3 w-full">
               <input
                 type="text"
                 id="formFullName"
@@ -180,8 +192,8 @@ const ViewProfilePage = () => {
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
-            <div className="font-bold">Email</div>
-            <div className="form-group pb-3 w-full">
+            <div className="font-bold mb-1">Email</div>
+            <div className="form-group mb-3 w-full">
               <input
                 type="email"
                 id="formEmail"
@@ -191,8 +203,8 @@ const ViewProfilePage = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="font-bold">Phone Number</div>
-            <div className="form-group pb-3 w-full">
+            <div className="font-bold mb-1">Phone Number</div>
+            <div className="form-group mb-3 w-full">
               <input
                 type="number"
                 id="formPhoneNumber"
@@ -202,8 +214,8 @@ const ViewProfilePage = () => {
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </div>
-            <div className="font-bold">Campus</div>
-            <div className="form-group pb-3 w-full">
+            <div className="font-bold mb-1">Campus</div>
+            <div className="form-group mb-3 w-full">
               <input
                 type="text"
                 id="formCampus"
@@ -213,8 +225,8 @@ const ViewProfilePage = () => {
                 onChange={(e) => setCampus(e.target.value)}
               />
             </div>
-            <div className="font-bold">Password</div>
-            <div className="form-group pb-3 w-full">
+            <div className="font-bold mb-1">Password</div>
+            <div className="form-group mb-3 w-full">
               <input
                 type="password"
                 id="formPassword"
@@ -224,17 +236,17 @@ const ViewProfilePage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div className="flex flex-row">
+            <div className="flex justify-between mt-5">
               <button
                 onClick={handleSave}
                 type="button"
-                className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-1"
+                className="rounded-md bg-tertiary text-background bg-fourth px-10 text-white font-extrabold py-1 hover:shadow-md"
               >
                 Save
               </button>
               <button
                 type="button"
-                className="rounded-md bg-tertiary text-background border-2 border-red-500 px-8 font-nunito text-red-500 font-extrabold my-5 ml-5 py-1"
+                className="rounded-md bg-tertiary text-background bg-red-500 px-8 text-white font-extrabold ml-auto py-2 hover:shadow-md"
                 onClick={() => signOut()}
               >
                 Logout

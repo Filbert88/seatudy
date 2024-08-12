@@ -5,6 +5,8 @@ import { useState } from "react";
 import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import LoadingBouncer from "../loading";
 import { useToast } from "@/components/ui/use-toast";
+import { FiUpload } from "react-icons/fi";
+import { GrDocumentVerified } from "react-icons/gr";
 
 interface SubmissionProps {
   assignmentId: string;
@@ -128,11 +130,11 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
       <div className="font-nunito pt-5 pb-2">
         Upload your project file down below:
       </div>
-      <div className="border-2 flex flex-col max-w-fit px-60 py-20 border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
+      <div className="border-2 flex flex-col max-w-fit px-60 py-20 mb-2 border-dashed border-black bg-cyan-100 rounded-xl items-center justify-center p-10">
         {file == null ? (
-          <Image src="/assets/File.png" alt="file" width={80} height={80} />
+          <FiUpload size={50} />
         ) : (
-          <Image src="/assets/checked.png" alt="checked" width={80} height={80} />
+          <GrDocumentVerified size={50} />
         )}
         <div className="flex flex-row">
           <div className="font-nunito font-bold pr-1 py-5">
@@ -160,7 +162,7 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
       </form>
       <button
         className={`font-nunito font-bold py-2 my-3 px-5 rounded-lg text-white ${
-          validate ? "bg-cyan-500" : "bg-gray-300"
+          validate ? "bg-fourth" : "bg-gray-300"
         }`}
         onClick={handleSubmit}
       >

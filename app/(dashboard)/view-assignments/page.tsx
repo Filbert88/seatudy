@@ -8,6 +8,8 @@ import {
 import pencil_icon from "../../../public/assets/edit_icon.png";
 import delete_icon from "../../../public/assets/trash_icon.png";
 import Image from "next/image";
+import { PiNotePencilBold } from "react-icons/pi";
+import { PiTrashBold } from "react-icons/pi";
 import { useToast } from "@/components/ui/use-toast";
 
 const ViewAssignmentPage = () => {
@@ -132,28 +134,18 @@ const ViewAssignmentPage = () => {
                 </div>
                 <div className="flex">
                   <button
-                    className="hover:bg-gray-100 rounded-lg"
+                    className="hover:bg-gray-100 rounded-lg mr-1 p-1"
                     onClick={() =>
                       router.push(`edit-assignments?id=${assignment.id}`)
                     }
                   >
-                    <Image
-                      src={pencil_icon}
-                      alt="edit"
-                      width={30}
-                      height={10}
-                    />
+                    <PiNotePencilBold size={30} />
                   </button>
                   <button
-                    className="hover:bg-gray-100 rounded-lg"
+                    className="hover:bg-gray-100 rounded-lg p-1"
                     onClick={() => handleDelete(assignment.id)}
                   >
-                    <Image
-                      src={delete_icon}
-                      alt="delete"
-                      width={30}
-                      height={10}
-                    />
+                    <PiTrashBold size={30}/>
                   </button>
                 </div>
               </div>
