@@ -144,7 +144,6 @@ model Submission {
   student      User       @relation(fields: [studentId], references: [id])
   studentId    String
   grade        Float?
-  @@unique([assignmentId, studentId]) 
 }
 
 model Review {
