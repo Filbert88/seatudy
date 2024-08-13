@@ -16,7 +16,7 @@ import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { Session } from "next-auth";
 
-const ViewForumPage = ({ session }: { session: Session }) => {
+const ViewForumPage = ({ session }: { session: Session | null }) => {
   //   console.log(session.user.id);
   const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -78,7 +78,7 @@ const ViewForumPage = ({ session }: { session: Session }) => {
       const data = await response.json();
   
       const transformedData = data.map((comment: ForumCommentInterface) => {
-        if (comment.userId === session.user.id) {
+        if (comment.userId === session?.user.id) {
           return {
             ...comment,
             user: {
@@ -163,7 +163,7 @@ const ViewForumPage = ({ session }: { session: Session }) => {
                 user: {
                   ...returnedComment.user,
                   fullName:
-                    returnedComment.userId === session.user.id
+                    returnedComment.userId === session?.user.id
                       ? "You"
                       : returnedComment.user.fullName,
                 },
@@ -206,7 +206,7 @@ const ViewForumPage = ({ session }: { session: Session }) => {
     }
     else {
       console.log("Fetching course data from server");
-      getCourses(id, session.user.id)
+      getCourses(id, session?.user.id)
       .then((data) => {
         const newSideBarData = {
           materialData: data.materials,

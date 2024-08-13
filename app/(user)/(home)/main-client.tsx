@@ -9,7 +9,7 @@ import { Session } from "next-auth";
 
 interface HomeProps {
   initialCourseData: CourseInterface[];
-  session: Session;
+  session: Session | null;
 }
 
 export default function Home({ initialCourseData, session }: HomeProps) {
