@@ -15,9 +15,9 @@ const customJestConfig: Config = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
-    // Handle module aliases (this will be automatically done for you by next/jest if you have tsconfig paths configured)
-    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@/(.*)$': '<rootDir>/$1',
   },
+  
   transform: {
     // Use ts-jest to transform TypeScript files
     '^.+\\.(ts|tsx)$': 'ts-jest',
