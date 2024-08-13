@@ -8,11 +8,13 @@ import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
 
-const AssignmentPage = () => {
+const ReviewPage = () => {
   const [tempRating, setTempRating] = useState(0);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState<number>(0);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [courseId, setCourseId] = useState<string>("");
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
@@ -47,9 +49,49 @@ const AssignmentPage = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    try {
+      setSubmitting(true);
+      const response = await fetch("/api/review/create", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          courseId: courseId,
+          rating: rating,
+          content: comment,
+        }),
+      });
+      if (response.ok) {
+        toast({
+          title: "Review submitted successfully",
+          description: "Thank you for your feedback!",
+        });
+        setRating(0);
+        setComment("");
+      } else {
+        toast({
+          title: "Failed to submit review",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Failed to submit review",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
+    setCourseId(id || "");
     const assignmentId = param.get("assignmentId");
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
@@ -123,10 +165,12 @@ const AssignmentPage = () => {
           <div className="text-2xl ml-3 mt-1 font-semibold">{`${rating || tempRating} / 5`}</div>
         </div>
         <textarea name="comments" className="mt-10 p-3 rounded-md min-h-40 border border-grays" placeholder="Your feedback.." value={comment} onChange={(e) => setComment(e.target.value)} />
-          {rating > 0 && comment.length > 0 && <button className="bg-fourth text-white font-semibold px-10 py-2 rounded-lg mt-10 w-fit">Submit review</button>}
+        {rating > 0 && comment.length > 0 && 
+          <button disabled={submitting} onClick={handleSubmit} className={`${submitting ? "bg-gray-400" : "bg-fourth"} text-white font-semibold px-10 py-2 rounded-lg mt-10 w-fit`}>{submitting ? "Submitting..." : "Submit review"}</button>
+        }
       </div>
     </div>
   );
 };
 
-export default AssignmentPage;
+export default ReviewPage;
