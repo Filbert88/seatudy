@@ -13,6 +13,7 @@ import {
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
+import { useSession } from "next-auth/react";
 
 const ReviewPage = () => {
   const [tempRating, setTempRating] = useState(0);
@@ -25,6 +26,7 @@ const ReviewPage = () => {
     SideBarDataInterface | undefined
   >();
   const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
+  const session = useSession();
   const { toast } = useToast();
 
   const getAssignmentById = async (assignmentId: string) => {
@@ -38,6 +40,7 @@ const ReviewPage = () => {
       });
       const data = await response.json();
       setAssignmentData(data.data);
+      console.log(assignmentData);
       if (data.message !== "Success") {
         toast({
           title: "Failed to load material",
@@ -97,7 +100,7 @@ const ReviewPage = () => {
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
-    setCourseId(id || "");
+    setCourseId(id ?? "");
     const assignmentId = param.get("assignmentId");
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
@@ -106,31 +109,27 @@ const ReviewPage = () => {
         setIsLoading(false);
       } else {
         console.log("Fetching course data from server");
-        getCourses(id)
-          .then((data) => {
-            const newSideBarData = {
-              materialData: data.materials,
-              assignmentData: data.assignments,
-              titleData: data.title,
-            };
-            setSideBarData(newSideBarData);
-          })
-          .catch((error) => {
-            console.error("Error fetching course data:", error);
-            toast({
-              title: "Course not found",
-              variant: "destructive",
-            });
-          })
-          .finally(() => {
-            setIsLoading(false);
+        getCourses(id, session.data?.user?.id)
+        .then((data) => {
+          const newSideBarData = {
+            materialData: data.materials,
+            assignmentData: data.assignments,
+            titleData: data.title,
+          };
+          setSideBarData(newSideBarData);
+        })
+        .catch((error) => {
+          console.error("Error fetching course data:", error);
+          toast({
+            title: "Course not found",
+            variant: "destructive",
           });
       }
     }
     if (assignmentId) {
       getAssignmentById(assignmentId);
     }
-  }, []);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (comment.length === 0 && rating > 0) {
@@ -139,7 +138,7 @@ const ReviewPage = () => {
         description: "Let's leave some feedback for the instructor",
       });
     }
-  }, [rating]);
+  }, [rating]); // eslint-disable-line
 
   if (isLoading) {
     return <LoadingBouncer />;
