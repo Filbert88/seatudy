@@ -77,7 +77,7 @@ const CheckOutPage = () => {
     if (session) {
       getProfile();
     }
-  }, [courseId, session]); // eslint-disable-line
+  }, [courseId, session]);
 
   const handlePurchase = async () => {
     if (profile?.balance && courseDetails?.price) {
