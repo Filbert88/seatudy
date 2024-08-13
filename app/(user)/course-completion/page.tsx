@@ -5,11 +5,9 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import CongratulationImage from "../../../public/assets/congratulations_icon.png";
-import { useSession } from "next-auth/react";
 
 const CourseCompletionPage = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [courseId, setCourseId] = useState<string>("");
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
@@ -47,15 +45,7 @@ const CourseCompletionPage = () => {
     if (courseId) {
       getCourse();
     }
-
-    if (status !== "authenticated") {
-      toast({
-        title: "You need to login first",
-        variant: "destructive",
-      });
-      router.push("/auth/signin");
-    }
-  }, [courseId, router, toast, status]);
+  }, [courseId, router, toast]);
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-cover bg-primary">
       <div className="bg-white rounded-lg p-5 flex flex-col font-nunito font-bold text-1xl items-center justify-center max-w-96">
