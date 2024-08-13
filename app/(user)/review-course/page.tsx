@@ -110,24 +110,25 @@ const ReviewPage = () => {
       } else {
         console.log("Fetching course data from server");
         getCourses(id, session.data?.user?.id)
-        .then((data) => {
-          const newSideBarData = {
-            materialData: data.materials,
-            assignmentData: data.assignments,
-            titleData: data.title,
-          };
-          setSideBarData(newSideBarData);
-        })
-        .catch((error) => {
-          console.error("Error fetching course data:", error);
-          toast({
-            title: "Course not found",
-            variant: "destructive",
+          .then((data) => {
+            const newSideBarData = {
+              materialData: data.materials,
+              assignmentData: data.assignments,
+              titleData: data.title,
+            };
+            setSideBarData(newSideBarData);
+          })
+          .catch((error) => {
+            console.error("Error fetching course data:", error);
+            toast({
+              title: "Course not found",
+              variant: "destructive",
+            });
           });
       }
-    }
-    if (assignmentId) {
-      getAssignmentById(assignmentId);
+      if (assignmentId) {
+        getAssignmentById(assignmentId);
+      }
     }
   }, []); // eslint-disable-line
 
