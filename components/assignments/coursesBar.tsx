@@ -68,7 +68,7 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
       <hr className="border-t-1 border-secondary mb-3 w-full" />
       <button
         disabled={props.active.type === "review" && props.active.id === "review-course"}
-        className="text-sm block text-left w-full p-2 my-2 hover:bg-gray-300"
+        className={`block text-left text-sm w-full p-2 my-2 hover:bg-gray-300 ${props.active.type === "review" ? "bg-secondary text-primary hover:bg-secondary" : ""}`}
         onClick={() => handleButtonClick("review-course", new URLSearchParams(window.location.search).get('id') ?? '', undefined, undefined)}
       >
         {"Submit a review"}

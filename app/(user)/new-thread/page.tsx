@@ -117,7 +117,7 @@ const ViewForumPage = () => {
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
       <CoursesBar
-        title={courseData?.title || ""}
+        title={courseData?.title ?? ""}
         materials={sideBarData?.materialData || []}
         assignments={sideBarData?.assignmentData || []}
         active={{ type: "forum", id: "new-thread" }}
@@ -134,13 +134,13 @@ const ViewForumPage = () => {
               setTitle(e.target.value);
             }}
             value={title}
-            className="w-full h-10 rounded-lg px-3 mb-10"
-            placeholder=""
+            className="w-full h-10 rounded-lg px-3 mb-10 border border-grays"
+            placeholder="Your thread title.."
             name="title"
             required
           />
           <div className="text-xl font-semibold mb-3">{"Content"}</div>
-          <div className="min-h-60 w-full bg-white rounded-lg">
+          <div className="min-h-60 w-full bg-white rounded-lg border border-grays">
             <ReactQuill
               value={content}
               onChange={handleContentChange}
