@@ -20,6 +20,7 @@ export const GET = async (req: Request, { params }: { params: { courseId: string
             user: {
               select: {
                 fullName: true,
+                profileUrl: true,
               },
             },
             progress: {
