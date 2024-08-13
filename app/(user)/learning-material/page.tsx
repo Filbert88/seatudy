@@ -7,19 +7,26 @@ import {
   SideBarDataInterface,
 } from "@/components/types/types";
 import { BounceLoader } from "react-spinners";
-import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
+import {
+  getCourses,
+  getSideBarDataFromLocalStorage,
+} from "@/components/worker/local-storage-handler";
 import { useToast } from "@/components/ui/use-toast";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const MaterialsPage = () => {
+  const [materialId, setMaterialId] = useState<string | null>(null);
+  const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [materialData, setMaterialData] = useState<MaterialInterface>();
-  const [sideBarData, setSideBarData] = useState<
-    SideBarDataInterface | undefined
-  >();
+  const [materialData, setMaterialData] = useState<MaterialInterface | null>(null);
+  const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
   const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const getMaterialById = async (materialId: string) => {
+    console.log("Fetching material for ID:", materialId);
     try {
       setIsLoading(true);
       const response = await fetch(`/api/course/material/${materialId}`, {
@@ -29,15 +36,20 @@ const MaterialsPage = () => {
         },
       });
       const data = await response.json();
-      setMaterialData(data.data);
-      if (data.message !== "Success") {
+      if (data.message === "Success") {
+        console.log("Material fetched successfully:", data.data);
+        setMaterialData(data.data);
+      } else {
+        console.log("Failed to fetch material");
+        setMaterialData(null);
         toast({
           title: "Failed to load material",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching material:", error);
+      setMaterialData(null);
       toast({
         title: "Failed to load material",
         variant: "destructive",
@@ -48,41 +60,46 @@ const MaterialsPage = () => {
   };
 
   useEffect(() => {
-    const param = new URLSearchParams(window.location.search);
-    const id = param.get("id");
-    const materialId = param.get("materialId");
+    const id = searchParams.get("id");
+    const materialId = searchParams.get("materialId");
+
+    console.log("Current URL Params:", { id, materialId });
+
+    setMaterialId(materialId);
+    setCourseId(id);
+
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
       if (sideBarDataFromLocalStorage) {
         setSideBarData(sideBarDataFromLocalStorage);
-      }
-      else {
+      } else {
         console.log("Fetching course data from server");
         getCourses(id)
-        .then((data) => {
-          const newSideBarData = {
-            materialData: data.materials,
-            assignmentData: data.assignments,
-            titleData: data.title,
-          };
-          setSideBarData(newSideBarData);
-        })
-        .catch((error) => {
-          console.error("Error fetching course data:", error);
-          setIsMaterialAvailable(false);
-          toast({
-            title: "Course not found",
-            variant: "destructive",
+          .then((data) => {
+            const newSideBarData = {
+              materialData: data.materials,
+              assignmentData: data.assignments,
+              titleData: data.title,
+            };
+            setSideBarData(newSideBarData);
+          })
+          .catch((error) => {
+            console.error("Error fetching course data:", error);
+            setIsMaterialAvailable(false);
+            toast({
+              title: "Course not found",
+              variant: "destructive",
+            });
           });
-        }).finally(() => {
-          setIsLoading(false);
-        });
       }
     }
+  }, [searchParams]); 
+
+  useEffect(() => {
     if (materialId) {
       getMaterialById(materialId);
     }
-  }, []);
+  }, [materialId]);
 
   return (
     <>
@@ -104,14 +121,14 @@ const MaterialsPage = () => {
             {"Course material not found"}
           </div>
         )}
-        {!isLoading && isMaterialAvailable && (
+        {!isLoading && isMaterialAvailable && materialData && (
           <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
             <div className="my-5 font-nunito font-bold text-3xl">
-              {materialData?.title}
+              {materialData.title}
             </div>
             <div className="flex h-full pb-20">
               <PdfViewer
-                url={materialData?.url ?? "null"}
+                url={materialData.url ?? "null"} 
                 className="flex-grow flex w-full"
               />
             </div>
