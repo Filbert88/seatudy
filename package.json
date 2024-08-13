@@ -2,6 +2,29 @@
   "name": "seatudy",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@9.7.0",
+  "engines": {
+    "node": ">=16.18",
+    "pnpm": ">=8"
+  },
+  "contributors": [
+    {
+      "name": "Filbert",
+      "email": "filbertfilbert21@gmail.com"
+    },
+    {
+      "name": "Alex Johnson",
+      "email": "alex@example.com"
+    },
+    {
+      "name": "Emily Davis",
+      "email": "emily@example.com"
+    },
+    {
+      "name": "Michael Brown",
+      "email": "michael@example.com"
+    }
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "npx prisma generate && next build",
@@ -14,7 +37,7 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "type":"module",
+  "type": "module",
   "lint-staged": {
     "*.{js,ts,tsx}": "eslint --fix app/**/*.{js,ts,tsx} components/**/*.{js,ts,tsx}"
   },
