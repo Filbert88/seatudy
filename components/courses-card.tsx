@@ -17,11 +17,11 @@ const CoursesCard = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md shadow-gray-500 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}
+      className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md hover:shadow-lg hover:shadow-gray-500 shadow-gray-400 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}
     >
       <div className="aspect-w-16 aspect-h-9 relative">
         <Image
-          src={thumbnailURL ? thumbnailURL : "https://imgur.com/O1gDMZb.png"}
+          src={thumbnailURL ?? "https://res.cloudinary.com/dl2cqncwz/image/upload/v1723488183/zfprmxxybgzwffyj8kon.png"}
           alt="course thumbnail"
           fill
           style={{ objectFit: "cover" }}
