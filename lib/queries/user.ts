@@ -25,9 +25,6 @@ export async function calculateUserProgress(userId: string, courseId: string) {
     const totalMaterials = course.materials.length;
     const totalAssignments = course.assignments.length;
 
-    console.log(`Total Materials: ${totalMaterials}`);
-    console.log(`Total Assignments: ${totalAssignments}`);
-
     const completedMaterials = await prisma.courseMaterialAccess.count({
       where: {
         userId,
@@ -51,12 +48,10 @@ export async function calculateUserProgress(userId: string, courseId: string) {
 
     const progressPct = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
-    console.log(`Progress Percentage: ${progressPct.toFixed(2)}%`);
-
     const enrollment = await prisma.courseEnrollment.findFirst({
       where: {
         userId: userId,
-        courseId: courseId
+        courseId: courseId,
         // userId_courseId: {
         //   userId,
         //   courseId,
