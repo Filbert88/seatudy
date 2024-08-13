@@ -89,6 +89,15 @@ export interface instructorInterface {
   fullName: string;
 }
 
+export interface CourseDetailCardProps {
+  thumbnailUrl: string;
+  price: string;
+  isLogin: boolean;
+  averageRating: number;
+  syllabus: string[];
+  courseId: string;
+}
+
 export interface CourseDetailsInterface {
   id: string;
   title: string;

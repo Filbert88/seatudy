@@ -3,15 +3,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-
-interface Props {
-  thumbnailUrl: string;
-  price: number;
-  isLogin: boolean;
-  averageRating: number;
-  syllabus: string[];
-  courseId: string;
-}
+import { CourseDetailCardProps } from "../types/types";
 
 const listSyllabus = (syllabus: string[]) => {
   return syllabus?.map((item, index) => {
@@ -19,7 +11,7 @@ const listSyllabus = (syllabus: string[]) => {
   });
 };
 
-const Card: React.FC<Props> = (props) => {
+const Card: React.FC<CourseDetailCardProps> = (props) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -59,21 +51,21 @@ const Card: React.FC<Props> = (props) => {
                 <button
                   onClick={handleClick}
                   type="button"
-                  className="bg-primary text-black border-black border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-black hover:text-white z-1"
+                  className="text-secondary border-secondary border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-secondary hover:text-white z-1"
                 >
-                  Checkout
+                  Purchase this Course
                 </button>
               ) : (
                 <button
                   onClick={handleClick}
                   type="button"
-                  className="bg-primary text-black border-black border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-black hover:text-white"
+                  className="bg-primary text-secondary border-secondary border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-secondary hover:text-white"
                 >
                   Sign in to purchase
                 </button>
               )}
             </div>
-            <p className="font-nunito font-bold text-gray-400 my-5">
+            <p className="font-nunito font-semibold text-grays my-5">
               30 days money back guarantee
               <br />
               Full lifetime access
@@ -82,8 +74,7 @@ const Card: React.FC<Props> = (props) => {
               This course includes:
             </div>
             <ul
-              className="font-nunito font-bold"
-              style={{ listStyleType: "disc", paddingLeft: "20px" }}
+              className="font-nunito font-bold list-disc pl-5"
             >
               {listSyllabus(props.syllabus)}
             </ul>
