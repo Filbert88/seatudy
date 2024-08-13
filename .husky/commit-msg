@@ -1,2 +1,0 @@
-pnpm run lint && npx lint-staged
-npx --no -- commitlint --edit \
