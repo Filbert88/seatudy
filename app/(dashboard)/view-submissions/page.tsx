@@ -57,7 +57,7 @@ const ViewSubmissionsPage = () => {
     return <LoadingBouncer />;
   }
 
-  const handleChange = (value: string, id: string) => {
+  const handleChange = (value: string) => {
     value = value.replace(/\D/g, "");
     if (parseInt(value) > 100) {
       value = "100";
@@ -165,7 +165,7 @@ const ViewSubmissionsPage = () => {
                     disabled={activeGradingId !== submission.id && activeGradingId !== ""}
                     className="border border-grays rounded-md py-1 px-3 w-[5rem]"
                     onChange={(e) => {
-                      handleChange(e.target.value, submission.id);
+                      handleChange(e.target.value);
                       setActiveGradingId(submission.id);
                     }}
                   />

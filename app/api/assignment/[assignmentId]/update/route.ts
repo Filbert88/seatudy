@@ -1,8 +1,14 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
+
+interface UpdateAssignmentData {
+  title?: string;
+  description?: string;
+  dueDateOffset?: number;
+}
 
 export const POST = async (req: Request, { params }: { params: { assignmentId: string } }) => {
   if (req.method !== "POST") {
@@ -39,7 +45,7 @@ export const POST = async (req: Request, { params }: { params: { assignmentId: s
     const body = await req.json();
     const { title, description, dueDateOffset } = body;
 
-    const updateData: any = {};
+    const updateData: UpdateAssignmentData = {};
 
     if (title) updateData.title = title;
     if (description) updateData.description = description;
@@ -51,7 +57,7 @@ export const POST = async (req: Request, { params }: { params: { assignmentId: s
     });
 
     return NextResponse.json({ message: "Success", data: updateAssignment }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in POST /api/course/[courseId]/assignment/[assignmentId]/update", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }

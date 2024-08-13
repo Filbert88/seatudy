@@ -5,7 +5,7 @@ import { authOptions } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 import { uploadFileToCloudinary } from "@/lib/cloudinary";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -15,11 +15,14 @@ interface UpdateProfileData {
   phoneNumber?: string;
   campus?: string;
   password?: string;
+  profileUrl?: string;
 }
 
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {
-    return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
+    return new NextResponse(`Method ${req.method} Not Allowed`, {
+      status: 405,
+    });
   }
 
   const session = await getServerSession({ req, ...authOptions });
@@ -36,13 +39,13 @@ export const POST = async (req: Request) => {
     }
 
     const formData = await req.formData();
-    const fullName = formData.get("fullName");
-    const email = formData.get("email");
-    const phoneNumber = formData.get("phoneNumber");
-    const campus = formData.get("campus");
-    const password = formData.get("password") as string;
+    const fullName = formData.get("fullName") as string | null;
+    const email = formData.get("email") as string | null;
+    const phoneNumber = formData.get("phoneNumber") as string | null;
+    const campus = formData.get("campus") as string | null;
+    const password = formData.get("password") as string | null;
 
-    const updateData: any = {};
+    const updateData: UpdateProfileData = {};
 
     if (fullName) updateData.fullName = fullName;
     if (email) updateData.email = email;
@@ -50,17 +53,21 @@ export const POST = async (req: Request) => {
     if (campus) updateData.campus = campus;
     if (password) updateData.password = await hash(password, 10);
 
-    let generatedUrl = user.profileUrl;
+    let generatedUrl: string | undefined = user.profileUrl ?? undefined;
     const file = formData.get("file");
     if (file && file instanceof File) {
       generatedUrl = await uploadFileToCloudinary(file);
       updateData.profileUrl = generatedUrl;
     } else if (file) {
-      return NextResponse.json({ message: "Invalid File Type" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid File Type" },
+        { status: 400 }
+      );
     }
-    console.log(file);
-    console.log(generatedUrl);
-    console.log(formData);
+
+    if (generatedUrl) {
+      updateData.profileUrl = generatedUrl;
+    }
 
     const updateUser = await prisma.user.update({
       where: { id: session.user.id },
@@ -70,9 +77,12 @@ export const POST = async (req: Request) => {
       },
     });
 
-    return NextResponse.json({ message: "Success", data: updateUser }, { status: 201 });
-  } catch (error: any) {
+    return NextResponse.json(
+      { message: "Success", data: updateUser },
+      { status: 201 }
+    );
+  } catch (error) {
     console.error("Error in PATCH /api/user/profile:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ status: 500 });
   }
 };

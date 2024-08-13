@@ -5,10 +5,11 @@ import CoursesCard from "@/components/courses-card";
 import { useEffect, useState } from "react";
 import { CourseInterface } from "@/components/types/types";
 import LoadingBouncer from "../all-courses/loading";
+import { Session } from "next-auth";
 
 interface HomeProps {
   initialCourseData: CourseInterface[];
-  session: any;
+  session: Session;
 }
 
 export default function Home({ initialCourseData, session }: HomeProps) {

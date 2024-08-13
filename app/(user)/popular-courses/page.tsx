@@ -14,14 +14,6 @@ export default function Home() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleLoginClick = () => {
-    router.push("/auth/signin");
-  };
-
-  const handleRegisterClick = () => {
-    router.push("/auth/signup");
-  };
-
   const getCourses = async () => {
     try {
       setIsLoading(true);

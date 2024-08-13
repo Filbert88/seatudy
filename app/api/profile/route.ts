@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -27,7 +27,8 @@ export const GET = async (req: Request) => {
     }
 
     return NextResponse.json({ message: "Success", data: user }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ status: 500 });
   }
 };

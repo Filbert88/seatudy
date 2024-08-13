@@ -27,7 +27,7 @@ const CreateCourse = () => {
     return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const handlePriceChange = (e: any) => {
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/\D/g, "");
     val = formatNumberWithCommas(val);
     setCoursePrice(val);

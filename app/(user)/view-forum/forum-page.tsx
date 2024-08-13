@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import React from "react";
 import {
-  CourseInterface,
   ForumCommentInterface,
   ForumPostInterface,
   SideBarDataInterface,
@@ -15,13 +14,12 @@ import {
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
+import { Session } from "next-auth";
 
-const ViewForumPage = ({ session }: { session: any }) => {
+const ViewForumPage = ({ session }: { session: Session }) => {
   //   console.log(session.user.id);
-  const [index, setIndex] = useState<number>(0);
   const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [courseData, setCourseData] = useState<CourseInterface>();
   const [forumData, setForumData] = useState<ForumPostInterface[]>();
   const [commentData, setCommentData] = useState<{
     [key: string]: ForumCommentInterface[];
@@ -115,7 +113,6 @@ const ViewForumPage = ({ session }: { session: any }) => {
     setIsPosting(true);
 
     const tempCommentId = Math.random().toString(36).substr(2, 9);
-    const userName = session?.user?.name || "Unknown User";
 
     const newComment: ForumCommentInterface = {
       id: tempCommentId,
@@ -195,8 +192,6 @@ const ViewForumPage = ({ session }: { session: any }) => {
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
-    const index = param.get("index");
-    setIndex(parseInt(index ?? "0"));
     setCourseId(id);
     setIsLoading(true);
     if (id !== null) {
@@ -239,7 +234,7 @@ const ViewForumPage = ({ session }: { session: any }) => {
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
       <CoursesBar
-        title={courseData?.title || ""}
+        title={""}
         materials={sideBarData?.materialData || []}
         assignments={sideBarData?.assignmentData || []}
         active={{ type: "forum", id: "view-forum" }}
@@ -250,7 +245,7 @@ const ViewForumPage = ({ session }: { session: any }) => {
             {`Forum Discussions`}
           </div>
           {forumData &&
-            forumData.map((post: any, index: number) => {
+            forumData.map((post: ForumPostInterface, index: number) => {
               return (
                 <div
                   key={index}
@@ -307,7 +302,7 @@ const ViewForumPage = ({ session }: { session: any }) => {
                       </div>
                       <div className="mt-1 ml-2">
                         {commentData[post.id]?.map(
-                          (comment: any, index: number) => {
+                          (comment: ForumCommentInterface, index: number) => {
                             return (
                               <div
                                 key={index}

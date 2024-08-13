@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import PdfViewer from "@/components/pdf-viewer";
 import {
@@ -12,19 +12,17 @@ import {
   getSideBarDataFromLocalStorage,
 } from "@/components/worker/local-storage-handler";
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import CertificateGenerator from "@/components/worker/certificate-generator";
 import { useSession } from "next-auth/react";
 
 const MaterialsPage = () => {
   const [materialId, setMaterialId] = useState<string | null>(null);
-  const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [materialData, setMaterialData] = useState<MaterialInterface | null>(null);
   const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
   const { toast } = useToast();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const session = useSession();
 
@@ -69,7 +67,6 @@ const MaterialsPage = () => {
     console.log("Current URL Params:", { id, materialId });
 
     setMaterialId(materialId);
-    setCourseId(id);
 
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
