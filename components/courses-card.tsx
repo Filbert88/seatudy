@@ -24,7 +24,7 @@ const CoursesCard = ({
   return (
     <button onClick={onClick} className="text-start">
       <div
-        className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md hover:shadow-lg hover:shadow-gray-500 shadow-gray-400 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}
+        className={`bg-white hover:cursor-pointer w-[18rem] h-[20rem] shadow-md hover:shadow-lg transition hover:shadow-gray-500 shadow-gray-400 rounded-lg p-2 flex flex-col justify-between text-sm ${className}`}
       >
         <div className="aspect-w-16 aspect-h-9 relative">
           <Image

@@ -22,6 +22,7 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
       router.push("/auth/signin");
     }
   };
+
   return (
     <>
       {isLoading ? (
@@ -30,19 +31,17 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
         </div>
       ) : (
         <div
-          className="flex flex-col rounded-md drop-shadow-md border absolute bottom-0 top-[5rem] right-[12rem] bg-white ml-20"
-          style={{ width: "400px", height: "550px" }}
+          className="flex flex-col rounded-md drop-shadow-md border absolute top-[6.5rem] right-[12rem] bg-white ml-20 w-[25rem] h-fit"
         >
-          <div className="relative w-full h-48">
+          <div className="relative w-full aspect-w-16 aspect-h-9">
             <Image
               src={props.thumbnailUrl || "/assets/dummyCourse.png"}
               fill
-              style={{ objectFit: "cover" }}
-              className="rounded-t-md"
+              className="rounded-t-md cover p-0.5"
               alt="Course Image"
             />
           </div>
-          <div className="p-6 overflow-y-auto">
+          <div className="p-6 overflow-y-auto h-full">
             <h1 className="font-nunito font-bold text-3xl mb-3">
               Rp {props?.price?.toLocaleString()}
             </h1>
@@ -70,17 +69,17 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
               <br />
               Full lifetime access
             </p>
-            <div className="font-nunito font-extrabold">
+            <div className="font-nunito font-bold">
               This course includes:
             </div>
             <ul
-              className="font-nunito font-bold list-disc pl-5"
+              className="font-nunito font-bold list-disc ml-5"
             >
               {listSyllabus(props.syllabus)}
             </ul>
-            <div className="flex flex-row items-end justify-end">
-              <span className="font-nunito mt-5 mx-3 font-bold text-black">
-                {props.averageRating}
+            <div className="flex flex-row justify-end mb-auto">
+              <span className="font-nunito mt-5 mx-3 font-bold text-secondary">
+                {props.averageRating.toPrecision(2)}
               </span>
               <div className="flex justify-end flex-row items-end mb-1">
                 {props.averageRating < 0.5 ? (

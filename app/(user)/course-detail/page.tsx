@@ -1,23 +1,48 @@
 "use client";
 import { useEffect, useState } from "react";
 import Card from "@/components/courses/card";
-import { CourseDetailsInterface } from "@/components/types/types";
+import { CourseDetailsInterface, ReviewDataProps } from "@/components/types/types";
 import { useSession } from "next-auth/react";
 import { getInstructorNamebyId } from "@/lib/queries/profile";
 import LoadingBouncer from "./loading";
+import { useToast } from "@/components/ui/use-toast";
 
 const CoursesDetailPage = () => {
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
   const [isLoading, setIsLoading] = useState(true);
+  const [reviewData, setReviewData] = useState<ReviewDataProps[]>([]);
   const [isLogin, setIsLogin] = useState(false);
   const [courseId, setCourseId] = useState<string>("");
   const { data: session, status } = useSession();
   const courseDetailUrl = `/api/course/${courseId}`;
+  const { toast } = useToast();
 
   useEffect(() => {
+    const getReviews = async (id: string) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/review?courseId=${id}`, {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+        });
+        const data = await response.json();
+        setReviewData(data);
+      } catch (error) {
+        console.error(error);
+        toast({
+          title: "Failed to load reviews data",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     const id = new URLSearchParams(window.location.search).get("id");
     if (id) {
       setCourseId(id);
+      getReviews(id);
     }
   }, []);
 
@@ -80,46 +105,58 @@ const CoursesDetailPage = () => {
   });
 
   return (
-    <>
-      <div className="bg-secondary px-40 pt-20 pb-5">
-        <h1 className="font-nunito font-bold text-4xl mx-5 pt-10 text-primary max-w-[100vh]">
+    <div className="font-nunito">
+      <div className="bg-secondary px-40 pt-20 pb-8">
+        <div className="font-bold text-4xl mx-5 pt-10 text-primary">
           {courseDetails.title}
-        </h1>
+        </div>
         <div className="flex flex-row w-[50%]">
-          <p className="font-nunito font-bold text-lg text-primary mx-5 py-5 max-w-[100vh]">
+          <p className="font-semibold text-lg text-primary mx-5 py-5">
             {courseDetails.description}
           </p>
         </div>
-        <div className="flex flex-row font-bold text-primary space-x-20 mx-5">
-          <p>Difficulty: {courseDetails.difficulty}</p>
-          <p>Instructor: {courseDetails.instructor.fullName}</p>
+        <div className="flex flex-row font-semibold text-primary space-x-20 mx-5">
+          <p>{`Difficulty: ${courseDetails.difficulty}`}</p>
+          <p>{`Instructor: ${courseDetails.instructor.fullName}`}</p>
         </div>
       </div>
-      <div className="flex md:flex-row flex-col-reverse px-40">
-        <div className=" border-black border-2 px-5 py-4 m-5 w-[75%]">
-          <h1 className="font-nunito font-bold text-2xl">
-            What you’ll learn from this course
-          </h1>
-          <ul
-            className="font-nunito font-bold list-disc pl-8"
-          >
-            {outline}
-          </ul>
-        </div>
-        <div className="px-5 py-4 m-5 w-[50%]">
-          <div className="px-5 py-4 m-5 max-w-[50%] z-0">
-            <Card
-              courseId={courseDetails.id}
-              thumbnailUrl={courseDetails.thumbnailUrl}
-              price={formatNumber(courseDetails.price)}
-              isLogin={isLogin}
-              averageRating={courseDetails.averageRating}
-              syllabus={courseDetails.syllabus}
-            />
+      <div className="flex flex-col px-40">
+        <div className="m-5 mx-2.5 w-[50%]">
+          <div className="bg-white rounded-md shadow-md px-4 py-4 m-1">
+            <div className="font-bold text-xl">
+              {"What you'll learn from this course"}
+            </div>
+            <ul className="font-bold list-disc pl-8">
+              {outline}
+            </ul>
           </div>
         </div>
+        <div className="px-4 text-md font-bold mb-3">{"Student's reviews:"}</div>
+        <div className="flex flex-wrap mx-2.5 w-[50%]">
+          {reviewData.slice(0, 12).map((review) => (
+            <div key={review.id} className="bg-white shadow-md flex flex-col flex-grow rounded-md px-2 py-2 mx-1 my-1">
+              <div className="font-bold text-xs mb-0.5">
+                {review.user.fullName}
+              </div>
+              <div className="text-xs mb-0.5">
+                {review.content}
+              </div>
+              <div className="font-semibold text-xs">
+                {`Rating: ${review.rating}`}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
+      <Card
+        courseId={courseDetails.id}
+        thumbnailUrl={courseDetails.thumbnailUrl}
+        price={formatNumber(courseDetails.price)}
+        isLogin={isLogin}
+        averageRating={courseDetails.averageRating}
+        syllabus={courseDetails.syllabus}
+      />
+    </div>
   );
 };
 
