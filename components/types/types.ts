@@ -209,7 +209,6 @@ export interface ForumCommentInterface {
   user: UserInterfaces;
 }
 
-
 enum NotificationType {
   ASSIGNMENT_SUBMISSION,
   COURSE_PURCHASE,
@@ -236,7 +235,7 @@ export interface SubmissionDataInterface {
     id: string;
     fullName: string;
     email: string;
-  }
+  };
 }
 
 export interface StudentEnrollmentInterface {
@@ -247,6 +246,7 @@ export interface StudentEnrollmentInterface {
   updatedAt: string;
   user: {
     fullName: string;
-  }
-  progress: {progressPct: string}[];
+    profileUrl: string;
+  };
+  progress: { progressPct: string }[];
 }
