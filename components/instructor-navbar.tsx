@@ -31,7 +31,9 @@ const InstructorNavbar = ({ activePage }: NavbarInterface) => {
             !pathname.includes("instructor-dashboard") &&
             !pathname.includes("view-submissions") &&
             !pathname.includes("create-courses") &&
-            !pathname.includes("instructor-notification-page") && (
+            !pathname.includes("instructor-notification-page") &&
+            !pathname.includes("edit-materials") &&
+            !pathname.includes("edit-assignments") && (
               <>
                 <a
                   onClick={() => handleNavbarClick("/view-materials")}

@@ -53,12 +53,14 @@ export async function calculateUserProgress(userId: string, courseId: string) {
 
     console.log(`Progress Percentage: ${progressPct.toFixed(2)}%`);
 
-    const enrollment = await prisma.courseEnrollment.findUnique({
+    const enrollment = await prisma.courseEnrollment.findFirst({
       where: {
-        userId_courseId: {
-          userId,
-          courseId,
-        },
+        userId: userId,
+        courseId: courseId
+        // userId_courseId: {
+        //   userId,
+        //   courseId,
+        // },
       },
     });
 

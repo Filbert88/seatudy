@@ -1,19 +1,16 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef } from "react";
 import { signOut, useSession } from "next-auth/react";
-import { UserInterface } from "./types/types";
 import { BounceLoader } from "react-spinners";
 import { useToast } from "@/components/ui/use-toast";
 import { IoPersonCircleSharp } from "react-icons/io5";
-import React, { useRef } from 'react';
+
 
 const ViewProfilePage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [userData, setUserData] = useState<UserInterface>();
-  const [userID, setUserID] = useState<string>();
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
@@ -44,8 +41,6 @@ const ViewProfilePage = () => {
           });
           const data = await response.json();
           if (response.ok) {
-            setUserData(data.data);
-            setUserID(data.data.id);
             setFullName(session?.user?.name ?? "");
             setEmail(session?.user?.email ?? "");
             setPhoneNumber(data.data.phoneNumber ?? "");
@@ -194,7 +189,7 @@ const ViewProfilePage = () => {
                 type="text"
                 id="formFullName"
                 placeholder="Enter full name"
-                className="p-3 rounded-md bg-primary text-black w-full h-8"
+                className="p-3 rounded-md border border-grays text-black w-full h-8"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
@@ -205,7 +200,7 @@ const ViewProfilePage = () => {
                 type="email"
                 id="formEmail"
                 placeholder="Enter email"
-                className="p-3 rounded-md bg-primary text-black w-full h-8"
+                className="p-3 rounded-md border border-grays text-black w-full h-8"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -216,7 +211,7 @@ const ViewProfilePage = () => {
                 type="number"
                 id="formPhoneNumber"
                 placeholder="Enter phone number"
-                className="p-3 rounded-md bg-primary text-black w-full h-8"
+                className="p-3 rounded-md border border-grays text-black w-full h-8"
                 value={phoneNumber ?? ""}
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
@@ -227,7 +222,7 @@ const ViewProfilePage = () => {
                 type="text"
                 id="formCampus"
                 placeholder="Enter campus"
-                className="p-3 rounded-md bg-primary text-black w-full h-8"
+                className="p-3 rounded-md border border-grays text-black w-full h-8"
                 value={campus}
                 onChange={(e) => setCampus(e.target.value)}
               />
@@ -238,7 +233,7 @@ const ViewProfilePage = () => {
                 type="password"
                 id="formPassword"
                 placeholder="Enter your current or new password"
-                className="p-3 rounded-md bg-primary text-black w-full h-8"
+                className="p-3 rounded-md border border-grays text-black w-full h-8"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />

@@ -34,9 +34,11 @@ const EditMaterialPage = () => {
           }
         );
       } else {
-        alert("Please upload a file in pdf or image format");
-        console.log(selectedFile.type);
-        console.log(allowedFileTypes);
+        toast({
+          title: "Invalid file type",
+          description: "Please upload a file in pdf format",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -144,7 +146,7 @@ const EditMaterialPage = () => {
             <input
               type="text"
               placeholder="Enter new material's title.."
-              className="p-3 rounded-md bg-white w-full h-8"
+              className="p-3 rounded-md border border-grays min-w-[40%] h-8"
               value={materialTitle}
               onChange={(e) => setMaterialTitle(e.target.value)}
             />
@@ -158,7 +160,7 @@ const EditMaterialPage = () => {
           <div className="font-semibold text-black mb-1 text-lg">
             Upload new material
           </div>
-          <div className="border-2 flex flex-col px-60 py-20 mb-2 border-dashed border-black bg-primary rounded-sm items-center justify-center text-secondary w-[40%]">
+          <div className="border-2 flex flex-col px-60 py-20 mb-2 border-dashed border-grays bg-white rounded-md items-center justify-center text-secondary w-[40%]">
             {fileUrl === "" ? (
               <FiUpload size={50} />
             ) : (

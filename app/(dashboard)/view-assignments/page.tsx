@@ -122,7 +122,7 @@ const ViewAssignmentPage = () => {
         <div className="flex flex-col">
           {courseDetails?.assignments.length === 0 ? (
             <div className="font-nunito text-2xl font-semibold">
-              {"No Assignments yet... :("}
+              {"You have not created any assignments yet"}
             </div>
           ) : (
             courseDetails?.assignments.map((assignment) => (

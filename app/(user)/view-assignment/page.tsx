@@ -102,57 +102,55 @@ const AssignmentPage = () => {
   }
 
   return (
-    <>
-      <div className="flex flex-row py-20 pl-64">
-        {isAssignmentAvailable ? (
-          <CoursesBar
-            title={sideBarData?.titleData || ""}
-            materials={sideBarData?.materialData || []}
-            assignments={sideBarData?.assignmentData || []}
-            active={{ type: "assignments", id: assignmentData?.id || "" }}
-          />
-        ) : (
-          <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
-            {"Course assignment not found"}
+    <div className="flex flex-row py-20 pl-64">
+      {isAssignmentAvailable ? (
+        <CoursesBar
+          title={sideBarData?.titleData || ""}
+          materials={sideBarData?.materialData || []}
+          assignments={sideBarData?.assignmentData || []}
+          active={{ type: "assignments", id: assignmentData?.id || "" }}
+        />
+      ) : (
+        <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
+          {"Course assignment not found"}
+        </div>
+      )}
+      {(!isLoading && isAssignmentAvailable) && (
+        <div className="flex flex-col ">
+          <div className="my-5 ml-10 font-nunito font-bold text-3xl">
+            {assignmentData?.title}
           </div>
-        )}
-        {(!isLoading && isAssignmentAvailable) && (
-          <div className="flex flex-col ">
-            <div className="my-5 ml-10 font-nunito font-bold text-3xl">
-              {assignmentData?.title}
-            </div>
-            <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
-              <button
-                onClick={handleClickInstructions}
-                className={`px-2 ${
-                  showInstructions ? "border-b-2 border-cyan-500 font-bold" : ""
-                }`}
-              >
-                Instructions
-              </button>
-              <button
-                onClick={handleClickSubmissions}
-                className={`px-2 ${
-                  showSubmissions ? "border-b-2 border-cyan-500 font-bold" : ""
-                }`}
-              >
-                Submissions
-              </button>
-            </div>
-            <hr className="border-t-2 border-gray-300 mx-10 mt-3 mb-5 min-w-[150vh]" />
-            <div className="ml-10">
-              {showInstructions && (
-                <Instructions>
-                  {assignmentData?.description ??
-                    "No instructions given"}
-                </Instructions>
-              )}
-              {showSubmissions && <Submission assignmentId={assignmentData?.id!}/>}
-            </div>
+          <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
+            <button
+              onClick={handleClickInstructions}
+              className={`mx-2 px-0.5 pb-1 ${
+                showInstructions ? "border-b-2 border-fourth font-bold" : ""
+              }`}
+            >
+            Instructions
+            </button>
+            <button
+              onClick={handleClickSubmissions}
+              className={`mx-2 px-0.5 pb-1 ${
+                showSubmissions ? "border-b-2 border-fourth font-bold" : ""
+              }`}
+            >
+            Submissions
+            </button>
           </div>
-        )}
-      </div>
-    </>
+          <hr className="border-t border-secondary mx-10 mt-1 mb-5 min-w-[150vh]" />
+          <div className="ml-10">
+            {showInstructions && (
+              <Instructions>
+                {assignmentData?.description ??
+                  "No instructions given"}
+              </Instructions>
+            )}
+            {showSubmissions && <Submission assignmentId={assignmentData?.id!}/>}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
