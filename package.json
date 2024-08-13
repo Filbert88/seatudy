@@ -9,7 +9,8 @@
     "export": "next export",
     "lint": "next lint",
     "seed": "npx tsx prisma/seed.tsx",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "test": "jest"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
@@ -46,12 +47,17 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.14",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.41",
     "prisma": "^5.17.0",
     "raw-loader": "^4.0.2",
