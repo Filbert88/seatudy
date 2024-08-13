@@ -13,7 +13,6 @@ import {
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
-import { useRouter } from "next/navigation";
 
 const ReviewPage = () => {
   const [tempRating, setTempRating] = useState(0);
@@ -22,7 +21,6 @@ const ReviewPage = () => {
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [courseId, setCourseId] = useState<string>("");
-  const router = useRouter();
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
@@ -80,7 +78,6 @@ const ReviewPage = () => {
         });
         setRating(0);
         setComment("");
-        router.push(`course-completion?id=${courseId}`);
       } else {
         toast({
           title: "Failed to submit review",
