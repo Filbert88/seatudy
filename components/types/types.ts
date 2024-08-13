@@ -25,6 +25,14 @@ export interface MaterialInterface {
   url: string;
   createdAt: string;
   updatedAt: string;
+  accesses: AccessesInterface[];
+}
+
+export interface AccessesInterface {
+  id: string;
+  userId: string;
+  courseMaterialId: string;
+  accessedAt: string;
 }
 
 export interface AssignmentInterface {
@@ -33,6 +41,23 @@ export interface AssignmentInterface {
   title: string;
   description: string;
   dueDateOffset: number;
+  course: AssignmentCourseInterface;
+  submissions: AsgSubmissionInterface[];
+}
+
+export interface AssignmentCourseInterface {
+  id: string;
+  title: string;
+  description: string;
+  syllabus: string[];
+  thumbnailUrl: string;
+  skills: string[];
+  instructorId: string;
+  createdAt: string;
+  updatedAt: string;
+  averageRating: number;
+  difficulty: string;
+  price: string;
 }
 
 export interface NavbarInterface {
@@ -60,6 +85,19 @@ export interface MaterialInterface {
   updatedAt: string;
 }
 
+export interface instructorInterface {
+  fullName: string;
+}
+
+export interface CourseDetailCardProps {
+  thumbnailUrl: string;
+  price: string;
+  isLogin: boolean;
+  averageRating: number;
+  syllabus: string[];
+  courseId: string;
+}
+
 export interface CourseDetailsInterface {
   id: string;
   title: string;
@@ -76,7 +114,9 @@ export interface CourseDetailsInterface {
   enrollments: object[];
   materials: MaterialInterface[];
   categories: object[];
+  assignments: AssignmentInterface[];
   transactions: object[];
+  instructor: instructorInterface;
 }
 
 export interface UserInterface {
@@ -93,15 +133,16 @@ export interface UserInterface {
 }
 
 export interface SideBarDataInterface {
-  materialData: string[];
-  assignmentData: string[];
+  materialData: MaterialInterface[];
+  assignmentData: AssignmentInterface[];
+  titleData: string;
 }
 
 export interface CourseSidebarInterface {
   title: string;
-  materials: string[];
-  assignments: string[];
-  active: { type: string; index: number };
+  materials: MaterialInterface[];
+  assignments: AssignmentInterface[];
+  active: { type: string; id: string };
 }
 
 export interface TransactionInterface {
@@ -122,18 +163,27 @@ export interface ForumPostInterface {
   user: {
     id: string;
     fullName: string;
-  }
+  };
   _count: {
     comments: number;
-  }
+  };
 }
 
-export interface AssignmentSubmissionInterface {
+export interface AsgSubmissionInterface {
   id: string;
   title: string;
   description: string;
   dueDateOffset: number;
   courseId: string;
+}
+
+export interface AssignmentSubmissionInterface {
+  id: string;
+  title: string;
+  content: string;
+  dueDateOffset: number;
+  courseId: string;
+  grade: number | null;
 }
 
 export interface StudentSubmissionInterface {
@@ -153,15 +203,59 @@ export interface SubmissionInterface {
   student: StudentSubmissionInterface;
 }
 
+export interface UserInterfaces {
+  id: string;
+  fullName: string;
+}
+
 export interface ForumCommentInterface {
   id: string;
-  content: string;
   postId: string;
+  content: string;
+  createdAt: string;
+  updatedAt?: string;
   userId: string;
+  user: UserInterfaces;
+}
+
+enum NotificationType {
+  ASSIGNMENT_SUBMISSION,
+  COURSE_PURCHASE,
+}
+
+export interface NotificationInterface {
+  id: string;
+  userId: string;
+  message: string;
+  type: NotificationType;
+  createdAt: string;
+  read: boolean;
+}
+
+export interface SubmissionDataInterface {
+  id: string;
+  content: string;
+  createdAt: string;
+  assignmentId: string;
+  studentId: string;
+  grade: number;
+  assignment: AssignmentSubmissionInterface;
+  student: {
+    id: string;
+    fullName: string;
+    email: string;
+  };
+}
+
+export interface StudentEnrollmentInterface {
+  id: string;
+  userId: string;
+  courseId: string;
   createdAt: string;
   updatedAt: string;
   user: {
-    id: string;
-    fullName: string
-  }
+    fullName: string;
+    profileUrl: string;
+  };
+  progress: { progressPct: string }[];
 }

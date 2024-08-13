@@ -1,18 +1,18 @@
 import { prisma } from "../prisma";
-
-export async function getEnrolledUser(courseId: string) {
+import { CourseInterface } from "@/components/types/types";
+async function getEnrolledUser(courseId: string) {
   try {
     const students = await prisma.courseEnrollment.findMany({
       where: { courseId },
       include: {
         user: {
           select: {
-            fullName: true, 
+            fullName: true,
           },
         },
         progress: {
           select: {
-            progressPct: true, 
+            progressPct: true,
           },
         },
       },
@@ -39,19 +39,38 @@ export async function getEnrolledUser(courseId: string) {
       };
     });
   } catch (error) {
-    console.error('Error retrieving student names and progress:', error);
+    console.error("Error retrieving student names and progress:", error);
     throw error;
   }
 }
 
-// expected result should look like this
-// [
-//   {
-//     fullName: 'Kenneth',
-//     progress: '75 %', 
-//   },
-//   {
-//     fullName: 'William',
-//     progress: '100 %',
-//   }
-// ]
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
+
+async function getCoursesInfo(): Promise<CourseInterface[]> {
+  try {
+    const courses = await prisma.course.findMany({
+      take: 8,
+      include: {
+        enrollments: true,
+        materials: true,
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+        transactions: true,
+      },
+    });
+
+    return JSON.parse(JSON.stringify(courses)); 
+  } catch (error) {
+    console.error("Error retrieving courses:", error);
+    throw error;
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export { getCoursesInfo, getEnrolledUser };

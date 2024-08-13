@@ -1,25 +1,22 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { RiDownload2Line } from "react-icons/ri";
 import LoadingBouncer from "../../(user)/all-courses/loading";
 import {
-  AssignmentSubmissionInterface,
-  CourseDetailsInterface,
-  SubmissionInterface,
+  SubmissionDataInterface,
 } from "@/components/types/types";
-import pencil_icon from "../../../public/assets/edit_icon.png";
-import delete_icon from "../../../public/assets/trash_icon.png";
-import Image from "next/image";
+
+import { useToast } from "@/components/ui/use-toast";
 
 const ViewSubmissionsPage = () => {
-  const router = useRouter();
-  const [submissions, setSubmissions] = useState<SubmissionInterface[]>([]);
-  const [assignmentSubmissions, setAssignmentSubmissions] = useState<
-    AssignmentSubmissionInterface[]
-  >([]);
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
+  const [grade, setGrade] = useState<string>("");
+  const [activeGradingId, setActiveGradingId] = useState<string>("");
+  const [comment, setComment] = useState<string>("");
+  const [submissionData, setSubmissionData] = useState<SubmissionDataInterface[]>([]);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -27,7 +24,7 @@ const ViewSubmissionsPage = () => {
       setCourseId(id);
     }
 
-    const fetchSubmissions = async () => {
+    const fetchSubmission = async (courseId: string) => {
       try {
         setIsLoading(true);
         const response = await fetch(`/api/submission?courseId=${courseId}`, {
@@ -37,25 +34,7 @@ const ViewSubmissionsPage = () => {
           },
         });
         const data = await response.json();
-        setSubmissions(data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const fetchCourse = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/course/${courseId}`, {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-          },
-        });
-        const data = await response.json();
-        setCourseDetails(data.data);
+        setSubmissionData(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -63,68 +42,135 @@ const ViewSubmissionsPage = () => {
       }
     };
     if (courseId) {
-      fetchSubmissions();
-      fetchCourse();
+      fetchSubmission(courseId);
     }
   }, [courseId]);
+
+  useEffect(() => {
+    if (grade === "") {
+      setActiveGradingId("");
+      setComment("");
+    }
+  }, [grade, activeGradingId])
+
+  if (isLoading) {
+    return <LoadingBouncer />;
+  }
+
+  const handleChange = (value: string, id: string) => {
+    value = value.replace(/\D/g, "");
+    if (parseInt(value) > 100) {
+      value = "100";
+    }
+    else if (parseInt(value) < 0) {
+      value = "0"
+    }
+    setGrade(value);
+  }
+
+
+
+  const handleSubmissionClick = async (assignmentId:string, studentId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/submission-score/create`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+        body: JSON.stringify({ 
+          content: comment,
+          grade: parseInt(grade),
+          assignmentId: assignmentId,
+          studentId: studentId,
+        }),
+      });
+      if (!response.ok) {
+        toast({
+          title: "An error occurred while grading the submission",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Successfully graded the submission",
+        });
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "An error occurred while grading the submission",
+        variant: "destructive",
+      });
+    } finally { 
+      setIsLoading(false);
+      setGrade("");
+      setActiveGradingId("");
+      setComment("");
+    }
+  }
 
   if (isLoading) {
     return <LoadingBouncer />;
   }
 
   return (
-    <div className="px-72 pt-24 bg-primary w-screen h-screen">
-      <div className="font-nunito text-4xl font-bold">
-        {courseDetails?.title}
+    <div className="px-10 pt-28 bg-primary w-screen h-screen">
+      <div className="font-nunito text-3xl mb-3 font-bold">
+        {"Submissions"}
       </div>
-      <button
-        onClick={() => router.push(`/create-assignments?id=${courseId}`)}
-        type="button"
-        className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2"
-      >
-        Create new task
-      </button>
       <div className="flex flex-col">
-        {submissions === undefined ? (
+        {submissionData.length === 0 ? (
           <div className="font-nunito text-2xl font-semibold">
-            No Submissions yet... :(
+            {"Submission list is empty"}
           </div>
         ) : (
-          submissions.map((submission) => (
-            <div key={submission.id}>
-              <button>
-                <div className="bg-white rounded-md shadow-md p-5 my-5">
-                  <div className="flex justify-between">
-                    <div className="font-nunito text-2xl font-extrabold">
-                      {submission?.assignment.title}
-                    </div>
-                    <div className="flex">
-                      <button>
-                        <Image
-                          src={pencil_icon}
-                          alt="edit"
-                          width={30}
-                          height={10}
-                        />
-                      </button>
-                      <button>
-                        <Image
-                          src={delete_icon}
-                          alt="delete"
-                          width={30}
-                          height={10}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="font-nunito text-base font-semibold flex">
-                    {submission?.assignment.description}
-                  </div>
-                  <div className="font-nunito text-sm items-end justify-end flex font-semibold">
-                    {submission?.assignment.dueDateOffset}
-                  </div>
+          submissionData.map((submission) => (
+            <div key={submission.id} className={`bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-3 min-w-[140vh] ${activeGradingId !== submission.id && activeGradingId !== "" && "opacity-60"}`}>
+              <div className="flex justify-between items-center">
+                <div className="font-nunito text-xl font-bold w-[40%] whitespace-nowrap">
+                  {submission.student.fullName}
                 </div>
-              </button>
+                <div className="font-nunito text-xl font-semibold">
+                  {submission.assignment.title}
+                </div>
+                <div className="flex ml-auto">
+                  
+                  {activeGradingId === submission.id && 
+                  <>
+                    <input 
+                      type="text" 
+                      value={comment}
+                      placeholder="Add comment.."
+                      disabled={activeGradingId !== submission.id && activeGradingId !== ""}
+                      className="border border-grays rounded-md py-1 px-3 w-[20rem] mr-3"
+                      onChange={(e) => {
+                        setComment(e.target.value);
+                      }}
+                    />
+                    <button 
+                      className="mr-10 px-3 py-1 bg-fourth text-white font-semibold rounded-md hover:shadow-md"
+                      onClick={() => {
+                        handleSubmissionClick(submission.assignmentId, submission.studentId);
+                      }}
+                    >Grade</button>
+                  </>
+                  }
+                  <a className="hover:bg-gray-100 text-grays rounded-lg mr-3" href={submission.content} target="_blank">
+                    <RiDownload2Line size={30} />
+                  </a>
+                  <input 
+                    type="text" 
+                    value={activeGradingId === submission.id ? grade : (submission.grade ? submission.grade.toString() : "")}
+                    disabled={activeGradingId !== submission.id && activeGradingId !== ""}
+                    className="border border-grays rounded-md py-1 px-3 w-[5rem]"
+                    onChange={(e) => {
+                      handleChange(e.target.value, submission.id);
+                      setActiveGradingId(submission.id);
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           ))
         )}

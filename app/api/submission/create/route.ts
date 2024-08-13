@@ -3,12 +3,14 @@ import { getServerAuthSession } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 import { createNotification } from "@/lib/queries/notification";
 import { NotificationType } from "@prisma/client";
+import { calculateUserProgress } from "@/lib/queries/user";
 
 async function getAssignmentAndInstructor(assignmentId: string) {
   return prisma.assignment.findUnique({
     where: { id: assignmentId },
     select: {
       title: true,
+      courseId: true,
       course: {
         select: {
           instructor: {
@@ -63,6 +65,8 @@ export async function POST(req: NextRequest) {
     }
 
     await createNotification(assignment.course.instructor.id, `New submission from ${session.user.name} for ${assignment.title}`, NotificationType.ASSIGNMENT_SUBMISSION);
+
+    await calculateUserProgress(session.user.id, assignment.courseId);
 
     return NextResponse.json(submission);
   } catch (error) {

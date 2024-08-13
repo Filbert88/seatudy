@@ -144,7 +144,6 @@ model Submission {
   student      User       @relation(fields: [studentId], references: [id])
   studentId    String
   grade        Float?
-  @@unique([assignmentId, studentId]) 
 }
 
 model Review {
@@ -191,7 +190,6 @@ model ForumComment {
   userId     String
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @default(now())
-  @@unique([content, postId, userId])  
 }
 
 model Notification {

@@ -3,39 +3,25 @@ import { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import Instructions from "@/components/assignments/instructions";
 import Submission from "@/components/assignments/submission";
-import { CourseInterface, SideBarDataInterface } from "@/components/types/types";
-import { BounceLoader } from "react-spinners";
+import { AssignmentInterface, SideBarDataInterface } from "@/components/types/types";
 import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
 import LoadingBouncer from "./loading";
-
-let AssignmentTitle = "Assignment 2: To do list application";
-let CourseTitle = "Introduction to Javascript";
-
-const dummyMaterials = [
-  "Quick Introduction",
-  "Algorithm & Basic Logics",
-  "Object Oriented Programming",
-  "DOM Manipulation",
-];
-
-const dummyAssignments = [
-  "Basic Arithmetic Calculator",
-  "To Do List Application",
-  "Javascript Quiz",
-];
-
-const dummyInstructions =
-  "**Create a simple to-do list application using JavaScript.** *The application should have the following features*:\n\n- Add a new task\n- Mark a task as completed\n- Delete a task\n- Edit a task\n\nYou can use any front-end framework or library to build the application. The application should be responsive and user-friendly. You can use any CSS framework to style the application. The application should be hosted on a public URL. You can use any hosting platform to host the application. The application should be accessible via the URL provided in the submission. The application should be built using JavaScript, HTML, and CSS. You can use any front-end framework or library to build the application. The application should be responsive and user-friendly. You can use any CSS framework to style the application. The application should be hosted on a public URL. You can use any hosting platform to host the application. The application should be accessible via the URL provided in the submission.";
+import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
+import CertificateGenerator from "@/components/worker/certificate-generator";
 
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [showSubmissions, setShowSubmissions] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [index, setIndex] = useState<number>(0);
+  const [isAssignmentAvailable, setIsAssignmentAvailable] = useState(true);
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
-  const [courseData, setCourseData] = useState<CourseInterface>();
+  const session = useSession();
+  const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
+
+  const { toast } = useToast();
 
   const handleClickInstructions = () => {
     setShowInstructions(true);
@@ -46,36 +32,69 @@ const AssignmentPage = () => {
     setShowSubmissions(true);
   };
 
+  const getAssignmentById = async (assignmentId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/assignment/${assignmentId}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      setAssignmentData(data.data);
+      if (data.message !== "Success") {
+        toast({
+          title: "Failed to load material",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Failed to load material",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
-    const index = param.get("index");
-    setIndex(parseInt(index ?? "0"));
+    const assignmentId = param.get("assignmentId");
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
       if (sideBarDataFromLocalStorage) {
         setSideBarData(sideBarDataFromLocalStorage);
+        setIsLoading(false);
       }
-      getCourses(id)
+      else {
+        console.log("Fetching course data from server");
+        getCourses(id, session.data?.user?.id)
         .then((data) => {
-          setCourseData(data);
-          if (!sideBarDataFromLocalStorage) {
-            const newSideBarData = {
-              materialData: data.materials.map(
-                (material: any) => material.title
-              ),
-              assignmentData: data.assignments.map(
-                (assignment: any) => assignment.title
-              ),
-            };
-            setSideBarData(newSideBarData);
-          }
-          setIsLoading(false);
+          const newSideBarData = {
+            materialData: data.materials,
+            assignmentData: data.assignments,
+            titleData: data.title,
+          };
+          setSideBarData(newSideBarData);
         })
         .catch((error) => {
           console.error("Error fetching course data:", error);
+          setIsAssignmentAvailable(false);
+          toast({
+            title: "Course not found",
+            variant: "destructive",
+          });
+        }).finally(() => {
           setIsLoading(false);
         });
+      }
+    }
+    if (assignmentId) {
+      getAssignmentById(assignmentId);
     }
   }, []);
 
@@ -86,53 +105,61 @@ const AssignmentPage = () => {
   }
 
   return (
-    <>
-      <div className="flex flex-row py-20 pl-64">
+    <div className="flex flex-row py-20 pl-64 font-nunito">
+      {isAssignmentAvailable ? (
         <CoursesBar
-          title={courseData?.title || ""}
+          title={sideBarData?.titleData ?? ""}
           materials={sideBarData?.materialData || []}
           assignments={sideBarData?.assignmentData || []}
-          active={{ type: "assignments", index: index }}
+          active={{ type: "assignments", id: assignmentData?.id ?? "" }}
         />
-        {!isLoading && (
-          <div className="flex flex-col ">
-            <div className="my-5 ml-10 font-nunito font-bold text-3xl">
-              {`Assignment ${index + 1}: ${
-                courseData?.assignments?.[index].title
-              }`}
-            </div>
-            <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
-              <button
-                onClick={handleClickInstructions}
-                className={`px-2 ${
-                  showInstructions ? "border-b-2 border-cyan-500 font-bold" : ""
-                }`}
-              >
-                Instructions
-              </button>
-              <button
-                onClick={handleClickSubmissions}
-                className={`px-2 ${
-                  showSubmissions ? "border-b-2 border-cyan-500 font-bold" : ""
-                }`}
-              >
-                Submissions
-              </button>
-            </div>
-            <hr className="border-t-2 border-gray-300 mx-10 mt-3 mb-5 min-w-[150vh]" />
-            <div className="ml-10">
-              {showInstructions && (
-                <Instructions>
-                  {courseData?.assignments?.[index].description ??
-                    "No instructions given"}
-                </Instructions>
-              )}
-              {showSubmissions && <Submission />}
-            </div>
+      ) : (
+        <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
+          {"Course assignment not found"}
+        </div>
+      )}
+      {(!isLoading && isAssignmentAvailable) && (
+        <div className="flex flex-col">
+            {localStorage.getItem("progress") === "100.00%" && 
+              <div className="flex ml-10 my-5">
+                <div className="mr-2">{"You've completed this course. Download your certificate "}</div>
+                <CertificateGenerator courseName={sideBarData?.titleData ?? ''} />
+              </div>
+            }
+          <div className="my-5 ml-10 font-nunito font-bold text-3xl">
+            {assignmentData?.title}
           </div>
-        )}
-      </div>
-    </>
+          <div className="flex flex-row font-nunito font-semibold mx-10 space-x-5">
+            <button
+              onClick={handleClickInstructions}
+              className={`mx-2 px-0.5 pb-1 ${
+                showInstructions ? "border-b-2 border-fourth font-bold" : ""
+              }`}
+            >
+            Instructions
+            </button>
+            <button
+              onClick={handleClickSubmissions}
+              className={`mx-2 px-0.5 pb-1 ${
+                showSubmissions ? "border-b-2 border-fourth font-bold" : ""
+              }`}
+            >
+            Submissions
+            </button>
+          </div>
+          <hr className="border-t border-secondary mx-10 mt-1 mb-5 min-w-[150vh]" />
+          <div className="ml-10">
+            {showInstructions && (
+              <Instructions>
+                {assignmentData?.description ??
+                  "No instructions given"}
+              </Instructions>
+            )}
+            {showSubmissions && <Submission assignmentId={assignmentData?.id!}/>}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

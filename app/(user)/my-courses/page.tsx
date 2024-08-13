@@ -2,9 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { BounceLoader } from "react-spinners";
 import { CourseInterface } from "@/components/types/types";
-import { set } from "zod";
 import CoursesCard from "@/components/courses-card";
 import LoadingBouncer from "../../(dashboard)/loading";
 
@@ -12,6 +10,7 @@ const MyCoursesPage = () => {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const router = useRouter();
   useEffect(() => {
     // validation if user hasn't logged in yet
@@ -58,9 +57,9 @@ const MyCoursesPage = () => {
         <div className="font-bold text-3xl mb-5">Your Course</div>
         <div className="flex">
           {courseData.length > 0 ? (
-            courseData.map((course, index) => (
+            courseData.map((course) => (
               <CoursesCard
-                key={index}
+                key={course.id}
                 courseTitle={course.title}
                 totalChapters={course.materials.length}
                 rating={course.averageRating}
@@ -68,15 +67,17 @@ const MyCoursesPage = () => {
                 totalEnrolled={course.enrollments.length}
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
-                className="mr-5 mb-5"
-                onClick={() =>
-                  router.push(`/learning-material?id=${course.id}`)
-                }
+                className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-not-allowed": ""}`}
+                onClick={() => {
+                  if (course.materials.length > 0) {
+                    router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
+                  }
+                }}
               />
             ))
           ) : (
             <div className="font-semibold text-2xl text-gray-800 flex">
-              You havent enrolled in any course yet... :(
+              {"Let's get started by purchasing your first course!"}
             </div>
           )}
         </div>

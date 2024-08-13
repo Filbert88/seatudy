@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { CourseInterface } from "@/components/types/types";
 import CoursesCard from "@/components/courses-card";
@@ -42,11 +41,11 @@ const InstructorDashboard = () => {
   }
 
   return (
-    <div className="pt-24">
-      <div className="font-nunito font-extrabold mx-20 flex items-center justify-between mt-5">
+    <div className="pt-24 font-nunito">
+      <div className="font-extrabold mx-20 flex items-center justify-between mt-5">
         <div className="text-3xl mr-auto">Currently Active Courses</div>
         <button
-          className="rounded-md text-background bg-fourth px-4 py-2 h-fit font-nunito text-white font-semibold"
+          className="rounded-md text-background bg-fourth px-4 py-2 h-fit text-white font-semibold"
           type="button"
           onClick={() => router.push("/create-courses")}
         >
@@ -54,15 +53,15 @@ const InstructorDashboard = () => {
         </button>
       </div>
       {courseData.length === 0 ? (
-        <div className="text-2xl font-nunito font-semibold mt-10 mx-20">
+        <div className="text-2xl font-semibold mt-10 mx-20">
           You have not created any courses yet
         </div>
       ) : (
         <div className="flex-grow mx-20 my-5">
           <div className="flex">
-            {courseData.map((course, index) => (
+            {courseData.map((course) => (
               <CoursesCard
-                key={index}
+                key={course.id}
                 courseTitle={course.title}
                 totalChapters={course.materials.length}
                 rating={course.averageRating}
@@ -71,7 +70,7 @@ const InstructorDashboard = () => {
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
                 className="mr-5 mb-5"
-                onClick={() => router.push(`/view-submissions?id=${course.id}`)}
+                onClick={() => router.push(`/view-assignments?id=${course.id}`)}
               />
             ))}
           </div>

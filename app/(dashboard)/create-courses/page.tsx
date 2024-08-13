@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import LoadingBouncer from "./loading";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
+import { useToast } from "@/components/ui/use-toast";
 
 const CreateCourse = () => {
   const { data: session, status } = useSession();
@@ -18,6 +19,19 @@ const CreateCourse = () => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string>("");
   const [syllabus, setSyllabus] = useState<string>("");
   const [skills, setSkills] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const { toast } = useToast();
+
+  
+  const formatNumberWithCommas = (number: string) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handlePriceChange = (e: any) => {
+    let val = e.target.value.replace(/\D/g, "");
+    val = formatNumberWithCommas(val);
+    setCoursePrice(val);
+  };
 
   const handleSubmit = async () => {
     if (
@@ -26,7 +40,10 @@ const CreateCourse = () => {
       !courseDifficulty ||
       !coursePrice
     ) {
-      alert("Please fill in all fields");
+      toast({
+        title: "All fields are required",
+        variant: "destructive",
+      });
       return;
     }
     try {
@@ -40,11 +57,8 @@ const CreateCourse = () => {
       syllabus.split(",").forEach((item) => f.append("syllabus", item.trim()));
       skills.split(",").forEach((item) => f.append("skills", item.trim()));
       f.append("difficulty", courseDifficulty);
-      f.append("price", coursePrice);
-      f.append(
-        "categoryNames",
-        JSON.stringify(["Programming", "Web Development"])
-      );
+      f.append("price", coursePrice.replace(/,/g, ""));
+      category.split(",").forEach((item) => f.append("categoryNames", item.trim().toLowerCase()));
 
       const response = await fetch("/api/course/create", {
         method: "POST",
@@ -54,13 +68,23 @@ const CreateCourse = () => {
         body: f,
       });
       if (response.status === 201) {
-        alert("Course created successfully");
+        toast({
+          title: "Course created successfully",
+        });
         router.push("/instructor-dashboard");
       } else {
-        alert("Error creating course");
+        toast({
+          title: "Error creating course",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -79,73 +103,73 @@ const CreateCourse = () => {
       router.push("/");
     }
     setIsLoading(false);
-  }, []);
+  }, [status, session, router]);
 
   if (isLoading) {
     return <LoadingBouncer />;
   }
 
   return (
-    <div className="pt-24 px-16 font-nunito">
-      <div className="flex flex-col items-start justify-start">
+    <div className="pt-28 px-16 font-nunito">
+      <div className="flex flex-col items-center justify-start">
         <div className="flex font-nunito font-bold text-3xl">
           Creating a new course
         </div>
-        <div className="bg-secondary rounded-md p-5 my-5 min-w-[50rem]">
+        <div className="bg-white text-secondary shadow-md p-5 my-5 min-w-[50rem]">
           <form className="form-content items-center justify-center">
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Course Title
             </div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
                 placeholder="Enter course title.."
-                className="p-3 rounded-md bg-white w-full h-8"
+                className="p-3 border border-grays rounded-md bg-white w-full h-8"
                 value={courseTitle}
                 onChange={(e) => setCourseTitle(e.target.value)}
               />
             </div>
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Description
             </div>
             <div className="form-group pb-5 w-full">
               <textarea
                 placeholder="Enter a short description.."
-                className="p-3 rounded-md bg-white w-full min-h-25"
+                className="p-3 border border-grays rounded-md w-full min-h-30"
                 value={courseDescription}
                 onChange={(e) => setCourseDescription(e.target.value)}
               />
             </div>
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Syllabus
             </div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
                 placeholder="Separate with comma.."
-                className="p-3 rounded-md bg-white w-full h-8"
+                className="p-3 border border-grays rounded-md w-full h-8"
                 value={syllabus}
                 onChange={(e) => setSyllabus(e.target.value)}
               />
             </div>
-            <div className="font-semibold text-white mb-2 text-lg">
+            <div className="font-semibold mb-2 text-lg">
               Developed skills
             </div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
                 placeholder="Separate with comma.."
-                className="p-3 rounded-md bg-white w-full h-8"
+                className="p-3 border border-grays rounded-md w-full h-8"
                 value={skills}
                 onChange={(e) => setSkills(e.target.value)}
               />
             </div>
             <div className="flex flex-row items-center mb-5">
-              <div className="font-semibold text-white text-lg">
+              <div className="font-semibold text-lg">
                 Difficulty:
               </div>
               <select
-                className="bg-white text-black rounded-md ml-5 px-2 py-1"
+                className="bg-white border border-grays text-secondary rounded-md ml-5 px-2 py-1"
                 onChange={(e) => setCourseDifficulty(e.target.value)}
               >
                 <option value="BEGINNER">Beginner</option>
@@ -153,7 +177,7 @@ const CreateCourse = () => {
                 <option value="ADVANCED">Advanced</option>
               </select>
             </div>
-            <label className="text-white border-2 border-dashed py-10 rounded-md flex flex-col items-center w-80">
+            <label className="text-secondary border-2 border-grays border-dashed py-10 rounded-md flex flex-col items-center w-80">
               {thumbnailUrl.length > 0 ? (
                 <Image
                   src={thumbnailUrl}
@@ -175,19 +199,26 @@ const CreateCourse = () => {
                 placeholder="Select a thumbnail file"
               />
             </label>
-            <div className="font-semibold text-white mb-2 text-lg mt-5">
+            <div className="font-semibold mb-2 text-lg mt-5">
+              Category
+            </div>
+            <input
+              type="text"
+              className="p-3 rounded-md border border-grays w-full h-8"
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Separate with comma.."
+            />
+            <div className="font-semibold mb-2 text-lg mt-5">
               Price
             </div>
-            <div className="form-group pb-5 w-full">
+            <div className="form-group pb-5 w-full flex items-center">
+              <div className="font-semibold text-lg mr-3">Rp </div>
               <input
                 type="text"
-                placeholder="Enter a course price in IDR.. (Type only the number)"
-                className="p-3 rounded-md bg-white w-full h-8"
+                placeholder="Enter course price.."
+                className="p-3 rounded-md border border-grays w-full h-8"
                 value={coursePrice}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "");
-                  setCoursePrice(val);
-                }}
+                onChange={handlePriceChange}
               />
             </div>
           </form>

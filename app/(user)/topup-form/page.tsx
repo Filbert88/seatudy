@@ -7,30 +7,75 @@ import { TransactionInterface } from "@/components/types/types";
 import { BounceLoader } from "react-spinners";
 import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
 import { SiAmericanexpress } from "react-icons/si";
+import { useToast } from "@/components/ui/use-toast";
 
 const TopUpFormPage = () => {
   const [cardNumber, setCardNumber] = useState<string>("");
   const [cardDate, setCardDate] = useState<string>("");
   const [cardCVC, setCardCVC] = useState<string>("");
   const [cardName, setCardName] = useState<string>("");
-  const [nominals, setNominals] = useState<number>();
+  const [nominals, setNominals] = useState<string>();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [transactionData, setTransactionData] =
     useState<TransactionInterface>();
-
   const router = useRouter();
-
-  const handleInputPhoneNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneNumber = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-    setCardNumber(phoneNumber);
-  };
+  const { toast } = useToast();
 
   useEffect(() => {
     if (status === "authenticated") {
       setIsLoading(false);
     }
   }, [status]);
+
+  const formatCardDate = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    const formattedValue =
+      cleanValue.length > 2
+        ? `${cleanValue.slice(0, 2)}/${cleanValue.slice(2)}`
+        : cleanValue;
+    return formattedValue.length > 5
+      ? formattedValue.slice(0, 5)
+      : formattedValue;
+  };
+
+  const formatCardCVC = (value: string) => {
+    const cleanValue = value.replace(/\D/g, "");
+    return cleanValue.length > 3 ? cleanValue.slice(0, 3) : cleanValue;
+  };
+
+  const formatCardNumberWithSpaces = (number: string) => {
+    return number.replace(/\D/g, "").replace(/(.{4})(?=.)/g, "$1 ");
+  };
+
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value.replace(/\D/g, "");
+    if (input.length <= 19) {
+      setCardNumber(formatCardNumberWithSpaces(input));
+    }
+  };
+
+  const handleCardDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardDate(formatCardDate(e.target.value));
+  };
+
+  const handleCardCVCChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardCVC(formatCardCVC(e.target.value));
+  };
+
+  const handleCardNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardName(e.target.value);
+  };
+
+  const formatNumberWithCommas = (number: string) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handleNominalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/\D/g, "");
+    val = formatNumberWithCommas(val);
+    setNominals(val);
+  };
 
   const addTransactionData = async () => {
     let isVisa = /^4\d{12}(\d{3})?$/;
@@ -43,46 +88,64 @@ const TopUpFormPage = () => {
       cardDate === "" ||
       cardCVC === "" ||
       cardName === "" ||
-      nominals === 0
+      !nominals
     ) {
-      alert("Please fill all the fields!");
+      toast({
+        title: "Please fill all the fields!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #2: Check if the card number is valid
     if (
-      !isVisa.test(cardNumber) &&
-      !isMastercard.test(cardNumber) &&
-      !isAmex.test(cardNumber)
+      !isVisa.test(cardNumber.replace(/\s/g, "")) &&
+      !isMastercard.test(cardNumber.replace(/\s/g, "")) &&
+      !isAmex.test(cardNumber.replace(/\s/g, ""))
     ) {
-      alert("Invalid card number!");
+      toast({
+        title: "Invalid card number!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #3: Check if the expiration date is valid
     let isDate = /^\d{2}\/\d{2}$/;
     if (!isDate.test(cardDate)) {
-      alert("Invalid expiration date!");
+      toast({
+        title: "Invalid expiration date!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #4: Check if the CVC is valid
     let isCVC = /^\d{3}$/;
     if (!isCVC.test(cardCVC)) {
-      alert("Invalid CVC!");
+      toast({
+        title: "Invalid CVC!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #5: Check if the nominals is valid
-    if (nominals === 0) {
-      alert("Invalid Nominals!");
+    if (nominals === "0") {
+      toast({
+        title: "Invalid Nominals!",
+        variant: "destructive",
+      });
       return;
     }
 
     // Case #6: Check if the name is valid
     let isName = /^[a-zA-Z\s]*$/;
     if (!isName.test(cardName)) {
-      alert("Invalid Name!");
+      toast({
+        title: "Invalid Name!",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -96,7 +159,7 @@ const TopUpFormPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            amount: nominals,
+            amount: parseInt(nominals.replace(/,/g, "")),
             cardNumber: cardNumber,
             expirationDate: cardDate,
             cvc: cardCVC,
@@ -106,14 +169,23 @@ const TopUpFormPage = () => {
         if (response.ok) {
           const data = await response.json();
           setTransactionData(data);
-          console.log(transactionData);
-          alert("Payment method has been added successfully!");
+          toast({
+            title: "Payment method has been added successfully!",
+          });
           router.push("/view-profile");
+        } else {
+          toast({
+            title: "Error adding a payment method",
+            variant: "destructive",
+          });
         }
       }
     } catch (error) {
-      alert("Error in POST /api/topup");
-      console.error("Error in POST /api/topup", error);
+      toast({
+        title: "Error adding a payment method",
+        variant: "destructive",
+      });
+      console.error("Error adding a payment method", error);
     } finally {
       setIsLoading(false);
     }
@@ -145,12 +217,12 @@ const TopUpFormPage = () => {
         </div>
         <div className="form-group pb-5 w-full">
           <input
-            type="number"
+            type="text"
             id="formCardNumber"
             placeholder="Enter a card number..."
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardNumber}
-            onChange={handleInputPhoneNumber}
+            onChange={handleCardNumberChange}
           />
         </div>
         <div className="font-bold">Expiration Date</div>
@@ -161,7 +233,7 @@ const TopUpFormPage = () => {
             placeholder="MM/YY"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardDate}
-            onChange={(e) => setCardDate(e.target.value)}
+            onChange={handleCardDateChange}
           />
         </div>
         <div className="font-bold">CVC</div>
@@ -172,7 +244,7 @@ const TopUpFormPage = () => {
             placeholder="Security Code"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardCVC}
-            onChange={(e) => setCardCVC(e.target.value)}
+            onChange={handleCardCVCChange}
           />
         </div>
         <div className="font-bold">Name on the card</div>
@@ -183,18 +255,18 @@ const TopUpFormPage = () => {
             placeholder="Name"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={cardName}
-            onChange={(e) => setCardName(e.target.value)}
+            onChange={handleCardNameChange}
           />
         </div>
         <div className="font-bold">Nominals (IDR)</div>
         <div className="form-group pb-5 w-full">
           <input
-            type="number"
+            type="text"
             id="formCardName"
             placeholder="Enter Nominals"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
             value={nominals}
-            onChange={(e) => setNominals(parseInt(e.target.value))}
+            onChange={handleNominalsChange}
           />
         </div>
         <div className="flex flex-row justify-end space-x-4 pt-5">

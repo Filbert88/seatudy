@@ -10,8 +10,10 @@ import {
 import LoadingBouncer from "../all-courses/loading";
 import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import "react-quill/dist/quill.snow.css";
 import "./custom-quill.css";
+import { useSession } from "next-auth/react";
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -20,10 +22,12 @@ const ViewForumPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseData, setCourseData] = useState<CourseInterface>();
   const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
-  const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
+  const [isThreadAvailable, setIsThreadAvailable] = useState<boolean>(true);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const router = useRouter();
+  const session = useSession();
+  const { toast } = useToast();
 
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
@@ -35,29 +39,30 @@ const ViewForumPage = () => {
 
     if (sideBarDataFromLocalStorage) {
       setSideBarData(sideBarDataFromLocalStorage);
+      setIsLoading(false);
     }
-
-    getCourses(id)
+    else {
+      console.log("Fetching course data from server");
+      getCourses(id, session.data?.user?.id)
       .then((data) => {
-        setCourseData(data);
-        if (!sideBarDataFromLocalStorage) {
-          const newSideBarData = {
-            materialData: data.materials.map((material: any) => material.title),
-            assignmentData: data.assignments.map(
-              (assignment: any) => assignment.title
-            ),
-          };
-          setSideBarData(newSideBarData);
-        }
-        if (data.materials.length === 0) {
-          setIsMaterialAvailable(false);
-        }
-        setIsLoading(false);
+        const newSideBarData = {
+          materialData: data.materials,
+          assignmentData: data.assignments,
+          titleData: data.title,
+        };
+        setSideBarData(newSideBarData);
       })
       .catch((error) => {
         console.error("Error fetching course data:", error);
+        setIsThreadAvailable(false);
+        toast({
+          title: "Course not found",
+          variant: "destructive",
+        });
+      }).finally(() => {
         setIsLoading(false);
       });
+    }
   }, []);
 
   const handleContentChange = (value: string) => {
@@ -66,7 +71,10 @@ const ViewForumPage = () => {
 
   const handleSubmit = async () => {
     if (!title || !content) {
-      alert("Please fill in all fields");
+      toast({
+        title: "Please fill in all fields",
+        variant: "destructive",
+      });
       return;
     }
     try {
@@ -75,6 +83,7 @@ const ViewForumPage = () => {
         method: "POST",
         headers: {
           accept: "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           courseId: courseId,
@@ -82,14 +91,23 @@ const ViewForumPage = () => {
           postContent: content,
         }),
       });
-      if (response.status === 200) {
-        alert("Forum thread created successfully");
+      if (response.ok) {
+        toast({
+          title: "Forum thread created successfully",
+        });
         router.push(`/view-forum?id=${courseId}`);
       } else {
-        alert("Error creating forum thread");
+        toast({
+          title: "Error creating forum thread",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Failed to create forum thread",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -101,10 +119,10 @@ const ViewForumPage = () => {
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
       <CoursesBar
-        title={courseData?.title || ""}
+        title={courseData?.title ?? ""}
         materials={sideBarData?.materialData || []}
         assignments={sideBarData?.assignmentData || []}
-        active={{ type: "forum", index: 0 }}
+        active={{ type: "forum", id: "new-thread" }}
       />
       {!isLoading && (
         <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
@@ -118,13 +136,13 @@ const ViewForumPage = () => {
               setTitle(e.target.value);
             }}
             value={title}
-            className="w-full h-10 rounded-lg px-3 mb-10"
-            placeholder=""
+            className="w-full h-10 rounded-lg px-3 mb-10 border border-grays"
+            placeholder="Your thread title.."
             name="title"
             required
           />
           <div className="text-xl font-semibold mb-3">{"Content"}</div>
-          <div className="min-h-60 w-full bg-white rounded-lg">
+          <div className="min-h-60 w-full bg-white rounded-lg border border-grays">
             <ReactQuill
               value={content}
               onChange={handleContentChange}
