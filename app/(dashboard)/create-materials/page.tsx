@@ -14,9 +14,7 @@ const CreateMaterial = () => {
   const [title, setTitle] = useState<string>("");
   const [courseId, setCourseId] = useState<string>("");
   const { toast } = useToast();
-  const allowedFileTypes = [
-    "application/pdf",
-  ];
+  const allowedFileTypes = ["application/pdf"];
 
   const router = useRouter();
 
@@ -36,7 +34,7 @@ const CreateMaterial = () => {
         toast({
           title: "Invalid file type",
           variant: "destructive",
-        })
+        });
         console.log(selectedFile.type);
         console.log(allowedFileTypes);
       }
@@ -61,26 +59,34 @@ const CreateMaterial = () => {
       if (response.ok) {
         toast({
           title: "Material uploaded successfully",
-        })
+        });
         router.push(`view-materials?id=${courseId}`);
-      }
-      else {
-        alert(response.json());
+      } else {
+        toast({
+          title: "Failed to upload material",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async () => {
     if (!file) {
-      alert("Please upload a file");
+      toast({
+        title: "Please select a file to upload",
+        variant: "destructive",
+      });
       return;
     }
     if (title === "") {
-      alert("Please enter the material's title");
+      toast({
+        title: "Please enter a title for the material",
+        variant: "destructive",
+      });
       return;
     }
     try {
@@ -97,13 +103,19 @@ const CreateMaterial = () => {
   return (
     <div className="pt-24 flex flex-col items-center text-primary font-nunito">
       {isLoading && <LoadingBouncer />}
-      <div className="text-3xl font-bold my-5 text-secondary">Create Material</div>
+      <div className="text-3xl font-bold my-5 text-secondary">
+        Create Material
+      </div>
       <div className="bg-secondary rounded-md px-10 py-5">
         {/* Submission Form */}
-        <div className="pb-2 text-xl font-semibold">
-          {"Material's title"}
-        </div>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="Enter material's title.." className="w-full py-1 px-3 rounded-sm text-secondary bg-primary border"/>
+        <div className="pb-2 text-xl font-semibold">{"Material's title"}</div>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          type="text"
+          placeholder="Enter material's title.."
+          className="w-full py-1 px-3 rounded-sm text-secondary bg-primary border"
+        />
         <div className="pt-5 pb-2 text-xl font-semibold">
           {"Material resource (.pdf)"}
         </div>
@@ -119,7 +131,11 @@ const CreateMaterial = () => {
             </div>
             <label className="cursor-pointer bg-transparent py-5 text-gray-700">
               <span className="font-bold underline">Choose File</span>
-              <input type="file" onChange={handleFileChange} className="hidden" />
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </label>
           </div>
           {file != null && (
