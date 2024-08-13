@@ -54,6 +54,11 @@ const CoursesDetailPage = () => {
     checkIfUserIsLoggedIn();
   }, [courseId, courseDetailUrl, status]);
 
+  const formatNumber = (number: number): string => {
+    return new Intl.NumberFormat('en-US').format(number) + ".00";
+  };
+
+
   if (isLoading) {
     return <LoadingBouncer />;
   }
@@ -91,23 +96,22 @@ const CoursesDetailPage = () => {
         </div>
       </div>
       <div className="flex md:flex-row flex-col-reverse px-40">
-        <div className=" border-black border-2 px-5 py-4 m-5 w-full order-2 md:order-1">
+        <div className=" border-black border-2 px-5 py-4 m-5 w-[75%]">
           <h1 className="font-nunito font-bold text-2xl">
             What you’ll learn from this course
           </h1>
           <ul
-            className="font-nunito font-bold"
-            style={{ listStyleType: "disc", paddingLeft: "20px" }}
+            className="font-nunito font-bold list-disc pl-8"
           >
             {outline}
           </ul>
         </div>
-        <div className="px-5 py-4 m-5 w-full order-1 md:order-2 z-50">
-          <div className="px-5 py-4 m-5 w-[50%] z-1">
+        <div className="px-5 py-4 m-5 w-[50%]">
+          <div className="px-5 py-4 m-5 max-w-[50%] z-0">
             <Card
               courseId={courseDetails.id}
               thumbnailUrl={courseDetails.thumbnailUrl}
-              price={courseDetails.price}
+              price={formatNumber(courseDetails.price)}
               isLogin={isLogin}
               averageRating={courseDetails.averageRating}
               syllabus={courseDetails.syllabus}

@@ -14,6 +14,14 @@ const CoursesCard = ({
   className,
   onClick,
 }: CardInterface) => {
+
+  const truncateString = (input: string, maxChars: number): string => {
+    if (input.length <= maxChars) {
+      return input;
+    }
+    return input.substring(0, maxChars) + "...";
+  };
+
   return (
     <div
       onClick={onClick}
@@ -46,9 +54,9 @@ const CoursesCard = ({
             }
           })}
         </div>
-        <div className="underline font-bold text-lg mb-2">{courseTitle}</div>
+        <div className="underline font-bold text-lg mb-2">{truncateString(courseTitle, 25)}</div>
         <div className="text-md font-semibold">{"Skills you'll gain:"}</div>
-        <div className="text-sm font-bold text-grays">{skills.join(", ")}</div>
+        <div className="text-sm font-semibold text-grays">{truncateString(skills.join(", "), 60)}</div>
       </div>
       <div className="text-sm text-grays mt-auto p-1 flex items-center justify-between">
         <FaUser className="mr-2" />

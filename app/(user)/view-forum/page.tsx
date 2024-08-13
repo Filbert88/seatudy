@@ -4,7 +4,6 @@ import ViewForumPage from "./forum-page";
 
 export default async function page() {
   const session = await getServerAuthSession();
-  console.log("woi anjing", session);
   return (
     <div className="overflow-x-hidden">
       <ViewForumPage session={session} />

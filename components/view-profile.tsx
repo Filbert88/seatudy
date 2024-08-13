@@ -131,6 +131,10 @@ const ViewProfilePage = () => {
     }
   };
 
+  const formatNumber = (number: number): string => {
+    return new Intl.NumberFormat('en-US').format(number) + ".00";
+  };
+
   if (isLoading) {
     return (
       <div className="fixed top-0 left-0 w-full h-full bg-primary bg-opacity-40 z-50 flex items-center justify-center">
@@ -147,7 +151,7 @@ const ViewProfilePage = () => {
             <div>
             <h1 className="font-bold text-xl mb-2">Your Balance</h1>
             <h1 className="font-bold text-4xl ">
-              Rp {balance ?? 0}
+              Rp {balance ? formatNumber(balance) : 0}
             </h1>
             <button
               type="button"
