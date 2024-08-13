@@ -14,10 +14,11 @@ const TopUpFormPage = () => {
   const [cardDate, setCardDate] = useState<string>("");
   const [cardCVC, setCardCVC] = useState<string>("");
   const [cardName, setCardName] = useState<string>("");
-  const [nominals, setNominals] = useState<number>();
+  const [nominals, setNominals] = useState<string>();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [transactionData, setTransactionData] = useState<TransactionInterface>();
+  const [transactionData, setTransactionData] =
+    useState<TransactionInterface>();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -26,11 +27,6 @@ const TopUpFormPage = () => {
       setIsLoading(false);
     }
   }, [status]);
-
-  const formatCardNumber = (value: string) => {
-    const cleanValue = value.replace(/\D/g, "");
-    return cleanValue.length > 19 ? cleanValue.slice(0, 19) : cleanValue;
-  };
 
   const formatCardDate = (value: string) => {
     const cleanValue = value.replace(/\D/g, "");
@@ -48,10 +44,14 @@ const TopUpFormPage = () => {
     return cleanValue.length > 3 ? cleanValue.slice(0, 3) : cleanValue;
   };
 
+  const formatCardNumberWithSpaces = (number: string) => {
+    return number.replace(/\D/g, "").replace(/(.{4})(?=.)/g, "$1 ");
+  };
+
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value.replace(/\D/g, "");
     if (input.length <= 19) {
-      setCardNumber(formatCardNumber(input));
+      setCardNumber(formatCardNumberWithSpaces(input));
     }
   };
 
@@ -67,8 +67,14 @@ const TopUpFormPage = () => {
     setCardName(e.target.value);
   };
 
+  const formatNumberWithCommas = (number: string) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   const handleNominalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNominals(parseInt(e.target.value));
+    let val = e.target.value.replace(/\D/g, "");
+    val = formatNumberWithCommas(val);
+    setNominals(val);
   };
 
   const addTransactionData = async () => {
@@ -93,9 +99,9 @@ const TopUpFormPage = () => {
 
     // Case #2: Check if the card number is valid
     if (
-      !isVisa.test(cardNumber) &&
-      !isMastercard.test(cardNumber) &&
-      !isAmex.test(cardNumber)
+      !isVisa.test(cardNumber.replace(/\s/g, "")) &&
+      !isMastercard.test(cardNumber.replace(/\s/g, "")) &&
+      !isAmex.test(cardNumber.replace(/\s/g, ""))
     ) {
       toast({
         title: "Invalid card number!",
@@ -125,7 +131,7 @@ const TopUpFormPage = () => {
     }
 
     // Case #5: Check if the nominals is valid
-    if (nominals === 0) {
+    if (nominals === "0") {
       toast({
         title: "Invalid Nominals!",
         variant: "destructive",
@@ -153,7 +159,7 @@ const TopUpFormPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            amount: nominals,
+            amount: parseInt(nominals.replace(/,/g, "")),
             cardNumber: cardNumber,
             expirationDate: cardDate,
             cvc: cardCVC,
@@ -167,6 +173,11 @@ const TopUpFormPage = () => {
             title: "Payment method has been added successfully!",
           });
           router.push("/view-profile");
+        } else {
+          toast({
+            title: "Error adding a payment method",
+            variant: "destructive",
+          });
         }
       }
     } catch (error) {
@@ -206,7 +217,7 @@ const TopUpFormPage = () => {
         </div>
         <div className="form-group pb-5 w-full">
           <input
-            type="number"
+            type="text"
             id="formCardNumber"
             placeholder="Enter a card number..."
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"
@@ -250,7 +261,7 @@ const TopUpFormPage = () => {
         <div className="font-bold">Nominals (IDR)</div>
         <div className="form-group pb-5 w-full">
           <input
-            type="number"
+            type="text"
             id="formCardName"
             placeholder="Enter Nominals"
             className="p-3 rounded-md bg-primary text-secondary w-full h-8"

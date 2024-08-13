@@ -2,8 +2,14 @@
 import { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import Instructions from "@/components/assignments/instructions";
-import { AssignmentInterface, SideBarDataInterface } from "@/components/types/types";
-import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
+import {
+  AssignmentInterface,
+  SideBarDataInterface,
+} from "@/components/types/types";
+import {
+  getCourses,
+  getSideBarDataFromLocalStorage,
+} from "@/components/worker/local-storage-handler";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
@@ -34,6 +40,7 @@ const ReviewPage = () => {
       });
       const data = await response.json();
       setAssignmentData(data.data);
+      console.log(assignmentData);
       if (data.message !== "Success") {
         toast({
           title: "Failed to load material",
@@ -88,20 +95,19 @@ const ReviewPage = () => {
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
-    setCourseId(id || "");
+    setCourseId(id ?? "");
     const assignmentId = param.get("assignmentId");
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
       if (sideBarDataFromLocalStorage) {
         setSideBarData(sideBarDataFromLocalStorage);
         setIsLoading(false);
-      }
-      else {
+      } else {
         console.log("Fetching course data from server");
         getCourses(id, session.data?.user?.id)
         .then((data) => {
@@ -118,15 +124,12 @@ const ReviewPage = () => {
             title: "Course not found",
             variant: "destructive",
           });
-        }).finally(() => {
-          setIsLoading(false);
-        });
       }
     }
     if (assignmentId) {
       getAssignmentById(assignmentId);
     }
-  }, []);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (comment.length === 0 && rating > 0) {
@@ -135,12 +138,10 @@ const ReviewPage = () => {
         description: "Let's leave some feedback for the instructor",
       });
     }
-  }, [rating]);
+  }, [rating]); // eslint-disable-line
 
-  if(isLoading){
-    return(
-      <LoadingBouncer />
-    )
+  if (isLoading) {
+    return <LoadingBouncer />;
   }
 
   return (
@@ -159,17 +160,83 @@ const ReviewPage = () => {
           <Instructions>{`Your feedback is incredibly valuable to us. We would love to hear your thoughts on the "**${sideBarData?.titleData}**" course. Please share your honest ratings and reviews to help us continue improving and provide the best learning experience possible. Thank you for being a part of our community!`}</Instructions>
         </div>
         <div className="flex mt-[5vh] items-center">
-          <button onClick={() => setRating(1)} onMouseEnter={() => setTempRating(1)} onMouseLeave={() => setTempRating(0)} className="hover:bg-transparent pr-[1vh]"><FaStar color={`${tempRating > 0 || rating > 0 ? '#ffb900' : 'gray'}`} size={50}/></button>
-          <button onClick={() => setRating(2)} onMouseEnter={() => setTempRating(2)} onMouseLeave={() => setTempRating(0)} className="hover:bg-transparent pr-[1vh]"><FaStar color={`${tempRating > 1 || rating > 1 ? '#ffb900' : 'gray'}`} size={50}/></button>
-          <button onClick={() => setRating(3)} onMouseEnter={() => setTempRating(3)} onMouseLeave={() => setTempRating(0)} className="hover:bg-transparent pr-[1vh]"><FaStar color={`${tempRating > 2 || rating > 2 ? '#ffb900' : 'gray'}`} size={50}/></button>
-          <button onClick={() => setRating(4)} onMouseEnter={() => setTempRating(4)} onMouseLeave={() => setTempRating(0)} className="hover:bg-transparent pr-[1vh]"><FaStar color={`${tempRating > 3 || rating > 3 ? '#ffb900' : 'gray'}`} size={50}/></button>
-          <button onClick={() => setRating(5)} onMouseEnter={() => setTempRating(5)} onMouseLeave={() => setTempRating(0)} className="hover:bg-transparent pr-[1vh]"><FaStar color={`${tempRating > 4 || rating > 4 ? '#ffb900' : 'gray'}`} size={50}/></button>
-          <div className="text-2xl ml-3 mt-1 font-semibold">{`${rating || tempRating} / 5`}</div>
+          <button
+            onClick={() => setRating(1)}
+            onMouseEnter={() => setTempRating(1)}
+            onMouseLeave={() => setTempRating(0)}
+            className="hover:bg-transparent pr-[1vh]"
+          >
+            <FaStar
+              color={`${tempRating > 0 || rating > 0 ? "#ffb900" : "gray"}`}
+              size={50}
+            />
+          </button>
+          <button
+            onClick={() => setRating(2)}
+            onMouseEnter={() => setTempRating(2)}
+            onMouseLeave={() => setTempRating(0)}
+            className="hover:bg-transparent pr-[1vh]"
+          >
+            <FaStar
+              color={`${tempRating > 1 || rating > 1 ? "#ffb900" : "gray"}`}
+              size={50}
+            />
+          </button>
+          <button
+            onClick={() => setRating(3)}
+            onMouseEnter={() => setTempRating(3)}
+            onMouseLeave={() => setTempRating(0)}
+            className="hover:bg-transparent pr-[1vh]"
+          >
+            <FaStar
+              color={`${tempRating > 2 || rating > 2 ? "#ffb900" : "gray"}`}
+              size={50}
+            />
+          </button>
+          <button
+            onClick={() => setRating(4)}
+            onMouseEnter={() => setTempRating(4)}
+            onMouseLeave={() => setTempRating(0)}
+            className="hover:bg-transparent pr-[1vh]"
+          >
+            <FaStar
+              color={`${tempRating > 3 || rating > 3 ? "#ffb900" : "gray"}`}
+              size={50}
+            />
+          </button>
+          <button
+            onClick={() => setRating(5)}
+            onMouseEnter={() => setTempRating(5)}
+            onMouseLeave={() => setTempRating(0)}
+            className="hover:bg-transparent pr-[1vh]"
+          >
+            <FaStar
+              color={`${tempRating > 4 || rating > 4 ? "#ffb900" : "gray"}`}
+              size={50}
+            />
+          </button>
+          <div className="text-2xl ml-3 mt-1 font-semibold">{`${
+            rating || tempRating
+          } / 5`}</div>
         </div>
-        <textarea name="comments" className="mt-10 p-3 rounded-md min-h-40 border border-grays" placeholder="Your feedback.." value={comment} onChange={(e) => setComment(e.target.value)} />
-        {rating > 0 && comment.length > 0 && 
-          <button disabled={submitting} onClick={handleSubmit} className={`${submitting ? "bg-gray-400" : "bg-fourth"} text-white font-semibold px-10 py-2 rounded-lg mt-10 w-fit`}>{submitting ? "Submitting..." : "Submit review"}</button>
-        }
+        <textarea
+          name="comments"
+          className="mt-10 p-3 rounded-md min-h-40 border border-grays"
+          placeholder="Your feedback.."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        {rating > 0 && comment.length > 0 && (
+          <button
+            disabled={submitting}
+            onClick={handleSubmit}
+            className={`${
+              submitting ? "bg-gray-400" : "bg-fourth"
+            } text-white font-semibold px-10 py-2 rounded-lg mt-10 w-fit`}
+          >
+            {submitting ? "Submitting..." : "Submit review"}
+          </button>
+        )}
       </div>
     </div>
   );
