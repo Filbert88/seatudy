@@ -7,6 +7,7 @@ import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
+import { useSession } from "next-auth/react";
 
 const ReviewPage = () => {
   const [tempRating, setTempRating] = useState(0);
@@ -19,6 +20,7 @@ const ReviewPage = () => {
     SideBarDataInterface | undefined
   >();
   const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
+  const session = useSession();
   const { toast } = useToast();
 
   const getAssignmentById = async (assignmentId: string) => {
@@ -101,7 +103,7 @@ const ReviewPage = () => {
       }
       else {
         console.log("Fetching course data from server");
-        getCourses(id)
+        getCourses(id, session.data?.user?.id)
         .then((data) => {
           const newSideBarData = {
             materialData: data.materials,

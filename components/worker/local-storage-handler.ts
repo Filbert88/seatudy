@@ -1,6 +1,7 @@
+import { useSession } from "next-auth/react";
 import { AssignmentInterface, MaterialInterface } from "../types/types";
 
-export const getCourses = async (id: any) => {
+export const getCourses = async (id: any, userId: any) => {
   try {
     const response = await fetch(`/api/course/${id}`, {
       method: "GET",
@@ -15,6 +16,9 @@ export const getCourses = async (id: any) => {
     localStorage.setItem('assignmentData', JSON.stringify(assignmentData));
     localStorage.setItem('title', data.data.title);
     localStorage.setItem('id', id ?? '0');
+    const userEnrollment = data.data.enrollments.find((enrollment: any) => enrollment.userId === userId);
+    const userProgress = userEnrollment ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct : "0%";
+    localStorage.setItem('progress', userProgress);
     return data.data;
   } catch (error) {
     console.error(error);
