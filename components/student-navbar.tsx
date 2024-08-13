@@ -12,18 +12,17 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
   const router = useRouter();
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const rating = searchParams.get("rating") || undefined;
-    const difficulty = searchParams.get("difficulty") || undefined;
-    const category = searchParams.get("category") || undefined;
-    const queryParams = buildQueryParams(
-      rating,
-      difficulty,
-      category,
-      searchQuery
-    );
     if (e.key === "Enter") {
-      location.reload();
+      const searchParams = new URLSearchParams(window.location.search);
+      const rating = searchParams.get("rating") || undefined;
+      const difficulty = searchParams.get("difficulty") || undefined;
+      const category = searchParams.get("category") || undefined;
+      const queryParams = buildQueryParams(
+        rating,
+        difficulty,
+        category,
+        searchQuery
+      );
       router.push(`/all-courses?${queryParams}`);
     }
   };
