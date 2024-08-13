@@ -12,6 +12,7 @@ const CreateMaterial = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState<string>("");
+  const [fileUrl, setFileUrl] = useState<string>("");
   const [courseId, setCourseId] = useState<string>("");
   const { toast } = useToast();
   const allowedFileTypes = ["application/pdf"];
@@ -25,23 +26,26 @@ const CreateMaterial = () => {
     }
   }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       if (allowedFileTypes.includes(selectedFile.type)) {
         setFile(selectedFile);
+        setFileUrl("");
+        await uploadFileToCloudinary(selectedFile).then((response) => {
+          setFileUrl(response);
+        });
       } else {
         toast({
           title: "Invalid file type",
+          description: "Please upload a file in pdf format",
           variant: "destructive",
         });
-        console.log(selectedFile.type);
-        console.log(allowedFileTypes);
       }
     }
   };
 
-  const handleCreateMaterial = async (url: string) => {
+  const handleCreateMaterial = async () => {
     try {
       setIsLoading(true);
       const response = await fetch("/api/course/material/create", {
@@ -53,7 +57,7 @@ const CreateMaterial = () => {
         body: JSON.stringify({
           courseId: courseId,
           title: title,
-          url: url,
+          url: fileUrl,
         }),
       });
       if (response.ok) {
@@ -68,45 +72,48 @@ const CreateMaterial = () => {
         });
       }
     } catch (error) {
-      console.error(error);
+      toast({
+        title: "An error occurred while uploading material",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSubmit = async () => {
-    if (!file) {
+    if (fileUrl === "") {
       toast({
-        title: "Please select a file to upload",
+        title: "Please upload a file",
         variant: "destructive",
       });
       return;
     }
     if (title === "") {
       toast({
-        title: "Please enter a title for the material",
+        title: "Please enter the material's title",
         variant: "destructive",
       });
       return;
     }
     try {
       setIsLoading(true);
-      await uploadFileToCloudinary(file).then((uploadedUrl: string) => {
-        handleCreateMaterial(uploadedUrl);
-      });
+      handleCreateMaterial();
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <LoadingBouncer />;
+  }
+
   return (
-    <div className="pt-24 flex flex-col items-center text-primary font-nunito">
-      {isLoading && <LoadingBouncer />}
-      <div className="text-3xl font-bold my-5 text-secondary">
-        Create Material
-      </div>
-      <div className="bg-secondary rounded-md px-10 py-5">
+    <div className="pt-24 flex flex-col items-center text-secondary font-nunito">
+      <div className="text-3xl font-bold my-5">Create Material</div>
+      <div className="bg-white shadow-md px-10 py-8">
         {/* Submission Form */}
         <div className="pb-2 text-xl font-semibold">{"Material's title"}</div>
         <input
@@ -114,13 +121,13 @@ const CreateMaterial = () => {
           onChange={(e) => setTitle(e.target.value)}
           type="text"
           placeholder="Enter material's title.."
-          className="w-full py-1 px-3 rounded-sm text-secondary bg-primary border"
+          className="w-full py-1 px-3 rounded-md border border-grays"
         />
         <div className="pt-5 pb-2 text-xl font-semibold">
           {"Material resource (.pdf)"}
         </div>
-        <div className="border-2 flex flex-col w-full px-60 py-20 mb-2 border-dashed border-black bg-primary rounded-sm items-center justify-center text-secondary">
-          {file == null ? (
+        <div className="border-2 flex flex-col w-full px-60 py-20 mb-2 border-dashed border-grays rounded-md items-center justify-center text-secondary">
+          {fileUrl === "" ? (
             <FiUpload size={50} />
           ) : (
             <GrDocumentVerified size={50} />
@@ -138,15 +145,24 @@ const CreateMaterial = () => {
               />
             </label>
           </div>
-          {file != null && (
-            <span className="pl-2 text-green-500 font-bold underline">
-              Ready to be submitted!
-            </span>
+          {fileUrl !== "" && (
+            <div className="flex items-center">
+              <div className="text-green-600 font-bold underline mr-3">
+                {"File uploaded: "}
+              </div>
+              <a
+                href={fileUrl}
+                className="underline font-semibold"
+                target="_blank"
+              >
+                {file?.name}
+              </a>
+            </div>
           )}
         </div>
         <Instructions>Supported formats: **.pdf**</Instructions>
         <button
-          className="font-bold py-3 my-3 px-10 rounded-lg text-white w-fit bg-fourth hover:shadow-md"
+          className="font-bold py-2 my-5 px-10 rounded-lg text-white w-fit bg-fourth hover:shadow-md"
           onClick={handleSubmit}
           disabled={isLoading}
         >
