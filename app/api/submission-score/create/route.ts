@@ -22,9 +22,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await req.json();
-    const { content, grade, assignmentId, studentId } = data;
+    const { grade, assignmentId, studentId } = data;
 
-    if (!content || grade === undefined || !assignmentId || !studentId) {
+    if (grade === undefined || !assignmentId || !studentId) {
       return NextResponse.json(
         {
           message: "Missing required fields",
@@ -33,14 +33,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const submission = await prisma.submission.create({
+    const submission = await prisma.submission.updateMany({
+      where: {
+        assignmentId: assignmentId,
+        studentId: studentId,
+      },
       data: {
-        content,
         grade,
-        assignment: { connect: { id: assignmentId } },
-        student: { connect: { id: studentId } },
       },
     });
+
+    if (submission.count === 0) {
+      return NextResponse.json(
+        {
+          message: "No submission found to update",
+        },
+        { status: 404 }
+      );
+    }
 
     const assignment = await prisma.assignment.findUnique({
       where: { id: assignmentId },

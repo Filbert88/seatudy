@@ -7,6 +7,8 @@ import { AssignmentInterface, SideBarDataInterface } from "@/components/types/ty
 import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
+import CertificateGenerator from "@/components/worker/certificate-generator";
 
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
@@ -16,6 +18,7 @@ const AssignmentPage = () => {
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
+  const session = useSession();
   const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
 
   const { toast } = useToast();
@@ -69,7 +72,7 @@ const AssignmentPage = () => {
       }
       else {
         console.log("Fetching course data from server");
-        getCourses(id)
+        getCourses(id, session.data?.user?.id)
         .then((data) => {
           const newSideBarData = {
             materialData: data.materials,
@@ -102,13 +105,13 @@ const AssignmentPage = () => {
   }
 
   return (
-    <div className="flex flex-row py-20 pl-64">
+    <div className="flex flex-row py-20 pl-64 font-nunito">
       {isAssignmentAvailable ? (
         <CoursesBar
-          title={sideBarData?.titleData || ""}
+          title={sideBarData?.titleData ?? ""}
           materials={sideBarData?.materialData || []}
           assignments={sideBarData?.assignmentData || []}
-          active={{ type: "assignments", id: assignmentData?.id || "" }}
+          active={{ type: "assignments", id: assignmentData?.id ?? "" }}
         />
       ) : (
         <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
@@ -116,7 +119,13 @@ const AssignmentPage = () => {
         </div>
       )}
       {(!isLoading && isAssignmentAvailable) && (
-        <div className="flex flex-col ">
+        <div className="flex flex-col">
+            {localStorage.getItem("progress") === "100.00%" && 
+              <div className="flex ml-10 my-5">
+                <div className="mr-2">{"You've completed this course. Download your certificate "}</div>
+                <CertificateGenerator courseName={sideBarData?.titleData ?? ''} />
+              </div>
+            }
           <div className="my-5 ml-10 font-nunito font-bold text-3xl">
             {assignmentData?.title}
           </div>

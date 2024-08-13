@@ -211,7 +211,7 @@ const ViewForumPage = ({ session }: { session: any }) => {
     }
     else {
       console.log("Fetching course data from server");
-      getCourses(id)
+      getCourses(id, session.user.id)
       .then((data) => {
         const newSideBarData = {
           materialData: data.materials,

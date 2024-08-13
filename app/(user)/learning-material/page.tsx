@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import PdfViewer from "@/components/pdf-viewer";
 import {
@@ -13,6 +13,8 @@ import {
 } from "@/components/worker/local-storage-handler";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
+import CertificateGenerator from "@/components/worker/certificate-generator";
+import { useSession } from "next-auth/react";
 
 const MaterialsPage = () => {
   const [materialId, setMaterialId] = useState<string | null>(null);
@@ -24,6 +26,7 @@ const MaterialsPage = () => {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const session = useSession();
 
   const getMaterialById = async (materialId: string) => {
     console.log("Fetching material for ID:", materialId);
@@ -74,7 +77,7 @@ const MaterialsPage = () => {
         setSideBarData(sideBarDataFromLocalStorage);
       } else {
         console.log("Fetching course data from server");
-        getCourses(id)
+        getCourses(id, session.data?.user?.id)
           .then((data) => {
             const newSideBarData = {
               materialData: data.materials,
@@ -123,6 +126,12 @@ const MaterialsPage = () => {
         )}
         {!isLoading && isMaterialAvailable && materialData && (
           <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
+            {localStorage.getItem("progress") === "100.00%" && 
+              <div className="flex">
+                <div className="mr-2">{"You've completed this course. Download your certificate "}</div>
+                <CertificateGenerator courseName={sideBarData?.titleData ?? ''} />
+              </div>
+            }
             <div className="my-5 font-nunito font-bold text-3xl">
               {materialData.title}
             </div>

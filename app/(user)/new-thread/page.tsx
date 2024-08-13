@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import "react-quill/dist/quill.snow.css";
 import "./custom-quill.css";
+import { useSession } from "next-auth/react";
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -25,6 +26,7 @@ const ViewForumPage = () => {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const router = useRouter();
+  const session = useSession();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const ViewForumPage = () => {
     }
     else {
       console.log("Fetching course data from server");
-      getCourses(id)
+      getCourses(id, session.data?.user?.id)
       .then((data) => {
         const newSideBarData = {
           materialData: data.materials,
