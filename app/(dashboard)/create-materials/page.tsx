@@ -15,7 +15,9 @@ const CreateMaterial = () => {
   const [fileUrl, setFileUrl] = useState<string>("");
   const [courseId, setCourseId] = useState<string>("");
   const { toast } = useToast();
-  const allowedFileTypes = ["application/pdf"];
+  const allowedFileTypes = [
+    "application/pdf",
+  ];
 
   const router = useRouter();
 
@@ -32,9 +34,11 @@ const CreateMaterial = () => {
       if (allowedFileTypes.includes(selectedFile.type)) {
         setFile(selectedFile);
         setFileUrl("");
-        await uploadFileToCloudinary(selectedFile).then((response) => {
-          setFileUrl(response);
-        });
+        await uploadFileToCloudinary(selectedFile).then(
+          (response) => {
+            setFileUrl(response);
+          }
+        );
       } else {
         toast({
           title: "Invalid file type",
@@ -63,9 +67,10 @@ const CreateMaterial = () => {
       if (response.ok) {
         toast({
           title: "Material uploaded successfully",
-        });
+        })
         router.push(`view-materials?id=${courseId}`);
-      } else {
+      }
+      else {
         toast({
           title: "Failed to upload material",
           variant: "destructive",
@@ -79,7 +84,7 @@ const CreateMaterial = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleSubmit = async () => {
     if (fileUrl === "") {
@@ -115,14 +120,10 @@ const CreateMaterial = () => {
       <div className="text-3xl font-bold my-5">Create Material</div>
       <div className="bg-white shadow-md px-10 py-8">
         {/* Submission Form */}
-        <div className="pb-2 text-xl font-semibold">{"Material's title"}</div>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          type="text"
-          placeholder="Enter material's title.."
-          className="w-full py-1 px-3 rounded-md border border-grays"
-        />
+        <div className="pb-2 text-xl font-semibold">
+          {"Material's title"}
+        </div>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" placeholder="Enter material's title.." className="w-full py-1 px-3 rounded-md border border-grays"/>
         <div className="pt-5 pb-2 text-xl font-semibold">
           {"Material resource (.pdf)"}
         </div>
@@ -138,11 +139,7 @@ const CreateMaterial = () => {
             </div>
             <label className="cursor-pointer bg-transparent py-5 text-gray-700">
               <span className="font-bold underline">Choose File</span>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-              />
+              <input type="file" onChange={handleFileChange} className="hidden" />
             </label>
           </div>
           {fileUrl !== "" && (
@@ -150,11 +147,7 @@ const CreateMaterial = () => {
               <div className="text-green-600 font-bold underline mr-3">
                 {"File uploaded: "}
               </div>
-              <a
-                href={fileUrl}
-                className="underline font-semibold"
-                target="_blank"
-              >
+              <a href={fileUrl} className="underline font-semibold" target="_blank">
                 {file?.name}
               </a>
             </div>
