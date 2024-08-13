@@ -16,6 +16,7 @@ cloudinary.config({
 });
 
 export async function GET(): Promise<NextResponse> {
+  console.log("masuk ga");
   try {
     const timestamp = Math.round(new Date().getTime() / 1000);
     const params_to_sign = { timestamp };
@@ -24,7 +25,7 @@ export async function GET(): Promise<NextResponse> {
       params_to_sign,
       apiSecret
     );
-
+    console.log("timestamp: ", timestamp);
     return NextResponse.json({ signature, timestamp }, { status: 200 });
   } catch (error) {
     console.error('Error generating signature:', error);
