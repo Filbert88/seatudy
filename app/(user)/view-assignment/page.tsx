@@ -89,10 +89,6 @@ const AssignmentPage = () => {
           .catch((error) => {
             console.error("Error fetching course data:", error);
             setIsAssignmentAvailable(false);
-            toast({
-              title: "Course not found",
-              variant: "destructive",
-            });
           })
           .finally(() => {
             setIsLoading(false);
