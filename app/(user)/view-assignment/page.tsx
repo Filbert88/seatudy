@@ -150,7 +150,7 @@ const AssignmentPage = () => {
             </button>
           </div>
           <hr className="border-t border-secondary mx-10 mt-1 mb-5 min-w-[150vh]" />
-          <div className="ml-10">
+          <div className="ml-10 px-2.5">
             {showInstructions && (
               <Instructions>
                 {assignmentData?.description ?? "No instructions given"}

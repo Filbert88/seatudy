@@ -100,6 +100,15 @@ export interface CourseDetailCardProps {
   courseId: string;
 }
 
+export interface ReviewDataProps {
+  id: string;
+  content: string;
+  rating: number;
+  user: UserInterfaces;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CourseDetailsInterface {
   id: string;
   title: string;

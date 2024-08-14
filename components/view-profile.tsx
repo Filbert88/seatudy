@@ -156,14 +156,14 @@ const ViewProfilePage = () => {
             <button
               type="button"
               onClick={handleTopUp}
-              className="rounded-lg font-bold bg-primary mt-5 py-2 px-5 text-secondary hover:opacity-50"
+              className="rounded-lg font-bold bg-primary transition mt-5 py-2 px-5 text-secondary hover:opacity-50"
             >
               Top up
             </button>
             </div>
             <div className="ml-auto">
               {!profileUrl.length ?
-                <IoPersonCircleSharp size={150} className="text-gray-300 hover:cursor-pointer hover:opacity-50 w-full" onClick={() => {
+                <IoPersonCircleSharp size={150} className="text-gray-300 hover:cursor-pointer hover:opacity-50 transition w-full" onClick={() => {
                   if (fileInputRef.current) {
                     fileInputRef.current.click();
                   }
@@ -246,13 +246,13 @@ const ViewProfilePage = () => {
               <button
                 onClick={handleSave}
                 type="button"
-                className="rounded-md bg-tertiary text-background bg-fourth px-10 text-white font-extrabold py-1 hover:shadow-md"
+                className="rounded-md bg-tertiary text-background transition bg-fourth px-10 text-white font-extrabold py-1 hover:shadow-md"
               >
                 Save
               </button>
               <button
                 type="button"
-                className="rounded-md bg-tertiary text-background bg-red-500 px-8 text-white font-extrabold ml-auto py-2 hover:shadow-md"
+                className="rounded-md bg-tertiary text-background transition bg-red-500 px-8 text-white font-extrabold ml-auto py-2 hover:shadow-md"
                 onClick={() => signOut()}
               >
                 Logout

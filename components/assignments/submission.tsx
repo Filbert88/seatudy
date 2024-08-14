@@ -1,12 +1,14 @@
 "use client";
 import Instructions from "./instructions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import LoadingBouncer from "../loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FiUpload } from "react-icons/fi";
 import { GrDocumentVerified } from "react-icons/gr";
 import { MdInfoOutline } from "react-icons/md";
+import { SubmissionDataInterface } from "../types/types";
+import { useSession } from "next-auth/react";
 
 interface SubmissionProps {
   assignmentId: string;
@@ -18,7 +20,9 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
   const [loading, setIsLoading] = useState(false);
   const [fileUrl, setFileUrl] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [grade, setGrade] = useState<any>("notsubmitted");
   const { toast } = useToast();
+  const session = useSession();
 
   const allowedFileTypes = [
     "application/pdf",
@@ -26,6 +30,37 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
     "image/png",
     "image/jpg",
   ];
+
+  useEffect(() => {
+    fetchSubmission(assignmentId);
+    
+  }, []);
+
+  const fetchSubmission = async (assignmentId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/submission-score?userId=${session.data?.user.id}&assignmentId=${assignmentId}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      await response.json().then((data) => {
+        if (response.status === 404) {
+          setGrade("notsubmitted");
+        }
+        else {
+          setGrade(data.grade);
+          console.log(data.grade);
+        }
+      });
+      
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -84,6 +119,7 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
       });
     } finally {
       setUploading(false);
+      await fetchSubmission(assignmentId);
     }
   };
 
@@ -124,7 +160,8 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
 
   if (loading) return <LoadingBouncer />;
 
-  return (
+  if (grade === "notsubmitted") {
+    return (
     <>
       <div className="border border-secondary font-secondary flex flex-row px-5 py-3 items-center min-w-[10vh] max-w-fit">
         <MdInfoOutline size={40} />
@@ -132,7 +169,6 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
           Please upload your file in pdf, png, jpeg, or jpg format
         </div>
       </div>
-
       <div className="font-nunito mt-5 mb-3">
         Upload your project file down below:
       </div>
@@ -162,7 +198,7 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
           </div>
         )}
       </div>
-      <Instructions>Supported formats: **pdf, png, jpeg, jpg**</Instructions>
+      <Instructions>{"Supported formats: **pdf, png, jpeg, jpg**"}</Instructions>
       <form className="py-5 flex flex-row">
         <input type="checkbox" className="mr-3" onClick={handleClick} checked={validate} />
         <Instructions>
@@ -181,7 +217,42 @@ const Submission = ({ assignmentId }: SubmissionProps) => {
         {uploading ? "Uploading..." : "Submit"}
       </button>
     </>
-  );
+    );
+  }
+
+  else if (grade === null) {
+    return (
+      <>
+        <div className="border border-secondary font-secondary flex flex-row px-5 py-3 items-center min-w-[10vh] max-w-fit mb-3">
+          <MdInfoOutline size={40} />
+          <div className="font-nunito font-bold p-5">
+            {"Your submission is being reviewed by the instructor"}
+          </div>
+        </div>
+        <div className="font-nunito text-secondary text-xl mb-3">{"You will be notified once the review is complete."}</div>
+        <div className="font-nunito text-secondary font-bold">{"* You can only submit your assignment once"}</div>
+      </>
+    )
+  }
+
+  else {
+    return (
+      <>
+        <div className="border border-secondary font-secondary flex flex-row px-5 py-3 items-center min-w-[10vh] max-w-fit mb-3">
+          <MdInfoOutline size={40} />
+          <div className="font-nunito font-bold p-5">
+            {"Your submission has been reviewed by the instructor"}
+          </div>
+        </div>
+        <div className="flex items-center mt-5">
+          <div className="font-nunito text-secondary font-semibold text-2xl">{`Your score is`}</div>
+          <div className="bg-secondary ml-3 py-0.5 px-2 text-2xl rounded-md">
+            <div className="font-nunito font-bold text-primary">{grade}</div>
+          </div>
+        </div>
+      </>
+    )
+  }
 };
 
 export default Submission;
