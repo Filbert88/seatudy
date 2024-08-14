@@ -121,13 +121,14 @@ const CreateAssignmentsPage = () => {
   return (
     <div className="pt-28 px-16 font-nunito text-secondary">
       <div className="flex flex-col items-center">
-        <div className="flex font-nunito font-bold text-3xl">
-          Course: {courseDetails?.title}
-        </div>
+
         <div className="bg-white shadow-md p-5 my-5 min-w-[50rem]">
+          <div className="flex font-nunito font-bold text-3xl justify-center mb-3">
+            Course: {courseDetails?.title}
+          </div>
           <form className="form-content items-center justify-center">
             <div className="font-semibold mb-2 text-lg">
-              Assignment&apos;s Title
+              {"Assignment Title"}
             </div>
             <div className="form-group pb-5 w-full">
               <input
@@ -160,9 +161,9 @@ const CreateAssignmentsPage = () => {
           </form>
           <button
             onClick={handleSubmit}
-            className="bg-fourth text-white py-2 px-10 hover:shadow-md font-semibold w-fit rounded-md mt-5"
+            className="bg-fourth text-white py-2 px-10 hover:shadow-md font-semibold w-fit rounded-md my-5 transition"
           >
-            Upload Assignment
+            Create Assignment
           </button>
         </div>
       </div>

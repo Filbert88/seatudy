@@ -169,7 +169,7 @@ const EditMaterialPage = () => {
             )}
             <div className="flex flex-row">
               <div className="font-bold pr-1 py-5">
-                Drag and drop file here or
+                Upload material file by
               </div>
               <label className="cursor-pointer bg-transparent py-5 text-gray-700">
                 <span className="font-bold underline">Choose File</span>
@@ -198,7 +198,7 @@ const EditMaterialPage = () => {
         </form>
         <button
           onClick={handleSubmit}
-          className="flex items-center justify-center text-white font-nunito font-semibold bg-fourth rounded-md w-fit px-5 py-2 mt-5 hover:shadow-md"
+          className="flex items-center justify-center text-white font-nunito font-semibold bg-fourth rounded-md w-fit px-5 py-2 mt-5 hover:shadow-md transition"
         >
           Save Changes
         </button>

@@ -95,20 +95,20 @@ export default function Home({ initialCourseData, session }: HomeProps) {
               <span className="font-bold text-4xl p-3">
                 Elevate your skills with
               </span>
-              <div className="flex flex-col md:flex-row p-3 justify-center md:justify-start items-center">
+              <div className="flex flex-col md:flex-row p-3 justify-center md:justify-start items-center mb-1">
                 <SeatudyLogo className="h-10 w-10 mx-2" />
                 <span className="font-bold text-3xl">seatudy</span>
               </div>
               <div className="flex flex-col md:flex-row p-3 justify-center md:justify-start items-center">
                 <button
                   onClick={handleRegisterClick}
-                  className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4 mb-3 md:mb-0 hover:bg-white hover:text-black"
+                  className="bg-transparent hover:cursor-pointer border border-white rounded-md px-10 py-1.5 font-semibold mx-4 mb-3 md:mb-0 hover:opacity-60 transition"
                 >
                   Join for free
                 </button>
                 <button
                   onClick={handleLoginClick}
-                  className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4 hover:bg-transparent hover:text-white hover:border"
+                  className="bg-white hover:cursor-pointer rounded-md px-5 py-1.5 text-secondary font-semibold mx-4 hover:opacity-60 transition"
                 >
                   I have an account
                 </button>
@@ -123,9 +123,9 @@ export default function Home({ initialCourseData, session }: HomeProps) {
           Explore our courses
         </div>
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center place-items-center lg:place-items-start">
-          {courseData.map((course, index) => (
+          {courseData.map((course) => (
             <CoursesCard
-              key={index}
+              key={course.id}
               courseTitle={course.title}
               totalChapters={course.materials.length}
               rating={course.averageRating}
@@ -140,7 +140,6 @@ export default function Home({ initialCourseData, session }: HomeProps) {
               }`}
               onClick={() => {
                 if (course.materials.length > 0) {
-                  // router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
                   router.push(`/course-detail?id=${course.id}`);
                 }
               }}

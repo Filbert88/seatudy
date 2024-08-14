@@ -113,25 +113,22 @@ const SigninForm: React.FC = () => {
             required
           />
 
-          <div className="flex justify-between">
-            <a className="mr-2 text-primary">{"Don't have an account yet?"}</a>
-            <a
-              className="underline text-primary hover:cursor-pointer mr-auto"
+          <div className="flex">
+            <div className="mr-2 text-primary">{"Don't have an account yet?"}</div>
+            <button
+              className="underline hover:opacity-50 transition text-primary hover:cursor-pointer mr-auto"
               onClick={handleRegisterClick}
             >
               Sign Up here
-            </a>
-            <div className="underline text-primary hover:cursor-pointer">
-              Forgot Password
-            </div>
+            </button>
           </div>
 
-          <div
+          <button
             onClick={handleLoginClick}
-            className="bg-fourth mt-8 w-fit px-10 py-2 text-white font-bold rounded-lg hover:cursor-pointer"
+            className="bg-fourth mt-8 hover:shadow-md transition w-fit px-10 py-2 text-white font-bold rounded-lg hover:cursor-pointer"
           >
             Sign In
-          </div>
+          </button>
         </div>
       </div>
     </div>

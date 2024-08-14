@@ -112,10 +112,11 @@ const CreateCourse = () => {
   return (
     <div className="pt-28 px-16 font-nunito">
       <div className="flex flex-col items-center justify-start">
-        <div className="flex font-nunito font-bold text-3xl">
-          Creating a new course
-        </div>
+
         <div className="bg-white text-secondary shadow-md p-5 my-5 min-w-[50rem]">
+          <div className="flex font-nunito font-bold text-3xl mb-3 justify-center">
+            Creating a new course
+          </div>
           <form className="form-content items-center justify-center">
             <div className="font-semibold mb-2 text-lg">
               Course Title
@@ -166,10 +167,10 @@ const CreateCourse = () => {
             </div>
             <div className="flex flex-row items-center mb-5">
               <div className="font-semibold text-lg">
-                Difficulty:
+                Difficulty
               </div>
               <select
-                className="bg-white border border-grays text-secondary rounded-md ml-5 px-2 py-1"
+                className="bg-white border border-grays text-secondary rounded-md ml-5 px-2 py-1 hover:cursor-pointer font-nunito"
                 onChange={(e) => setCourseDifficulty(e.target.value)}
               >
                 <option value="BEGINNER">Beginner</option>
@@ -177,7 +178,7 @@ const CreateCourse = () => {
                 <option value="ADVANCED">Advanced</option>
               </select>
             </div>
-            <label className="text-secondary border-2 border-grays border-dashed py-10 rounded-md flex flex-col items-center w-80">
+            <label className="text-secondary border-2 border-grays border-dashed py-10 rounded-md flex flex-col items-center w-80 hover:cursor-pointer hover:opacity-80 transition">
               {thumbnailUrl.length > 0 ? (
                 <Image
                   src={thumbnailUrl}

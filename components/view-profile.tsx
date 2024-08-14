@@ -169,7 +169,7 @@ const ViewProfilePage = () => {
                   }
                 }} />
                 :
-              <div className="hover:cursor-pointer hover:opacity-50 aspect-w-16 aspect-h-16 relative w-[150px] h-[150px]" onClick={() => {
+              <div className="hover:cursor-pointer hover:opacity-50 aspect-w-16 aspect-h-16 transition relative w-[150px] h-[150px]" onClick={() => {
                 if (fileInputRef.current) {
                   fileInputRef.current.click();
                 }

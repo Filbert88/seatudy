@@ -64,19 +64,20 @@ export default function Home() {
       <div className="flex-grow mx-40 my-5">
         <div className="font-bold text-2xl mb-5">Our most enrolled courses</div>
         <div className="flex flex-wrap">
-          {courseData.map((course, index) => (
-            <CoursesCard
-              key={index}
-              courseTitle={course.title}
-              totalChapters={course.materials.length}
-              rating={course.averageRating}
-              skills={course.skills}
-              totalEnrolled={course.enrollments.length}
-              difficulty={course.difficulty}
-              thumbnailURL={course.thumbnailUrl}
-              className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-default": ""}`}
-              onClick={() => router.push(`/course-detail?id=${course.id}`)}
-            />
+          {courseData.map((course) => (
+            <div key={course.id} className="mr-5 mb-5">
+              <CoursesCard
+                courseTitle={course.title}
+                totalChapters={course.materials.length}
+                rating={course.averageRating}
+                skills={course.skills}
+                totalEnrolled={course.enrollments.length}
+                difficulty={course.difficulty}
+                thumbnailURL={course.thumbnailUrl}
+                className={course.materials.length === 0 ? "opacity-60 hover:cursor-default": ""}
+                onClick={() => router.push(`/course-detail?id=${course.id}`)}
+              />
+            </div>
           ))}
         </div>
       </div>
