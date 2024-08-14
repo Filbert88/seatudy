@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Card from "@/components/courses/card";
 import { CourseDetailsInterface } from "@/components/types/types";
 import { useSession } from "next-auth/react";
-import { getInstructorNamebyId } from "@/lib/queries/profile";
 import LoadingBouncer from "./loading";
 
 const CoursesDetailPage = () => {
@@ -11,7 +10,7 @@ const CoursesDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
   const [courseId, setCourseId] = useState<string>("");
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const courseDetailUrl = `/api/course/${courseId}`;
 
   useEffect(() => {

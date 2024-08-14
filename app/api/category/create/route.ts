@@ -9,19 +9,17 @@ export const POST = async (req: Request) => {
   try {
     const body = await req.json();
 
-    const { name } = body;
-
-    const newData: any = {
-      name,
-    };
+    const { name }: { name: string } = body;
 
     const category = await prisma.courseCategory.create({
-      data: newData,
+      data: {
+        name,
+      },
     });
 
     return NextResponse.json({ message: "Success", data: category }, { status: 201 });
   } catch (error) {
-    console.error("Error in GET /api/categories", error);
+    console.error("Error in POST /api/categories", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 };

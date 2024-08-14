@@ -5,7 +5,7 @@ import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -17,9 +17,14 @@ function stringToDifficulty(difficulty: string): DifficultyLevel {
   throw new Error("Invalid difficulty level");
 }
 
-export const POST = async (req: Request, { params }: { params: { courseId: string } }) => {
+export const POST = async (
+  req: Request,
+  { params }: { params: { courseId: string } }
+) => {
   if (req.method !== "POST") {
-    return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
+    return new NextResponse(`Method ${req.method} Not Allowed`, {
+      status: 405,
+    });
   }
 
   const courseId = params.courseId;
@@ -39,7 +44,10 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
     });
 
     if (!course) {
-      return NextResponse.json({ message: "Course not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 }
+      );
     }
 
     if (course.instructorId !== session.user.id) {
@@ -48,15 +56,25 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
 
     const formData = await req.formData();
     console.log(formData);
-    const title = formData.get("title");
-    const description = formData.get("description");
+    const title = formData.get("title") as string | null;
+    const description = formData.get("description") as string | null;
+    const difficulty = formData.get("difficulty") as string | null;
+    const priceString = formData.get("price") as string | null;
+    const categoryNames = formData.getAll("categoryNames") as string[];
     const syllabus = formData.getAll("syllabus") as string[];
     const skills = formData.getAll("skills") as string[];
-    const difficulty = formData.get("difficulty")?.toString() || "";
-    const price = formData.get("price");
-    const categoryNames = formData.getAll("categoryNames") as string[];
 
-    const updateData: any = {};
+    const price = priceString ? parseFloat(priceString) : undefined;
+
+    const updateData: Partial<{
+      title: string;
+      description: string;
+      syllabus: string[];
+      skills: string[];
+      difficulty: DifficultyLevel;
+      price: number;
+      thumbnailUrl: string;
+    }> = {};
 
     if (title) updateData.title = title;
     if (description) updateData.description = description;
@@ -65,14 +83,19 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
     if (difficulty) updateData.difficulty = stringToDifficulty(difficulty);
     if (price) updateData.price = price;
 
-    let generatedUrl = course.thumbnailUrl;
+    let generatedUrl: string | undefined = course.thumbnailUrl ?? undefined;
     const file = formData.get("file");
+
     if (file && file instanceof File) {
       generatedUrl = await uploadFileToCloudinary(file);
       updateData.thumbnailUrl = generatedUrl;
     } else if (file) {
-      return NextResponse.json({ message: "Invalid File Type" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid File Type" },
+        { status: 400 }
+      );
     }
+
     console.log(file);
 
     const categories = await Promise.all(
@@ -109,9 +132,15 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
       });
     }
 
-    return NextResponse.json({ message: "Success", data: updateCourse }, { status: 201 });
-  } catch (error: any) {
+    return NextResponse.json(
+      { message: "Success", data: updateCourse },
+      { status: 201 }
+    );
+  } catch (error) {
     console.error("Error in POST /api/course", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 };

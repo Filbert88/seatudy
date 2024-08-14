@@ -22,7 +22,7 @@ export const GET = async (req: Request) => {
     }
 
     return NextResponse.json({ message: "Success", data: notifications }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in GET /api/notification", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }

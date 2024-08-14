@@ -8,7 +8,7 @@ import LoadingBouncer from "../../(dashboard)/loading";
 
 const MyCoursesPage = () => {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const router = useRouter();

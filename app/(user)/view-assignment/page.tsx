@@ -3,8 +3,14 @@ import { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import Instructions from "@/components/assignments/instructions";
 import Submission from "@/components/assignments/submission";
-import { AssignmentInterface, SideBarDataInterface } from "@/components/types/types";
-import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
+import {
+  AssignmentInterface,
+  SideBarDataInterface,
+} from "@/components/types/types";
+import {
+  getCourses,
+  getSideBarDataFromLocalStorage,
+} from "@/components/worker/local-storage-handler";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
@@ -69,28 +75,24 @@ const AssignmentPage = () => {
       if (sideBarDataFromLocalStorage) {
         setSideBarData(sideBarDataFromLocalStorage);
         setIsLoading(false);
-      }
-      else {
+      } else {
         console.log("Fetching course data from server");
         getCourses(id, session.data?.user?.id)
-        .then((data) => {
-          const newSideBarData = {
-            materialData: data.materials,
-            assignmentData: data.assignments,
-            titleData: data.title,
-          };
-          setSideBarData(newSideBarData);
-        })
-        .catch((error) => {
-          console.error("Error fetching course data:", error);
-          setIsAssignmentAvailable(false);
-          toast({
-            title: "Course not found",
-            variant: "destructive",
+          .then((data) => {
+            const newSideBarData = {
+              materialData: data.materials,
+              assignmentData: data.assignments,
+              titleData: data.title,
+            };
+            setSideBarData(newSideBarData);
+          })
+          .catch((error) => {
+            console.error("Error fetching course data:", error);
+            setIsAssignmentAvailable(false);
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
-        }).finally(() => {
-          setIsLoading(false);
-        });
       }
     }
     if (assignmentId) {
@@ -98,10 +100,8 @@ const AssignmentPage = () => {
     }
   }, []);
 
-  if(isLoading){
-    return(
-      <LoadingBouncer />
-    )
+  if (isLoading) {
+    return <LoadingBouncer />;
   }
 
   return (
@@ -118,14 +118,16 @@ const AssignmentPage = () => {
           {"Course assignment not found"}
         </div>
       )}
-      {(!isLoading && isAssignmentAvailable) && (
+      {!isLoading && isAssignmentAvailable && (
         <div className="flex flex-col">
-            {localStorage.getItem("progress") === "100.00%" && 
-              <div className="flex ml-10 my-5">
-                <div className="mr-2">{"You've completed this course. Download your certificate "}</div>
-                <CertificateGenerator courseName={sideBarData?.titleData ?? ''} />
+          {localStorage.getItem("progress") === "100.00%" && (
+            <div className="flex ml-10 my-5">
+              <div className="mr-2">
+                {"You've completed this course. Download your certificate "}
               </div>
-            }
+              <CertificateGenerator courseName={sideBarData?.titleData ?? ""} />
+            </div>
+          )}
           <div className="my-5 ml-10 font-nunito font-bold text-3xl">
             {assignmentData?.title}
           </div>
@@ -136,7 +138,7 @@ const AssignmentPage = () => {
                 showInstructions ? "border-b-2 border-fourth font-bold" : ""
               }`}
             >
-            Instructions
+              Instructions
             </button>
             <button
               onClick={handleClickSubmissions}
@@ -144,18 +146,19 @@ const AssignmentPage = () => {
                 showSubmissions ? "border-b-2 border-fourth font-bold" : ""
               }`}
             >
-            Submissions
+              Submissions
             </button>
           </div>
           <hr className="border-t border-secondary mx-10 mt-1 mb-5 min-w-[150vh]" />
           <div className="ml-10">
             {showInstructions && (
               <Instructions>
-                {assignmentData?.description ??
-                  "No instructions given"}
+                {assignmentData?.description ?? "No instructions given"}
               </Instructions>
             )}
-            {showSubmissions && <Submission assignmentId={assignmentData?.id!}/>}
+            {showSubmissions && assignmentData?.id && (
+              <Submission assignmentId={assignmentData.id} />
+            )}
           </div>
         </div>
       )}

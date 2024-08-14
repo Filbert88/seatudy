@@ -1,0 +1,49 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies with retry
+        run: |
+          retries=3
+          count=0
+          until [ $count -ge $retries ]
+          do
+            pnpm install && break
+            count=$((count+1))
+            echo "Retrying pnpm install... ($count/$retries)"
+            sleep 10
+          done
+
+      - name: Run ESLint
+        run: pnpm eslint --fix
+
+      # - name: Run tests
+      #   run: pnpm test
+
+      - name: Build project
+        run: pnpm build

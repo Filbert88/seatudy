@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 // Get All Categories
-export const GET = async (req: Request) => {
+export const GET = async () => {
   try {
     const categories = await prisma.courseCategory.findMany();
 
@@ -11,7 +11,7 @@ export const GET = async (req: Request) => {
     }
 
     return NextResponse.json({ message: "Success", data: categories }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in GET /api/categories", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }

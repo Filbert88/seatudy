@@ -11,7 +11,7 @@ import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 
 const CheckOutPage = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [courseId, setCourseId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();

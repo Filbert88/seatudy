@@ -76,6 +76,7 @@ const CreateMaterial = () => {
         title: "An error occurred while uploading material",
         variant: "destructive",
       });
+      console.log(error);
     } finally {
       setIsLoading(false);
     }

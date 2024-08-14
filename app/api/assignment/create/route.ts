@@ -4,6 +4,13 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+interface CreateAssignmentData {
+  title: string;
+  description: string; 
+  dueDateOffset?: number;
+  courseId: string;
+}
+
 export const POST = async (req: Request) => {
   if (req.method !== "POST") {
     return new NextResponse(`Method ${req.method} Not Allowed`, { status: 405 });
@@ -23,7 +30,7 @@ export const POST = async (req: Request) => {
 
     const { title, description, dueDateOffset, courseId } = body;
 
-    const newData: any = {
+    const newData: CreateAssignmentData = {
       title,
       description,
       dueDateOffset,
