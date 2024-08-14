@@ -18,29 +18,29 @@ const ViewSubmissionsPage = () => {
 
   const { toast } = useToast();
 
+  const fetchSubmission = async (courseId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/submission?courseId=${courseId}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      setSubmissionData(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
     if (id) {
       setCourseId(id);
     }
-
-    const fetchSubmission = async (courseId: string) => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/submission?courseId=${courseId}`, {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-          },
-        });
-        const data = await response.json();
-        setSubmissionData(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     if (courseId) {
       fetchSubmission(courseId);
     }
@@ -106,6 +106,7 @@ const ViewSubmissionsPage = () => {
       setGrade("");
       setActiveGradingId("");
       setComment("");
+      await fetchSubmission(courseId);
     }
   }
 
