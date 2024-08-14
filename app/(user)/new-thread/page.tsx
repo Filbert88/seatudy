@@ -110,13 +110,10 @@ const ViewForumPage = () => {
     }
   };
 
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
       <CoursesBar
-        title={courseData?.title ?? ""}
+        title={sideBarData?.titleData ?? ""}
         materials={sideBarData?.materialData || []}
         assignments={sideBarData?.assignmentData || []}
         active={{ type: "forum", id: "new-thread" }}

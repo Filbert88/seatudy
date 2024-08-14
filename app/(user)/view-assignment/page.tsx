@@ -15,11 +15,14 @@ import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import CertificateGenerator from "@/components/worker/certificate-generator";
+import { useSearchParams } from "next/navigation";
+import { BounceLoader } from "react-spinners";
 
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [showSubmissions, setShowSubmissions] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [asgId, setAsgId] = useState<string | null>("");
   const [isAssignmentAvailable, setIsAssignmentAvailable] = useState(true);
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
@@ -28,6 +31,8 @@ const AssignmentPage = () => {
   const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
 
   const { toast } = useToast();
+
+  const searchParams = useSearchParams();
 
   const handleClickInstructions = () => {
     setShowInstructions(true);
@@ -67,9 +72,12 @@ const AssignmentPage = () => {
   };
 
   useEffect(() => {
-    const param = new URLSearchParams(window.location.search);
-    const id = param.get("id");
-    const assignmentId = param.get("assignmentId");
+    const id = searchParams.get("id");
+    const assignmentId = searchParams.get("assignmentId");
+    setAsgId(assignmentId);
+
+    console.log("Current URL Params:", { id, assignmentId });
+
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
       if (sideBarDataFromLocalStorage) {
@@ -95,17 +103,22 @@ const AssignmentPage = () => {
           });
       }
     }
-    if (assignmentId) {
-      getAssignmentById(assignmentId);
-    }
-  }, []);
+  }, [searchParams]);
 
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
+  useEffect(() => {
+    if (asgId) {
+      getAssignmentById(asgId);
+    }
+  }, [asgId]);
 
   return (
-    <div className="flex flex-row py-20 pl-64 font-nunito">
+    <>
+      {isLoading && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
+          <BounceLoader className="text-secondary" />
+        </div>
+      )}
+      <main className="flex flex-row py-20 pl-64 font-nunito">
       {isAssignmentAvailable ? (
         <CoursesBar
           title={sideBarData?.titleData ?? ""}
@@ -118,14 +131,22 @@ const AssignmentPage = () => {
           {"Course assignment not found"}
         </div>
       )}
+      
       {!isLoading && isAssignmentAvailable && (
         <div className="flex flex-col">
-          {localStorage.getItem("progress") === "100.00%" && (
-            <div className="flex ml-10 my-5">
+          {localStorage.getItem("progress") === "100.00%" ? (
+            <div className="flex ml-10 mt-5">
               <div className="mr-2">
                 {"You've completed this course. Download your certificate "}
               </div>
               <CertificateGenerator courseName={sideBarData?.titleData ?? ""} />
+            </div>
+          ) : (
+            <div className="flex ml-10 mt-5">
+              <div className="mr-2">
+                {"Your current progress:"}
+              </div>
+              <div className="font-semibold">{localStorage.getItem("progress")}</div>
             </div>
           )}
           <div className="my-5 ml-10 font-nunito font-bold text-3xl">
@@ -162,7 +183,9 @@ const AssignmentPage = () => {
           </div>
         </div>
       )}
-    </div>
+    </main>
+    </>
+    
   );
 };
 

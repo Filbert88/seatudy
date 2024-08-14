@@ -96,7 +96,7 @@ const MaterialsPage = () => {
     <>
       {isLoading && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <BounceLoader color="#393E46" />
+          <BounceLoader className="text-secondary" />
         </div>
       )}
       <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
@@ -114,7 +114,7 @@ const MaterialsPage = () => {
         )}
         {!isLoading && isMaterialAvailable && materialData && (
           <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
-            {localStorage.getItem("progress") === "100.00%" && (
+            {localStorage.getItem("progress") === "100.00%" ? (
               <div className="flex">
                 <div className="mr-2">
                   {"You've completed this course. Download your certificate "}
@@ -122,6 +122,13 @@ const MaterialsPage = () => {
                 <CertificateGenerator
                   courseName={sideBarData?.titleData ?? ""}
                 />
+              </div>
+            ) : (
+              <div className="flex">
+                <div className="mr-2">
+                  {"Your current progress:"}
+                </div>
+                <div className="font-semibold">{localStorage.getItem("progress")}</div>
               </div>
             )}
             <div className="my-5 font-nunito font-bold text-3xl">
