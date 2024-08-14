@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CoursesBar from "@/components/assignments/coursesBar";
+import CoursesBar from "@/components/assignments/course-bar";
 import PdfViewer from "@/components/pdf-viewer";
 import {
   MaterialInterface,

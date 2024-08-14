@@ -34,22 +34,30 @@ const InstructorNavbar = () => {
             !pathname.includes("edit-materials") &&
             !pathname.includes("edit-assignments") && (
               <>
-                <a
+                <button
                   onClick={() => handleNavbarClick("/view-materials")}
-                  className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                  className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
                     pathname.includes("view-materials") && "text-fourth"
                   }`}
                 >
                   Materials
-                </a>
-                <a
+                </button>
+                <button
                   onClick={() => handleNavbarClick("/view-assignments")}
-                  className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+                  className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
                     pathname.includes("view-assignments") && "text-fourth"
                   }`}
                 >
                   Assignments
-                </a>
+                </button>
+                <button
+                  onClick={() => handleNavbarClick("/view-threads")}
+                  className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
+                    (pathname.includes("view-threads") || pathname.includes("create-thread")) && "text-fourth"
+                  }`}
+                >
+                  Discussions
+                </button>
               </>
             )}
         </div>
@@ -57,18 +65,17 @@ const InstructorNavbar = () => {
           {status === "authenticated" && (
             <>
               <IoNotificationsOutline
-                className="text-primary mx-2 h-6 w-6 hover:cursor-pointer"
+                className="text-primary mx-2 h-6 w-6 hover:cursor-pointer hover:opacity-50 transition"
                 onClick={() => router.push("/instructor-notification-page")}
               />
-              <div
+              <button
                 onClick={() =>
                   router.push("/instructor-dashboard/view-profile")
                 }
-                className="hover:cursor-pointer ml-5 flex items-center"
+                className="hover:cursor-pointer hover:opacity-50 transition ml-5 flex items-center"
               >
                 <div className="mr-4 text-md">{session?.user?.name}</div>
-                <div className="bg-primary h-8 w-8 rounded-full"></div>
-              </div>
+              </button>
             </>
           )}
         </div>

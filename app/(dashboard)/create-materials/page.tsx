@@ -112,10 +112,10 @@ const CreateMaterial = () => {
   }
 
   return (
-    <div className="pt-24 flex flex-col items-center text-secondary font-nunito">
-      <div className="text-3xl font-bold my-5">Create Material</div>
-      <div className="bg-white shadow-md px-10 py-8">
+    <div className="pt-32 flex flex-col items-center text-secondary font-nunito">
+      <div className="bg-white shadow-md px-5 pb-5">
         {/* Submission Form */}
+        <div className="text-3xl font-bold justify-center mt-5 mb-3 flex">Create Material</div>
         <div className="pb-2 text-xl font-semibold">{"Material's title"}</div>
         <input
           value={title}
@@ -135,10 +135,10 @@ const CreateMaterial = () => {
           )}
           <div className="flex flex-row">
             <div className="font-bold pr-1 py-5">
-              Drag and drop file here or
+              Upload material file by
             </div>
             <label className="cursor-pointer bg-transparent py-5 text-gray-700">
-              <span className="font-bold underline">Choose File</span>
+              <span className="font-bold underline hover:text-blue-600 transition">Choose File</span>
               <input
                 type="file"
                 onChange={handleFileChange}
@@ -163,7 +163,7 @@ const CreateMaterial = () => {
         </div>
         <Instructions>Supported formats: **.pdf**</Instructions>
         <button
-          className="font-bold py-2 my-5 px-10 rounded-lg text-white w-fit bg-fourth hover:shadow-md"
+          className="font-bold py-2 my-5 px-10 rounded-lg text-white w-fit bg-fourth hover:shadow-md transition"
           onClick={handleSubmit}
           disabled={isLoading}
         >

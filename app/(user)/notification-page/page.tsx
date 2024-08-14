@@ -84,7 +84,7 @@ const InstructorNotificationPage = () => {
             <h1 className="text-2xl font-bold">Notifications</h1>
             <button
               onClick={() => setViewRead(!viewRead)}
-              className="bg-primary text-black px-5 py-2 rounded-md font-nunito font-bold"
+              className="bg-primary text-black px-5 py-2 rounded-md transition hover:opacity-65 font-nunito font-bold"
             >
               {viewRead ? "View Unread Message" : "View All Message"}
             </button>
@@ -109,7 +109,7 @@ const InstructorNotificationPage = () => {
                       </div>
                       {notification.read === false ? (
                         <button
-                          className="flex flex-row hover:cursor-pointer hover:bg-slate-100 rounded-md p-1"
+                          className="flex flex-row hover:cursor-pointer hover:bg-slate-100 transition rounded-md px-2 py-1"
                           onClick={() => handleMarkAsRead(notification.id)}
                         >
                           <MdOutlineMarkEmailRead className="mr-3 my-1" />

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import CoursesBar from "@/components/assignments/coursesBar";
+import CoursesBar from "@/components/assignments/course-bar";
 import Instructions from "@/components/assignments/instructions";
 import Submission from "@/components/assignments/submission";
 import {
