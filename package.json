@@ -2,7 +2,7 @@
   "name": "seatudy",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@8.0.0",
+  "packageManager": "pnpm@9.7.0",
   "engines": {
     "node": ">=16.18",
     "pnpm": ">=8"
