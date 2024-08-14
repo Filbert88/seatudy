@@ -130,13 +130,18 @@ const CheckOutPage = () => {
     }
   };
 
+  const formatNumber = (number: number): string => {
+    return new Intl.NumberFormat('en-US').format(number) + ".00";
+  };
+
+
   if (isLoading) {
     return <LoadingBouncer />;
   }
   return (
-    <div className="w-screen h-screen items-center justify-center bg-primary flex">
-      <form className="form-content mt-10 min-w-[60vh] rounded-md items-center justify-center bg-third">
-        <div className="relative w-full h-48">
+    <div className="min-w-screen h-screen items-center bg-primary flex flex-col text-secondary font-nunito pt-20">
+      <form className="form-content mt-10 max-w-[30%] items-center h-fit w-fit justify-center bg-white shadow-lg p-2">
+        <div className="relative aspect-w-16 aspect-h-9">
           <Image
             src={
               courseDetails
@@ -144,49 +149,47 @@ const CheckOutPage = () => {
                 : "/assets/checkout_banner.gif"
             }
             fill
-            style={{ objectFit: "cover" }}
-            className="rounded-t-md"
+            className="cover"
             alt="Course Image"
           />
         </div>
-        <div className="font-nunito text-xl px-5 pt-5 text-start font-extrabold text-white">
-          Purchase Details
-        </div>
-        <div className="py-5 px-3 mx-3 mb-3 flex items-center rounded-md bg-gray-800 text-white h-8">
-          {courseDetails?.title}
-        </div>
-        <div className="font-nunito text-xl px-5 pt-5 text-start font-extrabold text-white">
-          Pay for it with
-        </div>
-        <div className="py-5 px-3 mx-3 mb-3 flex items-center rounded-md bg-gray-800 text-white h-8">
-          Your Balance: Rp {profile?.balance.toLocaleString()}
-        </div>
-        <div className="text-xs flex items-center px-5 pb-1 text-white">
-          By clicking “purchase”, you agree to the Paid Services Terms
-        </div>
-        <hr className="border-t-1 border-white flex items-center mb-3 mx-5 w-[25rem]" />
-        <div className="text-xs flex items-center px-5 pb-5 text-white">
-          <p className="max-w-[25rem]">
-            Hey! This purchase is non-refundable. Once you complete your
-            purchase, the item will be available for use immediately and can be
-            accessed in My Course options in your navigation bar.
-          </p>
-        </div>
-        <div className="flex flex-row justify-end space-x-4 pb-5 px-3">
-          <button
-            onClick={() => router.back()}
-            type="button"
-            className="rounded-md bg-black text-background px-6 font-nunito text-white text-sm py-1 font-extrabold"
-          >
-            Go Back
-          </button>
-          <button
-            onClick={handlePurchase}
-            type="button"
-            className="rounded-md bg-tertiary text-background bg-fourth px-5 font-nunito text-sm py-1 text-white font-extrabold"
-          >
-            Purchase
-          </button>
+        <div className="p-3">
+          <div className="font-nunito text-xl mb-2 text-start font-semibold">
+            Course Title
+          </div>
+          <input value={courseDetails?.title} disabled className="py-1 px-3 rounded-md border border-grays w-full" />
+          <div className="font-nunito text-xl mb-2 mt-5 text-start font-semibold">
+            Course Price
+          </div>
+          <input value={`Rp ${formatNumber(courseDetails?.price ?? 0)}`} disabled className="py-1 px-3 rounded-md border border-grays w-full" />
+          <div className="font-nunito text-xl mb-2 mt-5 text-start font-semibold">
+            Your balance
+          </div>
+          <input value={`Rp ${formatNumber(profile?.balance ?? 0)}`} disabled className="py-1 px-3 rounded-md border border-grays w-full" />
+          <div className="text-xs flex items-center my-3">
+            By clicking “purchase”, you agree to the Paid Services Terms
+          </div>
+          <div className="text-xs flex items-center mb-5 max-w-[50%]">
+              *This purchase is non-refundable. Once you complete your
+              purchase, the item will be available for use immediately and can be
+              accessed in My Course options in your navigation bar.
+          </div>
+          <div className="flex flex-row justify-end space-x-4 mb-2">
+            <button
+              onClick={() => router.back()}
+              type="button"
+              className="rounded-md text-background px-6 font-nunito border-2 border-fourth text-fourth hover:shadow-md transition text-sm font-extrabold"
+            >
+              Go Back
+            </button>
+            <button
+              onClick={handlePurchase}
+              type="button"
+              className="rounded-md bg-tertiary text-background bg-fourth px-5 font-nunito text-sm py-1 text-white hover:shadow-md transition font-extrabold"
+            >
+              Purchase
+            </button>
+          </div>
         </div>
       </form>
     </div>

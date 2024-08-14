@@ -46,6 +46,7 @@ const MyCoursesPage = () => {
       }
     };
     fetchCourses();
+    localStorage.setItem("id", "null");
   }, []);
 
   if (isLoading) {
