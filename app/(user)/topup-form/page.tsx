@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { TransactionInterface } from "@/components/types/types";
 import { BounceLoader } from "react-spinners";
 import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
 import { SiAmericanexpress } from "react-icons/si";
@@ -17,8 +16,6 @@ const TopUpFormPage = () => {
   const [nominals, setNominals] = useState<string>();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [transactionData, setTransactionData] =
-    useState<TransactionInterface>();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -78,9 +75,9 @@ const TopUpFormPage = () => {
   };
 
   const addTransactionData = async () => {
-    let isVisa = /^4\d{12}(\d{3})?$/;
-    let isMastercard = /^5[1-5]\d{14}$/;
-    let isAmex = /^3[47]\d{13}$/;
+    const isVisa = /^4\d{12}(\d{3})?$/;
+    const isMastercard = /^5[1-5]\d{14}$/;
+    const isAmex = /^3[47]\d{13}$/;
 
     // Case #1: Check if the form is filled
     if (
@@ -111,7 +108,7 @@ const TopUpFormPage = () => {
     }
 
     // Case #3: Check if the expiration date is valid
-    let isDate = /^\d{2}\/\d{2}$/;
+    const isDate = /^\d{2}\/\d{2}$/;
     if (!isDate.test(cardDate)) {
       toast({
         title: "Invalid expiration date!",
@@ -121,7 +118,7 @@ const TopUpFormPage = () => {
     }
 
     // Case #4: Check if the CVC is valid
-    let isCVC = /^\d{3}$/;
+    const isCVC = /^\d{3}$/;
     if (!isCVC.test(cardCVC)) {
       toast({
         title: "Invalid CVC!",
@@ -140,7 +137,7 @@ const TopUpFormPage = () => {
     }
 
     // Case #6: Check if the name is valid
-    let isName = /^[a-zA-Z\s]*$/;
+    const isName = /^[a-zA-Z\s]*$/;
     if (!isName.test(cardName)) {
       toast({
         title: "Invalid Name!",
@@ -167,8 +164,6 @@ const TopUpFormPage = () => {
           }),
         });
         if (response.ok) {
-          const data = await response.json();
-          setTransactionData(data);
           toast({
             title: "Payment method has been added successfully!",
           });

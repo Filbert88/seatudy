@@ -1,10 +1,10 @@
-import { Role } from "@prisma/client";
+import { Role, Course } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -18,7 +18,7 @@ export const GET = async (req: Request) => {
   const userId = session.user.id;
 
   try {
-    let courses: any[] = [];
+    let courses: Course[] = [];
     if (role === Role.INSTRUCTOR) {
       courses = await prisma.course.findMany({
         where: {
@@ -60,12 +60,21 @@ export const GET = async (req: Request) => {
     }
 
     if (courses.length == 0) {
-      return NextResponse.json({ message: "No courses found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "No courses found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({ message: "Success", data: courses }, { status: 200 });
-  } catch (error: any) {
+    return NextResponse.json(
+      { message: "Success", data: courses },
+      { status: 200 }
+    );
+  } catch (error) {
     console.error("Error in GET /api/courses/my-course", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 };

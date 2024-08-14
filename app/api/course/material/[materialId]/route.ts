@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { calculateUserProgress } from "@/lib/queries/user";
 import { NextResponse } from "next/server";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -23,14 +23,6 @@ export const GET = async (req: Request, { params }: { params: { materialId: stri
       },
       include: {
         accesses: true,
-      },
-    });
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        assignments: true,
-        accessedMaterials: true,
       },
     });
 
@@ -57,7 +49,7 @@ export const GET = async (req: Request, { params }: { params: { materialId: stri
     }
 
     return NextResponse.json({ message: "Success", data: material }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in GET /api/course/material", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }

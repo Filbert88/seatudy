@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 

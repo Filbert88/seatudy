@@ -1,4 +1,3 @@
-import NextAuth from "next-auth";
 import { authOptions } from "./auth-options";
 import nextAuth from "next-auth";
 

@@ -53,7 +53,7 @@ export const POST = async (req: Request, { params }: { params: { courseId: strin
       return NextResponse.json({ message: "Already purchased this course" }, { status: 400 });
     }
 
-    const newData: any = {
+    const newData = {
       userId: session.user.id,
       courseId: course.id,
       amount: course.price,

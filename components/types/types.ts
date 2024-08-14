@@ -1,3 +1,5 @@
+import { Role } from "@prisma/client";
+
 export interface CourseInterface {
   id: string;
   instructorId: string;
@@ -134,9 +136,9 @@ export interface UserInterface {
   password: string;
   phoneNumber: string;
   campus: string;
-  role: any;
-  createdAt: any;
-  updatedAt: any;
+  role: Role;
+  createdAt: Date;
+  updatedAt: Date;
   balance: number;
   profileUrl: string;
 }

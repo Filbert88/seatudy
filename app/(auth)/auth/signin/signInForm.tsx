@@ -63,6 +63,7 @@ const SigninForm: React.FC = () => {
         description: "Please try again.",
         variant: "destructive",
       });
+      console.log(err);
     } finally {
       setIsLoading(false);
     }

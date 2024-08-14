@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
 // Get All Popular Courses
-export const GET = async (req: Request) => {
+export const GET = async () => {
   try {
     const courses = await prisma.course.findMany({
       orderBy: {
@@ -26,7 +26,7 @@ export const GET = async (req: Request) => {
     });
 
     return NextResponse.json({ message: "Success", data: courses }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in GET /api/course/popular", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
