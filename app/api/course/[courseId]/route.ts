@@ -30,7 +30,11 @@ export const GET = async (req: Request, { params }: { params: { courseId: string
             },
           },
         },
-        materials: true,
+        materials: {
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
         categories: {
           include: {
             category: true,
