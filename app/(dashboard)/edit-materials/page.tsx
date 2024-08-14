@@ -15,11 +15,8 @@ const EditMaterialPage = () => {
   const [materialTitle, setMaterialTitle] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
-  const allowedFileTypes = [
-    "application/pdf",
-  ];
-  const [materialUrl, setMaterialUrl] =
-    useState<string>("");
+  const allowedFileTypes = ["application/pdf"];
+  const [materialUrl, setMaterialUrl] = useState<string>("");
   const { toast } = useToast();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,11 +25,9 @@ const EditMaterialPage = () => {
       if (allowedFileTypes.includes(selectedFile.type)) {
         setFile(selectedFile);
         setFileUrl("");
-        await uploadFileToCloudinary(selectedFile).then(
-          (response) => {
-            setFileUrl(response);
-          }
-        );
+        await uploadFileToCloudinary(selectedFile).then((response) => {
+          setFileUrl(response);
+        });
       } else {
         toast({
           title: "Invalid file type",
@@ -153,9 +148,15 @@ const EditMaterialPage = () => {
           </div>
           <div className="flex items-center mb-5 text-md">
             <div className="font-semibold text-black text-lg mr-2">
-              Previous material: 
+              Previous material:
             </div>
-            <a href={materialUrl} className="underline text-blue-600" target="_blank">Click to view</a>
+            <a
+              href={materialUrl}
+              className="underline text-blue-600"
+              target="_blank"
+            >
+              Click to view
+            </a>
           </div>
           <div className="font-semibold text-black mb-1 text-lg">
             Upload new material
@@ -172,7 +173,11 @@ const EditMaterialPage = () => {
               </div>
               <label className="cursor-pointer bg-transparent py-5 text-gray-700">
                 <span className="font-bold underline">Choose File</span>
-                <input type="file" onChange={handleFileChange} className="hidden" />
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
               </label>
             </div>
             {fileUrl !== "" && (
@@ -180,7 +185,11 @@ const EditMaterialPage = () => {
                 <div className="text-green-600 font-bold underline mr-3">
                   {"File uploaded: "}
                 </div>
-                <a href={fileUrl} className="underline font-semibold" target="_blank">
+                <a
+                  href={fileUrl}
+                  className="underline font-semibold"
+                  target="_blank"
+                >
                   {file?.name}
                 </a>
               </div>

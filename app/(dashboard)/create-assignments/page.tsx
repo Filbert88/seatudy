@@ -138,9 +138,7 @@ const CreateAssignmentsPage = () => {
                 onChange={(e) => setAssignmentTitle(e.target.value)}
               />
             </div>
-            <div className="font-semibold mb-2 text-lg">
-              Description
-            </div>
+            <div className="font-semibold mb-2 text-lg">Description</div>
             <div className="form-group pb-5 w-full">
               <textarea
                 placeholder="Enter a short description.."
@@ -149,9 +147,7 @@ const CreateAssignmentsPage = () => {
                 onChange={(e) => setAssignmentDescription(e.target.value)}
               />
             </div>
-            <div className="font-semibold mb-2 text-lg">
-              Duration (days)
-            </div>
+            <div className="font-semibold mb-2 text-lg">Duration (days)</div>
             <div className="form-group pb-5 w-full">
               <input
                 type="number"

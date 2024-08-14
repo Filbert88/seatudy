@@ -6,7 +6,7 @@ import LoadingBouncer from "./loading";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
 import { BsDot } from "react-icons/bs";
 
-const InstructorNotificationPage = () => {
+const UserNotificationPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [notifications, setNotifications] = useState<NotificationInterface[]>(
     []
@@ -132,4 +132,4 @@ const InstructorNotificationPage = () => {
   );
 };
 
-export default InstructorNotificationPage;
+export default UserNotificationPage;
