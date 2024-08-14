@@ -9,6 +9,7 @@ import {
 import { PiNotePencilBold , PiTrashBold } from "react-icons/pi";
 import { useToast } from "@/components/ui/use-toast";
 import StudentBar from "@/components/student-enrolled/student-bar";
+import Instructions from "@/components/assignments/instructions";
 
 const ViewAssignmentPage = () => {
   const router = useRouter();
@@ -99,22 +100,22 @@ const ViewAssignmentPage = () => {
   return (
     <>
       {courseDetails && <StudentBar students={students}/>}
-      <div className="px-[24rem] pt-28 bg-primary w-screen h-screen">
-        <div className="font-nunito text-4xl font-bold">
+      <div className="pl-[24rem] pr-20  pt-28 bg-primary w-screen h-screen">
+        <div className="font-nunito text-3xl font-bold">
           {courseDetails?.title}
         </div>
         <div className="flex">
           <button
             onClick={() => router.push(`/create-assignments?id=${courseId}`)}
             type="button"
-            className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2 mr-5"
+            className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2 mr-5 hover:shadow-md transition"
           >
             Create new task
           </button>
           <button
             onClick={() => router.push(`/view-submissions?id=${courseId}`)}
             type="button"
-            className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2"
+            className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2 hover:shadow-md transition"
           >
             View Submissions
           </button>
@@ -128,10 +129,10 @@ const ViewAssignmentPage = () => {
             courseDetails?.assignments.map((assignment) => (
               <div
                 key={assignment.id}
-                className="bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]"
+                className="bg-white hover:shadow-xl transition rounded-md shadow-sm p-5 my-5 w-full"
               >
                 <div className="flex justify-between">
-                  <div className="font-nunito text-2xl font-extrabold">
+                  <div className="font-nunito text-2xl font-bold">
                     {assignment.title}
                   </div>
                   <div className="flex text-grays">
@@ -151,8 +152,8 @@ const ViewAssignmentPage = () => {
                     </button>
                   </div>
                 </div>
-                <div className="font-nunito text-base font-semibold flex">
-                  {assignment.description}
+                <div className="font-nunito flex">
+                  <Instructions>{assignment.description}</Instructions>
                 </div>
                 <div className="font-nunito text-sm items-end justify-end flex font-semibold">
                   {assignment.dueDateOffset} days left

@@ -105,18 +105,19 @@ const CoursesDetailPage = () => {
 
   return (
     <div className="font-nunito">
-      <div className="bg-secondary px-40 pt-20 pb-8">
-        <div className="font-bold text-4xl mx-5 pt-10 text-primary">
+      <div className="bg-secondary px-40 mt-20 pb-8">
+        <div className="font-bold text-4xl ml-3 pt-10 text-primary">
           {courseDetails.title}
         </div>
-        <div className="flex flex-row w-[50%]">
-          <p className="font-semibold text-lg text-primary mx-5 py-5">
+        <div className="flex flex-row w-[55%] ml-3">
+          <p className="font-semibold text-lg text-primary py-5">
             {courseDetails.description}
           </p>
         </div>
-        <div className="flex flex-row font-semibold text-primary space-x-20 mx-5">
-          <p>{`Difficulty: ${courseDetails.difficulty}`}</p>
-          <p>{`Instructor: ${courseDetails.instructor.fullName}`}</p>
+        <div className="flex flex-row font-semibold text-primary w-[55%] justify-between ml-3">
+          <div>{`Difficulty: ${courseDetails.difficulty}`}</div>
+          <div>{`Instructor: ${courseDetails.instructor.fullName}`}</div>
+          <div>{`Last Updated: ${new Date(courseDetails.updatedAt).toLocaleDateString()}`}</div>
         </div>
       </div>
       <div className="flex flex-col px-40">

@@ -46,7 +46,11 @@ export default function Home() {
         );
 
         setResults(filteredCourses);
-      } else {
+      } 
+      else if (allCoursesResponse.status === 200) {
+        setResults(allCoursesData.data);
+      }
+      else {
         setResults([]);
       }
     } catch (error) {
@@ -104,23 +108,24 @@ export default function Home() {
             <div className="mb-5">All Courses</div>
           )}
           <div className="flex flex-wrap">
-            {results.map((course, index) => (
-              <CoursesCard
-                key={index}
-                courseTitle={course.title}
-                totalChapters={course.materials.length}
-                rating={course.averageRating}
-                skills={course.skills}
-                totalEnrolled={course.enrollments.length}
-                difficulty={course.difficulty}
-                thumbnailURL={course.thumbnailUrl}
-                className={`mr-5 mb-5 ${
-                  course.materials.length === 0
-                    ? "opacity-60 hover:cursor-default"
-                    : ""
-                }`}
-                onClick={() => router.push(`/course-detail?id=${course.id}`)}
-              />
+            {results.map((course) => (
+              <div key={course.id} className="mr-5 mb-5">
+                <CoursesCard
+                  courseTitle={course.title}
+                  totalChapters={course.materials.length}
+                  rating={course.averageRating}
+                  skills={course.skills}
+                  totalEnrolled={course.enrollments.length}
+                  difficulty={course.difficulty}
+                  thumbnailURL={course.thumbnailUrl}
+                  className={
+                    course.materials.length === 0
+                      ? "opacity-60 hover:cursor-default"
+                      : ""
+                  }
+                  onClick={() => router.push(`/course-detail?id=${course.id}`)}
+                />
+              </div>
             ))}
           </div>
         </div>

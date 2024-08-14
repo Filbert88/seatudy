@@ -58,7 +58,7 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
                 <button
                   onClick={handleClick}
                   type="button"
-                  className="bg-primary text-secondary border-secondary border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-secondary hover:text-white"
+                  className="text-secondary border-secondary border-2 font-nunito font-bold py-2 px-4 rounded-md transition duration-300 hover:bg-secondary hover:text-white"
                 >
                   Sign in to purchase
                 </button>

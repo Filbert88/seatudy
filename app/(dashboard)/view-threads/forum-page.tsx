@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import CoursesBar from "@/components/assignments/course-bar";
 import React from "react";
 import {
   ForumCommentInterface,
   ForumPostInterface,
   SideBarDataInterface,
+  StudentEnrollmentInterface,
 } from "@/components/types/types";
 import {
   getCourses,
@@ -15,6 +15,8 @@ import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { Session } from "next-auth";
+import StudentBar from "@/components/student-enrolled/student-bar";
+import { useRouter } from "next/navigation";
 
 const ViewForumPage = ({ session }: { session: Session | null }) => {
   const [courseId, setCourseId] = useState<string | null>(null);
@@ -28,8 +30,10 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
+  const [students, setStudents] = useState<StudentEnrollmentInterface[]>([]);
   const [isForumAvailable, setIsForumAvailable] = useState<boolean>(true);
   const [isPosting, setIsPosting] = useState<boolean>(false); // Separate loading state for posting
+  const router = useRouter();
 
   const { toast } = useToast();
 
@@ -181,6 +185,35 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
     }
   };
 
+  const fetchCourse = async (id: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/course/${id}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setStudents(data.data.enrollments);
+      } else {
+        toast({
+          title: "Failed to load enrollments",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
@@ -188,53 +221,40 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
     setIsLoading(true);
     if (id !== null) {
       getForumData(id);
-    }
-
-    const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
-
-    if (sideBarDataFromLocalStorage) {
-      setSideBarData(sideBarDataFromLocalStorage);
-      setIsLoading(false);
-    } else {
-      console.log("Fetching course data from server");
-      getCourses(id, session?.user.id)
-        .then((data) => {
-          const newSideBarData = {
-            materialData: data.materials,
-            assignmentData: data.assignments,
-            titleData: data.title,
-          };
-          setSideBarData(newSideBarData);
-        })
-        .catch((error) => {
-          console.error("Error fetching course data:", error);
-          setIsForumAvailable(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+      fetchCourse(id);
     }
   }, []);
 
   if (isLoading) {
     return <LoadingBouncer />;
   }
+
+  if (!(!isLoading && isForumAvailable && forumData && forumData?.length > 0)) {
+    router.push(`/create-thread?id=${courseId}`);
+  }
+
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
-      <CoursesBar
-        title={""}
-        materials={sideBarData?.materialData || []}
-        assignments={sideBarData?.assignmentData || []}
-        active={{ type: "forum", id: "view-forum" }}
-      />
-      {!isLoading && isForumAvailable && forumData && forumData?.length > 0 ? (
-        <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20">
-          <div className="my-5 font-nunito font-bold text-3xl">
-            Forum Discussions
+      <StudentBar students={students}/>
+      {(!isLoading && isForumAvailable && forumData && forumData?.length > 0) &&
+        <div className="flex flex-col h-screen pl-[24rem] pt-[6rem] w-full pr-20">
+          <div className="flex justify-between my-5">
+            <div className="font-nunito font-bold text-3xl">
+              Student Discussions
+            </div>
+            <button 
+              className="bg-fourth hover:shadow-md transition px-5 py-2 font-bold text-white rounded-md ml-auto h-fit w-fit"
+              onClick={() => {
+                router.push(`/create-thread?id=${courseId}`);
+              }}
+            >
+              Create new thread
+            </button>
           </div>
+
           {forumData?.map((post: ForumPostInterface, index: number) => (
             <div
-              key={index}
+              key={post.createdAt}
               className="flex flex-col bg-white shadow-lg rounded-md my-3 p-3 justify-between"
             >
               <div className="flex justify-between mb-1">
@@ -290,7 +310,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
                     {commentData[post.id]?.map(
                       (comment: ForumCommentInterface, index: number) => (
                         <div
-                          key={index}
+                          key={post.id}
                           className="flex flex-col border-t-2 p-3 justify-between"
                         >
                           <div className="text-sm font-semibold mb-1">
@@ -323,13 +343,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
             </div>
           ))}
         </div>
-      ) : (
-        <div className="flex items-center justify-center w-full h-screen">
-          <div className="text-xl font-semibold text-gray-500">
-            There are no forum discussions for now.
-          </div>
-        </div>
-      )}
+      }
     </div>
   );
 };

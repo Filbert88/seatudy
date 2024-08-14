@@ -237,19 +237,19 @@ const SignupForm: React.FC = () => {
           )}
           <div className="mt-4">
             <a className="text-primary mr-2">Already have an account?</a>
-            <a
-              className="text-primary underline hover:cursor-pointer"
+            <button
+              className="text-primary underline hover:cursor-pointer hover:opacity-50 transition"
               onClick={handleLoginClick}
             >
               Sign In here
-            </a>
+            </button>
           </div>
-          <div
+          <button
             onClick={handleSubmit}
-            className="bg-fourth mt-8 w-fit px-10 py-2 text-white font-bold rounded-lg hover:cursor-pointer"
+            className="bg-fourth mt-8 w-fit px-10 py-2 text-white font-bold rounded-lg hover:cursor-pointer hover:shadow-md transition"
           >
             Sign Up
-          </div>
+          </button>
         </div>
       </div>
     </div>

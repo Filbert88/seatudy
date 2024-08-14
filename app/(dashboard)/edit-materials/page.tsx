@@ -155,7 +155,7 @@ const EditMaterialPage = () => {
             <div className="font-semibold text-black text-lg mr-2">
               Previous material: 
             </div>
-            <a href={materialUrl} className="underline text-blue-600" target="_blank">Click to view</a>
+            <a href={materialUrl} className="underline text-blue-600 font-semibold" target="_blank">Click to view</a>
           </div>
           <div className="font-semibold text-black mb-1 text-lg">
             Upload new material
@@ -168,10 +168,10 @@ const EditMaterialPage = () => {
             )}
             <div className="flex flex-row">
               <div className="font-bold pr-1 py-5">
-                Drag and drop file here or
+                Upload material file by
               </div>
               <label className="cursor-pointer bg-transparent py-5 text-gray-700">
-                <span className="font-bold underline">Choose File</span>
+                <span className="font-bold underline hover:text-blue-600 transition">Choose File</span>
                 <input type="file" onChange={handleFileChange} className="hidden" />
               </label>
             </div>
@@ -189,7 +189,7 @@ const EditMaterialPage = () => {
         </form>
         <button
           onClick={handleSubmit}
-          className="flex items-center justify-center text-white font-nunito font-semibold bg-fourth rounded-md w-fit px-5 py-2 mt-5 hover:shadow-md"
+          className="flex items-center justify-center text-white font-nunito font-semibold bg-fourth rounded-md w-fit px-5 py-2 mt-5 hover:shadow-md transition"
         >
           Save Changes
         </button>

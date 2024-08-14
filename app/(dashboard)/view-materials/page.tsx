@@ -98,14 +98,14 @@ const ViewMaterialsPage = () => {
   return (
     <>
     {courseDetails && <StudentBar students={students}/>}
-    <div className="px-[24rem] pt-28 bg-primary w-screen h-screen">
+    <div className="pl-[24rem] pr-20 pt-28 bg-primary w-screen h-screen">
       <div className="font-nunito text-3xl font-bold">
         {courseDetails?.title}
       </div>
       <button
         onClick={() => router.push(`/create-materials?id=${courseId}`)}
         type="button"
-        className="rounded-md bg-tertiary text-background bg-fourth px-5 font-nunito text-white font-bold my-5 py-2"
+        className="rounded-md text-background bg-fourth hover:shadow-md transition px-5 font-nunito text-white font-bold my-5 py-2"
       >
         Create new material
       </button>
@@ -118,7 +118,7 @@ const ViewMaterialsPage = () => {
           courseDetails?.materials.map((material) => (
             <div
               key={material.id}
-              className="bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-5 min-w-[140vh]"
+              className="bg-white hover:shadow-xl transition rounded-md shadow-sm p-5 my-5 min-w-[140vh]"
             >
               <div className="flex justify-between">
                 <div className="font-nunito text-2xl font-bold">
@@ -140,7 +140,7 @@ const ViewMaterialsPage = () => {
                 </div>
               </div>
               <div className="font-nunito text-base font-semibold flex">
-                <a href={material.url} className="hover:underline" target="_blank">{"View PDF material"}</a>
+                <a href={material.url} className="hover:underline hover:text-blue-600 transition" target="_blank">{"View PDF material"}</a>
               </div>
             </div>
           ))

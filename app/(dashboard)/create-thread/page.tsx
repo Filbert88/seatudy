@@ -7,14 +7,16 @@ import CoursesBar from "@/components/assignments/course-bar";
 import {
   CourseInterface,
   SideBarDataInterface,
+  StudentEnrollmentInterface,
 } from "@/components/types/types";
-import LoadingBouncer from "../all-courses/loading";
+import LoadingBouncer from "../loading";
 import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import "react-quill/dist/quill.snow.css";
 import "./custom-quill.css";
 import { useSession } from "next-auth/react";
+import StudentBar from "@/components/student-enrolled/student-bar";
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -23,7 +25,7 @@ const ViewForumPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [courseData, setCourseData] = useState<CourseInterface>();
   const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
-  const [isThreadAvailable, setIsThreadAvailable] = useState<boolean>(true);
+  const [students, setStudents] = useState<StudentEnrollmentInterface[]>([]);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const router = useRouter();
@@ -36,31 +38,40 @@ const ViewForumPage = () => {
     setCourseId(id);
     setIsLoading(true);
 
-    const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
+    if (id !== null) {
+      fetchCourse(id);
+    }
 
-    if (sideBarDataFromLocalStorage) {
-      setSideBarData(sideBarDataFromLocalStorage);
+  }, []);
+
+  const fetchCourse = async (id: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/course/${id}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setStudents(data.data.enrollments);
+      } else {
+        toast({
+          title: "Failed to load enrollments",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
     }
-    else {
-      console.log("Fetching course data from server");
-      getCourses(id, session.data?.user?.id)
-      .then((data) => {
-        const newSideBarData = {
-          materialData: data.materials,
-          assignmentData: data.assignments,
-          titleData: data.title,
-        };
-        setSideBarData(newSideBarData);
-      })
-      .catch((error) => {
-        console.error("Error fetching course data:", error);
-        setIsThreadAvailable(false);
-      }).finally(() => {
-        setIsLoading(false);
-      });
-    }
-  }, []);
+  };
 
   const handleContentChange = (value: string) => {
     setContent(value);
@@ -92,7 +103,7 @@ const ViewForumPage = () => {
         toast({
           title: "Forum thread created successfully",
         });
-        router.push(`/view-forum?id=${courseId}`);
+        router.push(`/view-threads?id=${courseId}`);
       } else {
         toast({
           title: "Error creating forum thread",
@@ -115,14 +126,9 @@ const ViewForumPage = () => {
   }
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
-      <CoursesBar
-        title={courseData?.title ?? ""}
-        materials={sideBarData?.materialData || []}
-        assignments={sideBarData?.assignmentData || []}
-        active={{ type: "forum", id: "new-thread" }}
-      />
+      <StudentBar students={students}/>
       {!isLoading && (
-        <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
+        <div className="flex flex-col h-screen pl-[24rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
           <div className="my-5 font-nunito font-bold text-3xl">
             {`Create a new forum thread`}
           </div>

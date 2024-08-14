@@ -76,46 +76,45 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
         </div>
         <div className="flex items-center">
           {status === "authenticated" && (
-            <a
+            <button
               onClick={() => handleNavbarClick("/my-courses")}
-              className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+              className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
                 activePage === "My Courses" && "text-fourth"
               }`}
             >
               My Courses
-            </a>
+            </button>
           )}
-          <a
+          <button
             onClick={() => handleNavbarClick("/all-courses")}
-            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+            className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
               activePage === "All Courses" && "text-fourth"
             }`}
           >
             All Courses
-          </a>
-          <a
+          </button>
+          <button
             onClick={() => handleNavbarClick("/popular-courses")}
-            className={`mx-10 font-semibold hover:underline text-md hover:cursor-pointer ${
+            className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
               activePage === "Popular Courses" && "text-fourth"
             }`}
           >
             Popular Courses
-          </a>
+          </button>
         </div>
         <div className="flex items-center justify-end ml-auto mr-10">
           {status === "authenticated" && (
             <>
               <IoNotificationsOutline
-                className="text-primary mx-2 h-6 w-6 hover:cursor-pointer"
+                className="text-primary mx-2 h-6 w-6 hover:cursor-pointer hover:opacity-50 transition"
                 onClick={() => router.push("/notification-page")}
               />
-              <div
+              <button
                 onClick={() => router.push("/view-profile")}
-                className="hover:cursor-pointer ml-5 flex items-center"
+                className="hover:cursor-pointer hover:opacity-50 transition ml-5 flex items-center"
               >
                 <div className="mr-4 text-md">{session?.user?.name}</div>
-                <div className="bg-primary h-8 w-8 rounded-full"></div>
-              </div>
+              </button>
             </>
           )}
         </div>
