@@ -14,8 +14,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
   }
 
-  const data = await req.json();
-  const { userId, assignmentId } = data;
+  const userId = req.nextUrl.searchParams.get("userId");
+  const assignmentId = req.nextUrl.searchParams.get("assignmentId");
 
   if (!userId || !assignmentId) {
     return NextResponse.json(

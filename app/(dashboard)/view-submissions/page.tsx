@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 import { RiDownload2Line } from "react-icons/ri";
 import LoadingBouncer from "../../(user)/all-courses/loading";
-import { SubmissionDataInterface } from "@/components/types/types";
+import {
+  SubmissionDataInterface,
+} from "@/components/types/types";
 
 import { useToast } from "@/components/ui/use-toast";
 
@@ -12,9 +14,7 @@ const ViewSubmissionsPage = () => {
   const [grade, setGrade] = useState<string>("");
   const [activeGradingId, setActiveGradingId] = useState<string>("");
   const [comment, setComment] = useState<string>("");
-  const [submissionData, setSubmissionData] = useState<
-    SubmissionDataInterface[]
-  >([]);
+  const [submissionData, setSubmissionData] = useState<SubmissionDataInterface[]>([]);
 
   const { toast } = useToast();
 
@@ -51,7 +51,7 @@ const ViewSubmissionsPage = () => {
       setActiveGradingId("");
       setComment("");
     }
-  }, [grade, activeGradingId]);
+  }, [grade, activeGradingId])
 
   if (isLoading) {
     return <LoadingBouncer />;
@@ -61,16 +61,16 @@ const ViewSubmissionsPage = () => {
     value = value.replace(/\D/g, "");
     if (parseInt(value) > 100) {
       value = "100";
-    } else if (parseInt(value) < 0) {
-      value = "0";
+    }
+    else if (parseInt(value) < 0) {
+      value = "0"
     }
     setGrade(value);
-  };
+  }
 
-  const handleSubmissionClick = async (
-    assignmentId: string,
-    studentId: string
-  ) => {
+
+
+  const handleSubmissionClick = async (assignmentId:string, studentId: string) => {
     try {
       setIsLoading(true);
       const response = await fetch(`/api/submission-score/create`, {
@@ -78,7 +78,7 @@ const ViewSubmissionsPage = () => {
         headers: {
           accept: "application/json",
         },
-        body: JSON.stringify({
+        body: JSON.stringify({ 
           content: comment,
           grade: parseInt(grade),
           assignmentId: assignmentId,
@@ -95,19 +95,20 @@ const ViewSubmissionsPage = () => {
           title: "Successfully graded the submission",
         });
       }
+
     } catch (error) {
       console.error(error);
       toast({
         title: "An error occurred while grading the submission",
         variant: "destructive",
       });
-    } finally {
+    } finally { 
       setIsLoading(false);
       setGrade("");
       setActiveGradingId("");
       setComment("");
     }
-  };
+  }
 
   if (isLoading) {
     return <LoadingBouncer />;
@@ -115,7 +116,9 @@ const ViewSubmissionsPage = () => {
 
   return (
     <div className="px-10 pt-28 bg-primary w-screen h-screen">
-      <div className="font-nunito text-3xl mb-3 font-bold">{"Submissions"}</div>
+      <div className="font-nunito text-3xl mb-3 font-bold">
+        {"Submissions"}
+      </div>
       <div className="flex flex-col">
         {submissionData.length === 0 ? (
           <div className="font-nunito text-2xl font-semibold">
@@ -123,14 +126,7 @@ const ViewSubmissionsPage = () => {
           </div>
         ) : (
           submissionData.map((submission) => (
-            <div
-              key={submission.id}
-              className={`bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-3 min-w-[140vh] ${
-                activeGradingId !== submission.id &&
-                activeGradingId !== "" &&
-                "opacity-60"
-              }`}
-            >
+            <div key={submission.id} className={`bg-white hover:shadow-xl rounded-md shadow-sm p-5 my-3 min-w-[140vh] ${activeGradingId !== submission.id && activeGradingId !== "" && "opacity-60"}`}>
               <div className="flex justify-between items-center">
                 <div className="font-nunito text-xl font-bold w-[40%] whitespace-nowrap">
                   {submission.student.fullName}
@@ -139,54 +135,34 @@ const ViewSubmissionsPage = () => {
                   {submission.assignment.title}
                 </div>
                 <div className="flex ml-auto">
-                  {activeGradingId === submission.id && (
-                    <>
-                      <input
-                        type="text"
-                        value={comment}
-                        placeholder="Add comment.."
-                        disabled={
-                          activeGradingId !== submission.id &&
-                          activeGradingId !== ""
-                        }
-                        className="border border-grays rounded-md py-1 px-3 w-[20rem] mr-3"
-                        onChange={(e) => {
-                          setComment(e.target.value);
-                        }}
-                      />
-                      <button
-                        className="mr-10 px-3 py-1 bg-fourth text-white font-semibold rounded-md hover:shadow-md"
-                        onClick={() => {
-                          handleSubmissionClick(
-                            submission.assignmentId,
-                            submission.studentId
-                          );
-                        }}
-                      >
-                        Grade
-                      </button>
-                    </>
-                  )}
-                  <a
-                    className="hover:bg-gray-100 text-grays rounded-lg mr-3"
-                    href={submission.content}
-                    target="_blank"
-                  >
+                  
+                  {activeGradingId === submission.id && 
+                  <>
+                    <input 
+                      type="text" 
+                      value={comment}
+                      placeholder="Add comment.."
+                      disabled={activeGradingId !== submission.id && activeGradingId !== ""}
+                      className="border border-grays rounded-md py-1 px-3 w-[20rem] mr-3"
+                      onChange={(e) => {
+                        setComment(e.target.value);
+                      }}
+                    />
+                    <button 
+                      className="mr-10 px-3 py-1 bg-fourth text-white font-semibold rounded-md hover:shadow-md"
+                      onClick={() => {
+                        handleSubmissionClick(submission.assignmentId, submission.studentId);
+                      }}
+                    >Grade</button>
+                  </>
+                  }
+                  <a className="hover:bg-gray-100 text-grays rounded-lg mr-3" href={submission.content} target="_blank">
                     <RiDownload2Line size={30} />
                   </a>
-                  <input
-                    type="text"
-                    value={
-                      activeGradingId === submission.id
-                        ? grade
-                        : submission.grade
-                        ? submission.grade.toString()
-                        : ""
-                    }
-                    disabled={
-                      activeGradingId !== submission.id &&
-                      activeGradingId !== ""
-                    }
+                  <input 
+                    type="text" 
+                    value={activeGradingId === submission.id ? grade : (submission.grade ? submission.grade.toString() : "")}
+                    disabled={activeGradingId !== submission.id && activeGradingId !== ""}
                     className="border border-grays rounded-md py-1 px-3 w-[5rem]"
                     onChange={(e) => {
                       handleChange(e.target.value);
