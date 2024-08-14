@@ -12,10 +12,8 @@ export default async function AuthLayout({
     redirect("/");
   }
   return (
-    <>
-      <div className="w-full min-h-screen bg-[url('/assets/login_bg.png')] bg-cover flex items-center justify-center font-nunito">
-        <main>{children}</main>
-      </div>
-    </>
+    <div className="w-full min-h-screen bg-[url('/assets/login_bg.png')] bg-cover flex items-center justify-center font-nunito">
+      <main>{children}</main>
+    </div>
   );
 }
