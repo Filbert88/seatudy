@@ -5,16 +5,27 @@ import { uploadFileToCloudinary } from "@/lib/cloudinary";
 import { authOptions } from "../../auth/[...nextauth]/auth-options";
 import { prisma } from "@/lib/prisma";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
-function stringToDifficulty(difficulty: string): DifficultyLevel {
-  const lowerCaseRole = difficulty.toLowerCase();
+interface NewCourseData {
+  title: string;
+  description: string;
+  syllabus: string[];
+  thumbnailUrl: string | null;
+  skills: string[];
+  instructorId: string;
+  difficulty: DifficultyLevel;
+  price: number | null;
+}
+
+function stringToDifficulty(difficulty: string | null): DifficultyLevel {
+  const lowerCaseRole = difficulty?.toLowerCase();
   if (lowerCaseRole === "beginner") return DifficultyLevel.BEGINNER;
   if (lowerCaseRole === "intermediate") return DifficultyLevel.INTERMEDIATE;
   if (lowerCaseRole === "advanced") return DifficultyLevel.ADVANCED;
-  throw new Error("Invalid role");
+  throw new Error("Invalid difficulty level");
 }
 
 export const POST = async (req: Request) => {
@@ -33,24 +44,23 @@ export const POST = async (req: Request) => {
 
   try {
     const formData = await req.formData();
-    const title = formData.get("title");
-    const description = formData.get("description");
+    const title = (formData.get("title") as string | null) ?? ""; // Provide default value
+    const description = (formData.get("description") as string | null) ?? ""; // Provide default value
+    const difficulty = formData.get("difficulty") as string | null;
+    const priceString = formData.get("price") as string | null;
+    const categoryNames = formData.getAll("categoryNames") as string[];
     const syllabus = formData.getAll("syllabus") as string[];
     const skills = formData.getAll("skills") as string[];
-    const difficulty = formData.get("difficulty")?.toString() || "";
-    const price = formData.get("price");
-    const categoryNames = formData.getAll("categoryNames") as string[];
 
-    let generatedUrl = null;
+    const price = priceString ? parseFloat(priceString) : null;
+    
+    let generatedUrl: string | null = null;
     const file = formData.get("file");
     if (file && file instanceof File) {
       generatedUrl = await uploadFileToCloudinary(file);
     } else if (file) {
       return NextResponse.json({ message: "Invalid File Type" }, { status: 400 });
     }
-    console.log(file);
-    console.log(generatedUrl);
-    console.log(formData);
 
     const categories = await Promise.all(
       categoryNames.map(async (name) => {
@@ -65,7 +75,7 @@ export const POST = async (req: Request) => {
       })
     );
 
-    const newData: any = {
+    const newData: Omit<NewCourseData, 'price'> & { price: number | bigint } = {
       title,
       description,
       syllabus,
@@ -73,8 +83,8 @@ export const POST = async (req: Request) => {
       skills,
       instructorId: session.user.id,
       difficulty: stringToDifficulty(difficulty),
-      price,
-    };
+      price: price ?? 0, 
+    };    
 
     const course = await prisma.course.create({
       data: newData,
@@ -90,7 +100,7 @@ export const POST = async (req: Request) => {
     }
 
     return NextResponse.json({ message: "Success", data: course }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in POST /api/course", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }

@@ -1,10 +1,10 @@
-import { TransactionType } from "@prisma/client";
+import { TransactionType, Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/auth-options";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -23,14 +23,16 @@ export const POST = async (req: Request) => {
 
     const { amount, cardNumber, expirationDate, cvc, cardHolderName } = body;
 
-    const newData: any = {
-      userId: session.user.id,
+    const newData: Prisma.TransactionCreateInput = {
       amount,
       cardNumber,
       expirationDate,
       cvc,
       cardHolderName,
       type: TransactionType.DEPOSIT,
+      user: {
+        connect: { id: session.user.id }, 
+      },
     };
 
     const transaction = await prisma.transaction.create({
@@ -48,7 +50,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json({ message: "Success", data: transaction }, { status: 201 });
   } catch (error) {
-    console.error("Error in GET /api/categories", error);
+    console.error("Error in POST /api/transactions", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 };

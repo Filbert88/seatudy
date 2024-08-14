@@ -120,10 +120,6 @@ const ReviewPage = () => {
           })
           .catch((error) => {
             console.error("Error fetching course data:", error);
-            toast({
-              title: "Course not found",
-              variant: "destructive",
-            });
           });
       }
       if (assignmentId) {

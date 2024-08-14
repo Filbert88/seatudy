@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CoursesBar from "@/components/assignments/coursesBar";
 import PdfViewer from "@/components/pdf-viewer";
 import {
@@ -11,20 +11,21 @@ import {
   getCourses,
   getSideBarDataFromLocalStorage,
 } from "@/components/worker/local-storage-handler";
-import { useToast } from "@/components/ui/use-toast";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import CertificateGenerator from "@/components/worker/certificate-generator";
 import { useSession } from "next-auth/react";
 
 const MaterialsPage = () => {
   const [materialId, setMaterialId] = useState<string | null>(null);
-  const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [materialData, setMaterialData] = useState<MaterialInterface | null>(null);
-  const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
+  const [materialData, setMaterialData] = useState<MaterialInterface | null>(
+    null
+  );
+  const [sideBarData, setSideBarData] = useState<
+    SideBarDataInterface | undefined
+  >();
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
-  const { toast } = useToast();
-  const router = useRouter();
+
   const searchParams = useSearchParams();
   const session = useSession();
 
@@ -45,18 +46,10 @@ const MaterialsPage = () => {
       } else {
         console.log("Failed to fetch material");
         setMaterialData(null);
-        toast({
-          title: "Failed to load material",
-          variant: "destructive",
-        });
       }
     } catch (error) {
       console.error("Error fetching material:", error);
       setMaterialData(null);
-      toast({
-        title: "Failed to load material",
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +62,6 @@ const MaterialsPage = () => {
     console.log("Current URL Params:", { id, materialId });
 
     setMaterialId(materialId);
-    setCourseId(id);
 
     if (id) {
       const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
@@ -89,14 +81,10 @@ const MaterialsPage = () => {
           .catch((error) => {
             console.error("Error fetching course data:", error);
             setIsMaterialAvailable(false);
-            toast({
-              title: "Course not found",
-              variant: "destructive",
-            });
           });
       }
     }
-  }, [searchParams]); 
+  }, [searchParams]);
 
   useEffect(() => {
     if (materialId) {
@@ -126,18 +114,22 @@ const MaterialsPage = () => {
         )}
         {!isLoading && isMaterialAvailable && materialData && (
           <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
-            {localStorage.getItem("progress") === "100.00%" && 
+            {localStorage.getItem("progress") === "100.00%" && (
               <div className="flex">
-                <div className="mr-2">{"You've completed this course. Download your certificate "}</div>
-                <CertificateGenerator courseName={sideBarData?.titleData ?? ''} />
+                <div className="mr-2">
+                  {"You've completed this course. Download your certificate "}
+                </div>
+                <CertificateGenerator
+                  courseName={sideBarData?.titleData ?? ""}
+                />
               </div>
-            }
+            )}
             <div className="my-5 font-nunito font-bold text-3xl">
               {materialData.title}
             </div>
             <div className="flex h-full pb-20">
               <PdfViewer
-                url={materialData.url ?? "null"} 
+                url={materialData.url ?? "null"}
                 className="flex-grow flex w-full"
               />
             </div>

@@ -1,4 +1,5 @@
-import { useSession } from "next-auth/react";
+/* eslint-disable */
+
 import { AssignmentInterface, MaterialInterface } from "../types/types";
 
 export const getCourses = async (id: any, userId: any) => {

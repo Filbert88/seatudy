@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-(BigInt.prototype as any).toJSON = function () {
+(BigInt.prototype as unknown as { toJSON: () => string }).toJSON = function () {
   return this.toString();
 };
 
@@ -21,7 +21,7 @@ export const GET = async (req: Request) => {
     });
 
     return NextResponse.json({ message: "Success", data: materials }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in GET /api/course/material", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }

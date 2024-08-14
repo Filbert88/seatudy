@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import SeatudyLogo from "./assets/seatudy-logo";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { usePathname, useRouter } from "next/navigation";
-import { NavbarInterface } from "./types/types";
 import { useSession } from "next-auth/react";
 
-const InstructorNavbar = ({ activePage }: NavbarInterface) => {
+const InstructorNavbar = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
