@@ -30,9 +30,7 @@ describe("Home Page", () => {
   it("renders the logged-in heading", () => {
     render(<Home initialCourseData={mockCourseData} session={mockSession} />);
 
-    const heading = screen.getByText(
-      `Welcome back, ${mockSession.user.name}! Ready to continue your journey?`
-    );
+    const heading = screen.getByText(`Welcome back, ${mockSession.user.name}! Ready to continue your journey?`);
 
     expect(heading).toBeInTheDocument();
   });
