@@ -50,7 +50,7 @@ export default function Home({ initialCourseData, session }: HomeProps) {
           setMyCourseData(data.data);
         }
       } catch (error) {
-        console.error(error);
+        console.log(error);
       } finally {
         setIsLoading(false);
       }
