@@ -1,6 +1,6 @@
 import { render, waitFor } from "@testing-library/react";
+import CoursesDetailPage from "@/app/(user)/course-detail/page";
 import { SessionProvider } from "next-auth/react";
-import CheckOutPage from "@/app/(user)/checkout/page";
 
 jest.mock("next/navigation", () => ({
   useRouter() {
@@ -27,7 +27,7 @@ describe("CheckOut Page", () => {
     await waitFor(() => {
       render(
         <SessionProvider session={mockSession}>
-          <CheckOutPage />
+          <CoursesDetailPage />
         </SessionProvider>
       );
     });

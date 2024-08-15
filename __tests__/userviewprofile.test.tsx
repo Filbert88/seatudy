@@ -1,10 +1,11 @@
 import { render } from "@testing-library/react";
-import Home from "@/app/(user)/(home)/main-client";
+import ViewProfilePage from "@/components/view-profile";
+import { SessionProvider } from "next-auth/react";
 
 jest.mock("next/navigation", () => ({
   useRouter() {
     return {
-      prefetch: () => null,
+      prefetch: jest.fn(),
     };
   },
 }));
@@ -21,8 +22,12 @@ const mockSession = {
   expires: "",
 };
 
-describe("Home Page", () => {
-  it("should render the home page", () => {
-    render(<Home initialCourseData={[]} session={mockSession} />);
+describe("View Profile Page", () => {
+  it("should render", () => {
+    render(
+      <SessionProvider session={mockSession}>
+        <ViewProfilePage />
+      </SessionProvider>
+    );
   });
 });

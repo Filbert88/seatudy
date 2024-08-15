@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
-import InstructorNotificationPage from "@/app/(dashboard)/instructor-notification-page/page";
+import UserNotificationPage from "@/app/(user)/notification-page/page";
 
-describe("Instructor Notification Page", () => {
+describe("User Notification Page", () => {
   let originalConsoleError: typeof console.error;
 
   beforeAll(() => {
@@ -14,6 +14,6 @@ describe("Instructor Notification Page", () => {
   });
 
   it("should render", () => {
-    render(<InstructorNotificationPage />);
+    render(<UserNotificationPage />);
   });
 });
