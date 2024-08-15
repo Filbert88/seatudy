@@ -11,16 +11,28 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
+const mockSession = {
+  user: {
+    name: "test",
+    email: "test@gmail.com",
+    role: "INSTRUCTOR",
+    id: "1",
+  },
+  expires: "",
+};
+
 // pake fetch nanti disini
 
 describe("Create Course Page", () => {
   it("should render", async () => {
     await waitFor(() =>
       render(
-        <SessionProvider>
+        <SessionProvider session={mockSession}>
           <CreateCourse />
         </SessionProvider>
       )
     );
   });
 });
+
+// Ini yg masih failed
