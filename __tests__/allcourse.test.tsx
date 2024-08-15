@@ -1,12 +1,15 @@
 import { render } from "@testing-library/react";
 import Home from "@/app/(user)/all-courses/page";
 
-// Mock useRouter:
-jest.mock("next/router", () => ({
+// Mock next/navigation module
+jest.mock("next/navigation", () => ({
   useRouter() {
     return {
       prefetch: () => null,
     };
+  },
+  useSearchParams() {
+    return new URLSearchParams();
   },
 }));
 

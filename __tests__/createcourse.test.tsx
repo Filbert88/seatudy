@@ -1,5 +1,6 @@
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import CreateCourse from "@/app/(dashboard)/create-courses/page";
+import { SessionProvider } from "next-auth/react";
 
 // Mock useRouter:
 jest.mock("next/navigation", () => ({
@@ -10,8 +11,16 @@ jest.mock("next/navigation", () => ({
   },
 }));
 
+// pake fetch nanti disini
+
 describe("Create Course Page", () => {
-  it("should render", () => {
-    render(<CreateCourse />);
+  it("should render", async () => {
+    await waitFor(() =>
+      render(
+        <SessionProvider>
+          <CreateCourse />
+        </SessionProvider>
+      )
+    );
   });
 });
