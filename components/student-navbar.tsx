@@ -57,13 +57,13 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
       <div className="flex justify-between items-center ml-3 text-primary w-full">
-        <div
+        <button
           className="flex items-center hover:cursor-pointer"
           onClick={() => handleNavbarClick("/")}
         >
           <SeatudyLogo className="h-10 w-10 mx-2" />
           <span className="font-semibold text-2xl mx-2">seatudy</span>
-        </div>
+        </button>
         <div className="flex items-center border border-primary rounded-md ml-10 mx-10 bg-transparent text-sm w-[20rem]">
           <IoSearch className="text-primary mx-2" />
           <input

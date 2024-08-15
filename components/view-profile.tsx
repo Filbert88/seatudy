@@ -242,7 +242,7 @@ const ViewProfilePage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div className="flex justify-between mt-5">
+            <div className="flex justify-between mt-10">
               <button
                 onClick={handleSave}
                 type="button"

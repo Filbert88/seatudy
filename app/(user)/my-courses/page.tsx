@@ -46,16 +46,17 @@ const MyCoursesPage = () => {
       }
     };
     fetchCourses();
+    localStorage.setItem("id", "null");
   }, []);
 
   if (isLoading) {
     return <LoadingBouncer />;
   }
   return (
-    <div className="pt-24 px-16">
+    <div className="pt-24 px-16 font-nunito">
       <div className="flex-grow mx-20 my-5">
         <div className="font-bold text-3xl mb-5">Your Course</div>
-        <div className="flex">
+        <div className="flex flex-wrap">
           {courseData.length > 0 ? (
             courseData.map((course) => (
               <CoursesCard
