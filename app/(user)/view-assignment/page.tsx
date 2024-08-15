@@ -24,6 +24,7 @@ const AssignmentPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [asgId, setAsgId] = useState<string | null>("");
   const [isAssignmentAvailable, setIsAssignmentAvailable] = useState(true);
+  const [userProgress, setUserProgress] = useState<string>();
   const [sideBarData, setSideBarData] = useState<
     SideBarDataInterface | undefined
   >();
@@ -76,32 +77,30 @@ const AssignmentPage = () => {
     const assignmentId = searchParams.get("assignmentId");
     setAsgId(assignmentId);
 
-    console.log("Current URL Params:", { id, assignmentId });
-
-    if (id) {
-      const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
-      if (sideBarDataFromLocalStorage) {
-        setSideBarData(sideBarDataFromLocalStorage);
-        setIsLoading(false);
-      } else {
-        console.log("Fetching course data from server");
-        getCourses(id, session.data?.user?.id)
-          .then((data) => {
-            const newSideBarData = {
-              materialData: data.materials,
-              assignmentData: data.assignments,
-              titleData: data.title,
-            };
-            setSideBarData(newSideBarData);
-          })
-          .catch((error) => {
-            console.error("Error fetching course data:", error);
-            setIsAssignmentAvailable(false);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      }
+    const userData = JSON.parse(localStorage.getItem("userData") ?? "{}");
+    if (userData.id === session.data?.user.id && userData.courseId === id) {
+      setUserProgress(userData.progress);
+    }
+    else {
+      fetch(`/api/course/${id}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const userEnrollment = data.data.enrollments.find(
+            (enrollment: any) => enrollment.userId === session.data?.user.id
+          );
+          const userProgress = userEnrollment
+            ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct
+            : "0%";
+          setUserProgress(userProgress);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
     }
   }, [searchParams]);
 
@@ -113,24 +112,16 @@ const AssignmentPage = () => {
 
   return (
     <>
-      {isLoading && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <BounceLoader className="text-secondary" />
-        </div>
-      )}
+      {isLoading && <LoadingBouncer />}
       <main className="flex flex-row py-20 pl-64 font-nunito">
-      {isAssignmentAvailable ? (
-        <CoursesBar
-          title={sideBarData?.titleData ?? ""}
-          materials={sideBarData?.materialData || []}
-          assignments={sideBarData?.assignmentData || []}
-          active={{ type: "assignments", id: assignmentData?.id ?? "" }}
-        />
-      ) : (
+      <CoursesBar
+        active={{ type: "assignments", id: assignmentData?.id ?? "" }}
+      />
+      {!isAssignmentAvailable && 
         <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
           {"Course assignment not found"}
         </div>
-      )}
+      }
       
       {!isLoading && isAssignmentAvailable && (
         <div className="flex flex-col">

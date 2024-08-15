@@ -87,6 +87,11 @@ export interface MaterialInterface {
   updatedAt: string;
 }
 
+export interface CategoryInterface {
+  id: string;
+  name: string;
+}
+
 export interface instructorInterface {
   fullName: string;
 }
@@ -150,9 +155,9 @@ export interface SideBarDataInterface {
 }
 
 export interface CourseSidebarInterface {
-  title: string;
-  materials: MaterialInterface[];
-  assignments: AssignmentInterface[];
+  // title: string;
+  // materials: MaterialInterface[];
+  // assignments: AssignmentInterface[];
   active: { type: string; id: string };
 }
 

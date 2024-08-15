@@ -6,10 +6,6 @@ import {
   AssignmentInterface,
   SideBarDataInterface,
 } from "@/components/types/types";
-import {
-  getCourses,
-  getSideBarDataFromLocalStorage,
-} from "@/components/worker/local-storage-handler";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
@@ -20,13 +16,9 @@ const ReviewPage = () => {
   const [rating, setRating] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [comment, setComment] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [courseId, setCourseId] = useState<string>("");
-  const [sideBarData, setSideBarData] = useState<
-    SideBarDataInterface | undefined
-  >();
   const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
-  const session = useSession();
   const { toast } = useToast();
 
   const getAssignmentById = async (assignmentId: string) => {
@@ -102,30 +94,11 @@ const ReviewPage = () => {
     const id = param.get("id");
     setCourseId(id ?? "");
     const assignmentId = param.get("assignmentId");
-    if (id) {
-      const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
-      if (sideBarDataFromLocalStorage) {
-        setSideBarData(sideBarDataFromLocalStorage);
-        setIsLoading(false);
-      } else {
-        console.log("Fetching course data from server");
-        getCourses(id, session.data?.user?.id)
-          .then((data) => {
-            const newSideBarData = {
-              materialData: data.materials,
-              assignmentData: data.assignments,
-              titleData: data.title,
-            };
-            setSideBarData(newSideBarData);
-          })
-          .catch((error) => {
-            console.error("Error fetching course data:", error);
-          });
-      }
-      if (assignmentId) {
-        getAssignmentById(assignmentId);
-      }
+    
+    if (assignmentId) {
+      getAssignmentById(assignmentId);
     }
+    
   }, []); // eslint-disable-line
 
   useEffect(() => {
@@ -144,9 +117,6 @@ const ReviewPage = () => {
   return (
     <div className="flex flex-row py-20 pl-[20rem] font-nunito text-secondary">
       <CoursesBar
-        title={sideBarData?.titleData ?? ""}
-        materials={sideBarData?.materialData || []}
-        assignments={sideBarData?.assignmentData || []}
         active={{ type: "review", id: "review-course" }}
       />
       <div className="flex flex-col ">
@@ -154,7 +124,7 @@ const ReviewPage = () => {
           {"Help Us Make Seatudy Even Better!"}
         </div>
         <div className="pt-10 font-normal text-2xl">
-          <Instructions>{`Your feedback is incredibly valuable to us. We would love to hear your thoughts on the "**${sideBarData?.titleData}**" course. Please share your honest ratings and reviews to help us continue improving and provide the best learning experience possible. Thank you for being a part of our community!`}</Instructions>
+          <Instructions>{`Your feedback is incredibly valuable to us. We would love to hear your thoughts on the "**${localStorage.getItem("title")}**" course. Please share your honest ratings and reviews to help us continue improving and provide the best learning experience possible. Thank you for being a part of our community!`}</Instructions>
         </div>
         <div className="flex mt-[5vh] items-center">
           <button

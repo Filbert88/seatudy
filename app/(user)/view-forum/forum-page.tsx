@@ -186,49 +186,16 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
     setCourseId(id);
-    setIsLoading(true);
     if (id !== null) {
       getForumData(id);
-    }
-
-    const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
-
-    if (sideBarDataFromLocalStorage) {
-      setSideBarData(sideBarDataFromLocalStorage);
-      setIsLoading(false);
-    } else {
-      console.log("Fetching course data from server");
-      getCourses(id, session?.user.id)
-        .then((data) => {
-          const newSideBarData = {
-            materialData: data.materials,
-            assignmentData: data.assignments,
-            titleData: data.title,
-          };
-          setSideBarData(newSideBarData);
-        })
-        .catch((error) => {
-          console.error("Error fetching course data:", error);
-          setIsForumAvailable(false);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
     }
   }, []);
 
   return (
     <>
-      {isLoading && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <BounceLoader className="text-secondary" />
-        </div>
-      )}
+      {isLoading && <LoadingBouncer />}
       <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
         <CoursesBar
-          title={sideBarData?.titleData || ""}
-          materials={sideBarData?.materialData || []}
-          assignments={sideBarData?.assignmentData || []}
           active={{ type: "forum", id: "view-forum" }}
         />
         {!isLoading && isForumAvailable && forumData && forumData?.length > 0 ? (
