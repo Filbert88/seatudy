@@ -104,12 +104,12 @@ export default function Home() {
             (results.length > 0 ? 
             <div className="mb-5 font-semibold flex">
               <div>{`Showing ${results.length} results for`}</div>
-              <div className="font-bold ml-2">"{searchQuery}"</div>
+              <div className="font-bold ml-2">{`"${searchQuery}"`}</div>
             </div>
             : 
             <div className="mb-5 font-semibold flex">
               <div>{"No results found for"}</div>
-              <div className="font-bold ml-2">"{searchQuery}"</div>
+              <div className="font-bold ml-2">{`"${searchQuery}"`}</div>
             </div>)
            : (
             <div className="mb-5">All Courses</div>
