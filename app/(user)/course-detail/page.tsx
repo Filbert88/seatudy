@@ -7,7 +7,7 @@ import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 
 const CoursesDetailPage = () => {
-  const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
+  const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [reviewData, setReviewData] = useState<ReviewDataProps[]>([]);
   const [isLogin, setIsLogin] = useState(false);
@@ -19,7 +19,6 @@ const CoursesDetailPage = () => {
   useEffect(() => {
     const getReviews = async (id: string) => {
       try {
-        setIsLoading(true);
         const response = await fetch(`/api/review?courseId=${id}`, {
           method: "GET",
           headers: {
@@ -34,10 +33,9 @@ const CoursesDetailPage = () => {
           title: "Failed to load reviews data",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
       }
     };
+
     const id = new URLSearchParams(window.location.search).get("id");
     if (id) {
       setCourseId(id);
@@ -48,7 +46,6 @@ const CoursesDetailPage = () => {
   useEffect(() => {
     const getCoursesDetail = async () => {
       try {
-        setIsLoading(true);
         const response = await fetch(courseDetailUrl, {
           method: "GET",
           headers: {
@@ -82,7 +79,6 @@ const CoursesDetailPage = () => {
     return new Intl.NumberFormat('en-US').format(number) + ".00";
   };
 
-
   if (isLoading) {
     return <LoadingBouncer />;
   }
@@ -95,13 +91,11 @@ const CoursesDetailPage = () => {
     );
   }
 
-  const outline = courseDetails?.skills?.map((item, index) => {
-    return (
-      <li key={index} className="my-2">
-        {item}
-      </li>
-    );
-  });
+  const outline = courseDetails.skills?.map((item, index) => (
+    <li key={index} className="my-2">
+      {item}
+    </li>
+  ));
 
   return (
     <div className="font-nunito">
