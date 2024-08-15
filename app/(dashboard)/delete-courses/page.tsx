@@ -58,7 +58,7 @@ const DeleteCoursePage = () => {
         headers: {
           accept: "application/json",
         },
-        body: JSON.stringify({ id: courseId }),
+        body: JSON.stringify({ courseId }),
       });
       const data = await response.json();
       console.log(data);
