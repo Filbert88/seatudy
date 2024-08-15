@@ -4,16 +4,13 @@ import CoursesBar from "@/components/assignments/course-bar";
 import PdfViewer from "@/components/pdf-viewer";
 import {
   MaterialInterface,
-  SideBarDataInterface,
+  StudentEnrollmentInterface,
 } from "@/components/types/types";
-import { BounceLoader } from "react-spinners";
-import {
-  getCourses,
-  getSideBarDataFromLocalStorage,
-} from "@/components/worker/local-storage-handler";
+
 import { useSearchParams } from "next/navigation";
 import CertificateGenerator from "@/components/worker/certificate-generator";
 import { useSession } from "next-auth/react";
+import LoadingBouncer from "./loading";
 
 const MaterialsPage = () => {
   const [materialId, setMaterialId] = useState<string | null>(null);
@@ -21,9 +18,8 @@ const MaterialsPage = () => {
   const [materialData, setMaterialData] = useState<MaterialInterface | null>(
     null
   );
-  const [sideBarData, setSideBarData] = useState<
-    SideBarDataInterface | undefined
-  >();
+  const [userProgress, setUserProgress] = useState<string>();
+  const [courseTitle, setCourseTitle] = useState<string>("");
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
 
   const searchParams = useSearchParams();
@@ -41,11 +37,11 @@ const MaterialsPage = () => {
       });
       const data = await response.json();
       if (data.message === "Success") {
-        console.log("Material fetched successfully:", data.data);
         setMaterialData(data.data);
       } else {
         console.log("Failed to fetch material");
         setMaterialData(null);
+        setIsMaterialAvailable(false);
       }
     } catch (error) {
       console.error("Error fetching material:", error);
@@ -59,31 +55,36 @@ const MaterialsPage = () => {
     const id = searchParams.get("id");
     const materialId = searchParams.get("materialId");
 
-    console.log("Current URL Params:", { id, materialId });
-
     setMaterialId(materialId);
 
-    if (id) {
-      const sideBarDataFromLocalStorage = getSideBarDataFromLocalStorage(id);
-      if (sideBarDataFromLocalStorage) {
-        setSideBarData(sideBarDataFromLocalStorage);
-      } else {
-        console.log("Fetching course data from server");
-        getCourses(id, session.data?.user?.id)
-          .then((data) => {
-            const newSideBarData = {
-              materialData: data.materials,
-              assignmentData: data.assignments,
-              titleData: data.title,
-            };
-            setSideBarData(newSideBarData);
-          })
-          .catch((error) => {
-            console.error("Error fetching course data:", error);
-            setIsMaterialAvailable(false);
-          });
-      }
+    const userData = JSON.parse(localStorage.getItem("userData") ?? "{}");
+    if (userData.id === session.data?.user.id && userData.courseId === id) {
+      setUserProgress(userData.progress);
+      setCourseTitle(localStorage.getItem("title") ?? "");
     }
+    else {
+      fetch(`/api/course/${id}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const userEnrollment = data.data.enrollments.find(
+            (enrollment: StudentEnrollmentInterface) => enrollment.userId === session.data?.user.id
+          );
+          const userProgress = userEnrollment
+            ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct
+            : "0%";
+          setUserProgress(userProgress);
+          setCourseTitle(data.data.title);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    }
+
   }, [searchParams]);
 
   useEffect(() => {
@@ -94,33 +95,25 @@ const MaterialsPage = () => {
 
   return (
     <>
-      {isLoading && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-50 flex items-center justify-center">
-          <BounceLoader className="text-secondary" />
-        </div>
-      )}
+      {isLoading && <LoadingBouncer />}
       <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
-        {isMaterialAvailable ? (
-          <CoursesBar
-            title={sideBarData?.titleData ?? ""}
-            materials={sideBarData?.materialData || []}
-            assignments={sideBarData?.assignmentData || []}
-            active={{ type: "materials", id: materialData?.id ?? "" }}
-          />
-        ) : (
+        <CoursesBar
+          active={{ type: "materials", id: materialData?.id ?? "" }}
+        />
+        {!isMaterialAvailable &&
           <div className="pt-20 text-secondary text-3xl w-screen h-screen justify-center items-center flex">
             {"Course material not found"}
           </div>
-        )}
+        }
         {!isLoading && isMaterialAvailable && materialData && (
           <div className="flex flex-col h-screen pl-[18rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">
-            {localStorage.getItem("progress") === "100.00%" ? (
+            {userProgress === "100.00%" ? (
               <div className="flex">
                 <div className="mr-2">
                   {"You've completed this course. Download your certificate "}
                 </div>
                 <CertificateGenerator
-                  courseName={sideBarData?.titleData ?? ""}
+                  courseName={courseTitle}
                 />
               </div>
             ) : (
@@ -128,7 +121,7 @@ const MaterialsPage = () => {
                 <div className="mr-2">
                   {"Your current progress:"}
                 </div>
-                <div className="font-semibold">{localStorage.getItem("progress")}</div>
+                <div className="font-semibold">{userProgress}</div>
               </div>
             )}
             <div className="my-5 font-nunito font-bold text-3xl">

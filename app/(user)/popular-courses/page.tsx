@@ -17,20 +17,39 @@ export default function Home() {
   const getCourses = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/course/popular", {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setCourseData(data.data);
-      } else {
-        toast({
-          title: "Failed to fetch popular courses",
-          variant: "destructive",
-        });
+      const [popularCoursesResponse, myCoursesResponse] = await Promise.all([
+        fetch(`/api/course/popular`, {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+          },
+        }),
+        fetch("/api/course/my-course", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }),
+      ]);
+      const allCoursesData = await popularCoursesResponse.json();
+      const myCoursesData = await myCoursesResponse.json();
+
+      if (popularCoursesResponse.status === 200 && myCoursesResponse.ok) {
+        const allCourses = allCoursesData.data;
+        const myCourses = myCoursesData.data;
+
+        const filteredCourses = allCourses.filter(
+          (course: CourseInterface) =>
+            !myCourses.some((myCourse: CourseInterface) => myCourse.id === course.id)
+        );
+
+        setCourseData(filteredCourses);
+      } 
+      else if (popularCoursesResponse.status === 200) {
+        setCourseData(allCoursesData.data);
+      }
+      else {
+        setCourseData([]);
       }
     } catch (error) {
       console.error(error);

@@ -75,7 +75,7 @@ export default function Home() {
       params.set("difficulty", difficulty);
     }
     if (category) {
-      params.set("category", category);
+      params.set("categoryId", category);
     }
     if (title) {
       params.set("title", title);
@@ -86,25 +86,32 @@ export default function Home() {
   useEffect(() => {
     const rating = searchParams.get("rating") ?? undefined;
     const difficulty = searchParams.get("difficulty") ?? undefined;
-    const category = searchParams.get("category") ?? undefined;
+    const category = searchParams.get("categoryId") ?? undefined;
     const title = searchParams.get("title") ?? undefined;
     setSearchQuery(title);
     const queryParams = buildQueryParams(rating, difficulty, category, title);
     getCourses(queryParams);
   }, [searchParams]); // eslint-disable-line
 
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
-
   return (
-    <div className="flex min-h-screen flex-col bg-primary font-nunito font-bold">
+    
+    <div className="flex min-h-screen flex-col bg-primary font-nunito font-bold text-secondary">
+      {isLoading && <LoadingBouncer />}
       <FilterBar route="all-courses" />
       {!isLoading && (
         <div className="mt-[7.5rem] ml-[16rem] text-2xl">
-          {searchQuery ? (
-            <div className="mb-5">{`Showing ${results.length} results of "${searchQuery}"`}</div>
-          ) : (
+          {searchQuery ? 
+            (results.length > 0 ? 
+            <div className="mb-5 font-semibold flex">
+              <div>{`Showing ${results.length} results for`}</div>
+              <div className="font-bold ml-2">{`"${searchQuery}"`}</div>
+            </div>
+            : 
+            <div className="mb-5 font-semibold flex">
+              <div>{"No results found for"}</div>
+              <div className="font-bold ml-2">{`"${searchQuery}"`}</div>
+            </div>)
+           : (
             <div className="mb-5">All Courses</div>
           )}
           <div className="flex flex-wrap">

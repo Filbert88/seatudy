@@ -16,7 +16,7 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
       const searchParams = new URLSearchParams(window.location.search);
       const rating = searchParams.get("rating") || undefined;
       const difficulty = searchParams.get("difficulty") || undefined;
-      const category = searchParams.get("category") || undefined;
+      const category = searchParams.get("categoryId") || undefined;
       const queryParams = buildQueryParams(
         rating,
         difficulty,
@@ -42,7 +42,7 @@ const StudentNavbar = ({ activePage }: NavbarInterface) => {
       params.set("difficulty", difficulty);
     }
     if (category) {
-      params.set("category", category);
+      params.set("categoryId", category);
     }
     if (title) {
       params.set("title", title);
