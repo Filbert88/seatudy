@@ -5,18 +5,15 @@ import Instructions from "@/components/assignments/instructions";
 import Submission from "@/components/assignments/submission";
 import {
   AssignmentInterface,
-  SideBarDataInterface,
+  StudentEnrollmentInterface,
 } from "@/components/types/types";
-import {
-  getCourses,
-  getSideBarDataFromLocalStorage,
-} from "@/components/worker/local-storage-handler";
+
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import CertificateGenerator from "@/components/worker/certificate-generator";
 import { useSearchParams } from "next/navigation";
-import { BounceLoader } from "react-spinners";
+
 
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
@@ -25,9 +22,7 @@ const AssignmentPage = () => {
   const [asgId, setAsgId] = useState<string | null>("");
   const [isAssignmentAvailable, setIsAssignmentAvailable] = useState(true);
   const [userProgress, setUserProgress] = useState<string>();
-  const [sideBarData, setSideBarData] = useState<
-    SideBarDataInterface | undefined
-  >();
+  const [courseTitle, setCourseTitle] = useState<string>("");
   const session = useSession();
   const [assignmentData, setAssignmentData] = useState<AssignmentInterface>();
 
@@ -60,6 +55,7 @@ const AssignmentPage = () => {
           title: "Failed to load material",
           variant: "destructive",
         });
+        setIsAssignmentAvailable(false);
       }
     } catch (error) {
       console.error(error);
@@ -80,6 +76,7 @@ const AssignmentPage = () => {
     const userData = JSON.parse(localStorage.getItem("userData") ?? "{}");
     if (userData.id === session.data?.user.id && userData.courseId === id) {
       setUserProgress(userData.progress);
+      setCourseTitle(localStorage.getItem("title") ?? "");
     }
     else {
       fetch(`/api/course/${id}`, {
@@ -91,12 +88,13 @@ const AssignmentPage = () => {
         .then((response) => response.json())
         .then((data) => {
           const userEnrollment = data.data.enrollments.find(
-            (enrollment: any) => enrollment.userId === session.data?.user.id
+            (enrollment: StudentEnrollmentInterface) => enrollment.userId === session.data?.user.id
           );
           const userProgress = userEnrollment
             ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct
             : "0%";
           setUserProgress(userProgress);
+          setCourseTitle(data.data.title);
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
@@ -125,19 +123,19 @@ const AssignmentPage = () => {
       
       {!isLoading && isAssignmentAvailable && (
         <div className="flex flex-col">
-          {localStorage.getItem("progress") === "100.00%" ? (
+          {userProgress === "100.00%" ? (
             <div className="flex ml-10 mt-5">
               <div className="mr-2">
                 {"You've completed this course. Download your certificate "}
               </div>
-              <CertificateGenerator courseName={sideBarData?.titleData ?? ""} />
+              <CertificateGenerator courseName={courseTitle} />
             </div>
           ) : (
             <div className="flex ml-10 mt-5">
               <div className="mr-2">
                 {"Your current progress:"}
               </div>
-              <div className="font-semibold">{localStorage.getItem("progress")}</div>
+              <div className="font-semibold">{userProgress}</div>
             </div>
           )}
           <div className="my-5 ml-10 font-nunito font-bold text-3xl">

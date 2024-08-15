@@ -6,7 +6,6 @@ import FilterBar from "@/components/filter-bar";
 import { useEffect, useState } from "react";
 import { CourseInterface } from "@/components/types/types";
 import LoadingBouncer from "@/components/loading";
-import Instructions from "@/components/assignments/instructions";
 
 export default function Home() {
   const router = useRouter();

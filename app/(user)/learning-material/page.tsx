@@ -4,17 +4,12 @@ import CoursesBar from "@/components/assignments/course-bar";
 import PdfViewer from "@/components/pdf-viewer";
 import {
   MaterialInterface,
-  SideBarDataInterface,
+  StudentEnrollmentInterface,
 } from "@/components/types/types";
-import { BounceLoader } from "react-spinners";
-import {
-  getCourses,
-  getSideBarDataFromLocalStorage,
-} from "@/components/worker/local-storage-handler";
+
 import { useSearchParams } from "next/navigation";
 import CertificateGenerator from "@/components/worker/certificate-generator";
 import { useSession } from "next-auth/react";
-import { set } from "zod";
 import LoadingBouncer from "./loading";
 
 const MaterialsPage = () => {
@@ -24,9 +19,7 @@ const MaterialsPage = () => {
     null
   );
   const [userProgress, setUserProgress] = useState<string>();
-  const [sideBarData, setSideBarData] = useState<
-    SideBarDataInterface | undefined
-  >();
+  const [courseTitle, setCourseTitle] = useState<string>("");
   const [isMaterialAvailable, setIsMaterialAvailable] = useState<boolean>(true);
 
   const searchParams = useSearchParams();
@@ -48,6 +41,7 @@ const MaterialsPage = () => {
       } else {
         console.log("Failed to fetch material");
         setMaterialData(null);
+        setIsMaterialAvailable(false);
       }
     } catch (error) {
       console.error("Error fetching material:", error);
@@ -66,6 +60,7 @@ const MaterialsPage = () => {
     const userData = JSON.parse(localStorage.getItem("userData") ?? "{}");
     if (userData.id === session.data?.user.id && userData.courseId === id) {
       setUserProgress(userData.progress);
+      setCourseTitle(localStorage.getItem("title") ?? "");
     }
     else {
       fetch(`/api/course/${id}`, {
@@ -77,12 +72,13 @@ const MaterialsPage = () => {
         .then((response) => response.json())
         .then((data) => {
           const userEnrollment = data.data.enrollments.find(
-            (enrollment: any) => enrollment.userId === session.data?.user.id
+            (enrollment: StudentEnrollmentInterface) => enrollment.userId === session.data?.user.id
           );
           const userProgress = userEnrollment
             ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct
             : "0%";
           setUserProgress(userProgress);
+          setCourseTitle(data.data.title);
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
@@ -117,7 +113,7 @@ const MaterialsPage = () => {
                   {"You've completed this course. Download your certificate "}
                 </div>
                 <CertificateGenerator
-                  courseName={sideBarData?.titleData ?? ""}
+                  courseName={courseTitle}
                 />
               </div>
             ) : (

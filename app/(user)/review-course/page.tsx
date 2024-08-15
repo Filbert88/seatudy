@@ -4,12 +4,10 @@ import CoursesBar from "@/components/assignments/course-bar";
 import Instructions from "@/components/assignments/instructions";
 import {
   AssignmentInterface,
-  SideBarDataInterface,
 } from "@/components/types/types";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
 import { FaStar } from "react-icons/fa6";
-import { useSession } from "next-auth/react";
 
 const ReviewPage = () => {
   const [tempRating, setTempRating] = useState(0);

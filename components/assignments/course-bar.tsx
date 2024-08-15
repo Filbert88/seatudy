@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
-import { AssignmentInterface, CourseSidebarInterface, MaterialInterface, SideBarDataInterface } from "../types/types";
+import { AssignmentInterface, CourseSidebarInterface, MaterialInterface, SideBarDataInterface, StudentEnrollmentInterface } from "../types/types";
 import { useEffect, useState } from "react";
-import { getSideBarDataFromLocalStorage } from "../worker/local-storage-handler";
 import { useToast } from "../ui/use-toast";
 import { useSession } from "next-auth/react";
 
@@ -29,7 +28,7 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
         localStorage.setItem('materialData', JSON.stringify(data.data.materials));
         localStorage.setItem('assignmentData', JSON.stringify(data.data.assignments));
         localStorage.setItem('title', data.data.title);
-        const userEnrollment = data.data.enrollments.find((enrollment: any) => enrollment.userId === session.data?.user.id);
+        const userEnrollment = data.data.enrollments.find((enrollment: StudentEnrollmentInterface) => enrollment.userId === session.data?.user.id);
         const userProgress = userEnrollment ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct : "0%";
         localStorage.setItem('userData', JSON.stringify({
           progress: userProgress,
