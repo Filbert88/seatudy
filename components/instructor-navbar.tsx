@@ -53,10 +53,22 @@ const InstructorNavbar = () => {
                 <button
                   onClick={() => handleNavbarClick("/view-threads")}
                   className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
-                    (pathname.includes("view-threads") || pathname.includes("create-thread")) && "text-fourth"
+                    (pathname.includes("view-threads") ||
+                      pathname.includes("create-thread")) &&
+                    "text-fourth"
                   }`}
                 >
                   Discussions
+                </button>
+                <button
+                  onClick={() => handleNavbarClick("/delete-courses")}
+                  className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
+                    pathname.includes("delete-courses")
+                      ? "text-fourth"
+                      : "text-red-500"
+                  }`}
+                >
+                  Delete Course
                 </button>
               </>
             )}

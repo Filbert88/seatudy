@@ -30,9 +30,7 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
           Loading course details...
         </div>
       ) : (
-        <div
-          className="flex flex-col rounded-md drop-shadow-md border absolute top-[6.5rem] right-[12rem] bg-white ml-20 w-[25rem] h-fit"
-        >
+        <div className="flex flex-col rounded-md drop-shadow-md border absolute top-[6.5rem] right-[12rem] bg-white ml-20 w-[25rem] h-fit">
           <div className="relative w-full aspect-w-16 aspect-h-9">
             <Image
               src={props.thumbnailUrl || "/assets/dummyCourse.png"}
@@ -65,16 +63,10 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
               )}
             </div>
             <p className="font-nunito font-semibold text-grays my-5">
-              30 days money back guarantee
-              <br />
               Full lifetime access
             </p>
-            <div className="font-nunito font-bold">
-              This course includes:
-            </div>
-            <ul
-              className="font-nunito font-bold list-disc ml-5"
-            >
+            <div className="font-nunito font-bold">This course includes:</div>
+            <ul className="font-nunito font-bold list-disc ml-5">
               {listSyllabus(props.syllabus)}
             </ul>
             <div className="flex flex-row justify-end mb-auto">
