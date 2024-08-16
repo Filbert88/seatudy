@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
+import ViewForumPage from "@/app/(user)/view-forum/forum-page";
 import { SessionProvider } from "next-auth/react";
-import AssignmentPage from "@/app/(user)/view-assignment/page";
 
 jest.mock("next/navigation", () => ({
   useRouter() {
@@ -8,9 +8,6 @@ jest.mock("next/navigation", () => ({
       prefetch: jest.fn(),
     };
   },
-  useSearchParams: () => ({
-    get: () => {},
-  }),
 }));
 
 jest.mock("node-fetch", () => jest.fn());
@@ -25,11 +22,11 @@ const mockSession = {
   expires: "",
 };
 
-describe("View Assignment Page", () => {
+describe("View Forum Page", () => {
   it("should render", () => {
     render(
       <SessionProvider session={mockSession}>
-        <AssignmentPage />
+        <ViewForumPage session={mockSession} />
       </SessionProvider>
     );
   });
