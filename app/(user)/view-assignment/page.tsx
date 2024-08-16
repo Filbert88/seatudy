@@ -18,7 +18,7 @@ import { useSearchParams } from "next/navigation";
 const AssignmentPage = () => {
   const [showInstructions, setShowInstructions] = useState(true);
   const [showSubmissions, setShowSubmissions] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [asgId, setAsgId] = useState<string | null>("");
   const [isAssignmentAvailable, setIsAssignmentAvailable] = useState(true);
   const [userProgress, setUserProgress] = useState<string>();

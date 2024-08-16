@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 export default function Home() {
   const [courseData, setCourseData] = useState<CourseInterface[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
   const { toast } = useToast();

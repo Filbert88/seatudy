@@ -20,7 +20,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const ViewForumPage = () => {
   const [courseId, setCourseId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [students, setStudents] = useState<StudentEnrollmentInterface[]>([]);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -31,7 +31,6 @@ const ViewForumPage = () => {
     const param = new URLSearchParams(window.location.search);
     const id = param.get("id");
     setCourseId(id);
-    setIsLoading(true);
 
     if (id !== null) {
       fetchCourse(id);

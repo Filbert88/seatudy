@@ -15,7 +15,7 @@ const TopUpFormPage = () => {
   const [cardName, setCardName] = useState<string>("");
   const [nominals, setNominals] = useState<string>();
   const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
