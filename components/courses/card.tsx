@@ -28,7 +28,7 @@ const Card: React.FC<CourseDetailCardProps> = (props) => {
     <div className="flex flex-col rounded-md drop-shadow-md border absolute top-[6.5rem] right-[12rem] bg-white ml-20 w-[25rem] h-fit">
       <div className="relative w-full aspect-w-16 aspect-h-9">
         <Image
-          src={props.thumbnailUrl || "/assets/dummyCourse.png"}
+          src={props.thumbnailUrl || "https://res.cloudinary.com/dl2cqncwz/image/upload/v1723488183/zfprmxxybgzwffyj8kon.png"}
           fill
           className="rounded-t-md cover p-0.5"
           alt="Course Image"

@@ -221,15 +221,11 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
     }
   }, []);
 
-  if (!(!isLoading && isForumAvailable && forumData && forumData?.length > 0)) {
-    router.push(`/create-thread?id=${courseId}`);
-  }
-
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
       {isLoading && <LoadingBouncer />}
       <StudentBar students={students}/>
-      {(!isLoading && isForumAvailable && forumData && forumData?.length > 0) &&
+      {(!isLoading && isForumAvailable && forumData && forumData?.length > 0) ?
         <div className="flex flex-col h-screen pl-[24rem] pt-[6rem] w-full pr-20">
           <div className="flex justify-between my-5">
             <div className="font-nunito font-bold text-3xl">
@@ -337,6 +333,20 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
             </div>
           ))}
         </div>
+      :
+        <div className="flex pl-[24rem] pt-[7.5rem] w-full pr-20 items-center h-fit justify-between font-nunito">
+          <div className="text-3xl font-bold">Forum discussion is empty  </div>
+          <button 
+            className="bg-fourth py-2 px-5 w-fit h-fit ml-auto rounded-md text-white font-semibold hover:shadow-md transition"
+            onClick={() => {
+              setIsLoading(true);
+              router.push(`/create-thread?id=${courseId}`);
+            }}
+          >
+            Create new thread
+          </button>
+        </div>
+        
       }
     </div>
   );

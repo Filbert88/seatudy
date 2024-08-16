@@ -144,9 +144,7 @@ const CheckOutPage = () => {
         <div className="relative aspect-w-16 aspect-h-9">
           <Image
             src={
-              courseDetails
-                ? courseDetails?.thumbnailUrl
-                : "/assets/checkout_banner.gif"
+              courseDetails?.thumbnailUrl ?? "https://res.cloudinary.com/dl2cqncwz/image/upload/v1723488183/zfprmxxybgzwffyj8kon.png"
             }
             fill
             style={{ objectFit: "cover" }}
