@@ -1,6 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingBouncer from "./loading";
 import { FaRegImage } from "react-icons/fa6";
@@ -8,8 +7,7 @@ import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
 
 const CreateCourse = () => {
-  const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const [courseTitle, setCourseTitle] = useState<string>("");
   const [courseDescription, setCourseDescription] = useState<string>("");

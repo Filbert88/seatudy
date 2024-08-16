@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const CoursesDetailPage = () => {
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [reviewData, setReviewData] = useState<ReviewDataProps[]>([]);
   const [isLogin, setIsLogin] = useState(false);
   const [courseId, setCourseId] = useState<string>("");

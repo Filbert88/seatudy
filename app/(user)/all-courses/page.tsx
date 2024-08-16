@@ -11,7 +11,7 @@ export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams(); 
   const [results, setResults] = useState<CourseInterface[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
 
   const getCourses = async (params: string) => {

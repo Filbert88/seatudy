@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 const CheckOutPage = () => {
   const { data: session } = useSession();
   const [courseId, setCourseId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
   const [profile, setProfile] = useState<UserInterface>();
   const router = useRouter();

@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 const DeleteCoursePage = () => {
   const { data: session } = useSession();
   const [courseId, setCourseId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface>();
   const router = useRouter();
   const { toast } = useToast();
