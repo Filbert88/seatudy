@@ -101,6 +101,7 @@ const SignupForm: React.FC = () => {
           description: data.message || "An error occurred. Please try again.",
           variant: "destructive",
         });
+        setIsLoading(false);
       }
     } catch (err) {
       console.error("An error occurred:", err);

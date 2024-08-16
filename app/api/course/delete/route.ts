@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { courseId } = body;
     console.log(courseId);
-
+    
     await prisma.$transaction(async (prisma) => {
       await prisma.courseProgress.deleteMany({
         where: { enrollment: { courseId } },
