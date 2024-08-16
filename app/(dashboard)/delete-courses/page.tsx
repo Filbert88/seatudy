@@ -64,7 +64,7 @@ const DeleteCoursePage = () => {
       console.log(data);
       if (response.ok && data.message === "Success") {
         toast({
-          title: "Succesfully deleted the course",
+          title: "Course deleted successfully",
         });
         router.push("/instructor-dashboard");
       } else {
@@ -75,7 +75,7 @@ const DeleteCoursePage = () => {
       }
     } catch (error) {
       toast({
-        title: `Failed to purchase a course`,
+        title: `Failed to delete course`,
         variant: "destructive",
       });
       console.error(error);
