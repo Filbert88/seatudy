@@ -29,7 +29,7 @@ const CoursesBar: React.FC<CourseSidebarInterface> = (props) => {
         localStorage.setItem('assignmentData', JSON.stringify(data.data.assignments));
         localStorage.setItem('title', data.data.title);
         const userEnrollment = data.data.enrollments.find((enrollment: StudentEnrollmentInterface) => enrollment.userId === session.data?.user.id);
-        const userProgress = userEnrollment ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct : "0%";
+        const userProgress = userEnrollment ? (userEnrollment.progress[userEnrollment.progress.length - 1]?.progressPct ?? "0%") : "0%";
         localStorage.setItem('userData', JSON.stringify({
           progress: userProgress,
           id: session.data?.user.id,

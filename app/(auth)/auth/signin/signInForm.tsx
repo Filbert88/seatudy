@@ -49,6 +49,7 @@ const SigninForm: React.FC = () => {
           description: errorMessage,
           variant: "destructive",
         });
+        setIsLoading(false);
       } else {
         toast({
           title: "Login successful",
