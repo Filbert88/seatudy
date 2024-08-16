@@ -47,7 +47,10 @@ const InstructorDashboard = () => {
         <button
           className="rounded-md hover:shadow-md transition bg-fourth px-4 py-2 text-white font-semibold"
           type="button"
-          onClick={() => router.push("/create-courses")}
+          onClick={() => {
+            setIsLoading(true);
+            router.push("/create-courses");
+          }}
         >
           Create a new course
         </button>
@@ -68,7 +71,10 @@ const InstructorDashboard = () => {
                 totalEnrolled={course.enrollments.length}
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
-                onClick={() => router.push(`/view-materials?id=${course.id}`)}
+                onClick={() => {
+                  setIsLoading(true);
+                  router.push(`/view-materials?id=${course.id}`);
+                }}
               />
             </div>
           ))}

@@ -98,7 +98,8 @@ const DeleteCoursePage = () => {
                 : "/assets/checkout_banner.gif"
             }
             fill
-            className="cover"
+            style={{ objectFit: "cover" }}
+            loading="lazy"
             alt="Course Image"
           />
         </div>
@@ -111,20 +112,18 @@ const DeleteCoursePage = () => {
             disabled
             className="py-1 px-3 rounded-md border border-grays w-full"
           />
-          <div className="text-xs flex items-center my-3">
+          <div className="text-xs flex items-center my-5">
             By clicking “delete”, you acknowledge that you are deleting this
             course.
           </div>
-          <div className="text-xs flex items-center mb-5 max-w-[50%]">
-            *This action is reversible. Please note that you, as the instructor,
-            are solely responsible for any consequences resulting from deleting
-            this course.
+          <div className="text-xs flex items-center mb-8 max-w-[80%]">
+            {"*This action is non reversible. Please note that you, as the instructor, are solely responsible for any consequences resulting from deleting this course."}
           </div>
           <div className="flex flex-row justify-end space-x-4 mb-2">
             <button
               onClick={() => router.back()}
               type="button"
-              className="rounded-md text-background px-6 font-nunito border-2 border-fourth text-fourth hover:shadow-md transition text-sm font-extrabold"
+              className="rounded-md text-background px-5 py-1 font-nunito border-2 border-fourth text-fourth hover:opacity-65 transition text-sm font-extrabold"
             >
               Go Back
             </button>

@@ -77,9 +77,9 @@ const FilterBar = ({ route }: FilterBarProps) => {
 
   const buildQueryParams = (newRating?: string, newDifficulty?: string, newCategory?: string) => {
     const params = new URLSearchParams();
-    const rating = newRating !== undefined ? newRating : selectedRating;
-    const difficulty = newDifficulty !== undefined ? newDifficulty : selectedDifficulty;
-    const category = newCategory !== undefined ? newCategory : selectedCategory;
+    const rating = newRating ?? selectedRating;
+    const difficulty = newDifficulty ?? selectedDifficulty;
+    const category = newCategory ?? selectedCategory;
     
     if (rating) {
       params.set('rating', rating);

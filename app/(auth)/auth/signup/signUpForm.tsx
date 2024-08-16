@@ -62,6 +62,7 @@ const SignupForm: React.FC = () => {
   };
 
   const handleLoginClick = () => {
+    setIsLoading(true);
     router.push("/auth/signin");
   };
 
@@ -108,7 +109,6 @@ const SignupForm: React.FC = () => {
         description: "Please try again later.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };

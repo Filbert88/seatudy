@@ -71,6 +71,7 @@ const MyCoursesPage = () => {
                 className={`mr-5 mb-5 ${course.materials.length === 0 ? "opacity-60 hover:cursor-not-allowed": ""}`}
                 onClick={() => {
                   if (course.materials.length > 0) {
+                    setIsLoading(true);
                     router.push(`/learning-material?id=${course.id}&materialId=${course.materials[0].id}`);
                   }
                 }}
