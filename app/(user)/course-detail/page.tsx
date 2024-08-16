@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const CoursesDetailPage = () => {
   const [courseDetails, setCourseDetails] = useState<CourseDetailsInterface | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [reviewData, setReviewData] = useState<ReviewDataProps[]>([]);
   const [isLogin, setIsLogin] = useState(false);
   const [courseId, setCourseId] = useState<string>("");
@@ -19,6 +19,7 @@ const CoursesDetailPage = () => {
   useEffect(() => {
     const getReviews = async (id: string) => {
       try {
+        setIsLoading(true);
         const response = await fetch(`/api/review?courseId=${id}`, {
           method: "GET",
           headers: {
@@ -33,6 +34,8 @@ const CoursesDetailPage = () => {
           title: "Failed to load reviews data",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -46,6 +49,7 @@ const CoursesDetailPage = () => {
   useEffect(() => {
     const getCoursesDetail = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(courseDetailUrl, {
           method: "GET",
           headers: {
@@ -86,12 +90,12 @@ const CoursesDetailPage = () => {
   if (!courseDetails) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p>Course details not available.</p>
+        <p>{"Loading course details..."}</p>
       </div>
     );
   }
 
-  const outline = courseDetails.skills?.map((item, index) => (
+  const outline = courseDetails?.skills?.map((item, index) => (
     <li key={index} className="my-2">
       {item}
     </li>
