@@ -51,6 +51,7 @@ const DeleteCoursePage = () => {
   }, [courseId, session]); // eslint-disable-line
 
   const handleDelete = async () => {
+    console.log(courseId);
     try {
       setIsLoading(true);
       const response = await fetch(`/api/course/delete`, {
