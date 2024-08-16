@@ -91,7 +91,7 @@ const AssignmentPage = () => {
             (enrollment: StudentEnrollmentInterface) => enrollment.userId === session.data?.user.id
           );
           const userProgress = userEnrollment
-            ? userEnrollment.progress[userEnrollment.progress.length - 1].progressPct
+            ? (userEnrollment.progress[userEnrollment.progress.length - 1]?.progressPct ?? "0%")
             : "0%";
           setUserProgress(userProgress);
           setCourseTitle(data.data.title);

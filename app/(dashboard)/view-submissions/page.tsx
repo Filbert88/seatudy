@@ -13,10 +13,27 @@ const ViewSubmissionsPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [grade, setGrade] = useState<string>("");
   const [activeGradingId, setActiveGradingId] = useState<string>("");
-  const [comment, setComment] = useState<string>("");
   const [submissionData, setSubmissionData] = useState<SubmissionDataInterface[]>([]);
 
   const { toast } = useToast();
+
+  const fetchSubmission = async (courseId: string) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/submission?courseId=${courseId}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      setSubmissionData(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
@@ -24,23 +41,6 @@ const ViewSubmissionsPage = () => {
       setCourseId(id);
     }
 
-    const fetchSubmission = async (courseId: string) => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/submission?courseId=${courseId}`, {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-          },
-        });
-        const data = await response.json();
-        setSubmissionData(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     if (courseId) {
       fetchSubmission(courseId);
     }
@@ -49,7 +49,6 @@ const ViewSubmissionsPage = () => {
   useEffect(() => {
     if (grade === "") {
       setActiveGradingId("");
-      setComment("");
     }
   }, [grade, activeGradingId])
 
@@ -79,7 +78,6 @@ const ViewSubmissionsPage = () => {
           accept: "application/json",
         },
         body: JSON.stringify({ 
-          content: comment,
           grade: parseInt(grade),
           assignmentId: assignmentId,
           studentId: studentId,
@@ -94,6 +92,7 @@ const ViewSubmissionsPage = () => {
         toast({
           title: "Successfully graded the submission",
         });
+        await fetchSubmission(courseId);
       }
 
     } catch (error) {
@@ -106,7 +105,6 @@ const ViewSubmissionsPage = () => {
       setIsLoading(false);
       setGrade("");
       setActiveGradingId("");
-      setComment("");
     }
   }
 
@@ -137,24 +135,14 @@ const ViewSubmissionsPage = () => {
                 <div className="flex ml-auto">
                   
                   {activeGradingId === submission.id && 
-                  <>
-                    <input 
-                      type="text" 
-                      value={comment}
-                      placeholder="Add comment.."
-                      disabled={activeGradingId !== submission.id && activeGradingId !== ""}
-                      className="border border-grays rounded-md py-1 px-3 w-[20rem] mr-3"
-                      onChange={(e) => {
-                        setComment(e.target.value);
-                      }}
-                    />
-                    <button 
-                      className="mr-10 px-3 py-1 bg-fourth text-white font-semibold rounded-md hover:shadow-md"
-                      onClick={() => {
-                        handleSubmissionClick(submission.assignmentId, submission.studentId);
-                      }}
-                    >Grade</button>
-                  </>
+                  
+                  <button 
+                    className="mr-10 px-3 py-1 bg-fourth text-white font-semibold rounded-md hover:shadow-md"
+                    onClick={() => {
+                      handleSubmissionClick(submission.assignmentId, submission.studentId);
+                    }}
+                  >Grade</button>
+                  
                   }
                   <a className="hover:bg-gray-100 text-grays rounded-lg mr-3" href={submission.content} target="_blank">
                     <RiDownload2Line size={30} />
