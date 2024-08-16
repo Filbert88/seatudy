@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth-options";
 import { getServerSession } from "next-auth";
 import { Role } from "@prisma/client";
-
+import { Prisma } from "@prisma/client";
 export async function POST(req: NextRequest) {
   const session = await getServerSession({ req, ...authOptions });
   if (!session) {
@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { courseId } = body;
     console.log(courseId);
+    
     await prisma.$transaction(async (prisma) => {
       await prisma.courseProgress.deleteMany({
         where: { enrollment: { courseId } },
@@ -97,6 +98,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Success" }, { status: 200 });
   } catch (error) {
     console.error("Error deleting course and related records:", error);
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      console.error("Prisma client error: ", error.message, error.meta);
+    } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
+      console.error("Prisma unknown request error: ", error.message);
+    } else if (error instanceof Prisma.PrismaClientRustPanicError) {
+      console.error("Prisma Rust panic: ", error.message);
+    } else if (error instanceof Prisma.PrismaClientInitializationError) {
+      console.error("Prisma initialization error: ", error.message);
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      console.error("Prisma validation error: ", error.message);
+    } else {
+      console.error("General error: ", error);
+    }
+
     return NextResponse.json(
       {
         message: "Internal Server Error",

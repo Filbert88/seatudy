@@ -22,7 +22,6 @@ const CreateCourse = () => {
   const [category, setCategory] = useState<string>("");
   const { toast } = useToast();
 
-  
   const formatNumberWithCommas = (number: string) => {
     return number.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
@@ -61,7 +60,11 @@ const CreateCourse = () => {
       skills.split(",").forEach((item) => f.append("skills", item.trim()));
       f.append("difficulty", courseDifficulty.toUpperCase());
       f.append("price", coursePrice.replace(/,/g, ""));
-      category.split(",").forEach((item) => f.append("categoryNames", item.trim().toLowerCase()));
+      category
+        .split(",")
+        .forEach((item) =>
+          f.append("categoryNames", item.trim().toLowerCase())
+        );
 
       const response = await fetch("/api/course/create", {
         method: "POST",
@@ -88,6 +91,7 @@ const CreateCourse = () => {
         description: "Please try again later.",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -100,13 +104,6 @@ const CreateCourse = () => {
     }
   };
 
-  useEffect(() => {
-    if (status === "authenticated" && session?.user.role !== "INSTRUCTOR") {
-      router.push("/");
-    }
-    setIsLoading(false);
-  }, [status, session, router]);
-
   if (isLoading) {
     return <LoadingBouncer />;
   }
@@ -114,15 +111,12 @@ const CreateCourse = () => {
   return (
     <div className="pt-28 px-16 font-nunito">
       <div className="flex flex-col items-center justify-start">
-
         <div className="bg-white text-secondary shadow-md p-5 my-5 min-w-[50rem]">
           <div className="flex font-nunito font-bold text-3xl mb-3 justify-center">
             Creating a new course
           </div>
           <form className="form-content items-center justify-center">
-            <div className="font-semibold mb-2 text-lg">
-              Course Title
-            </div>
+            <div className="font-semibold mb-2 text-lg">Course Title</div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
@@ -132,9 +126,7 @@ const CreateCourse = () => {
                 onChange={(e) => setCourseTitle(e.target.value)}
               />
             </div>
-            <div className="font-semibold mb-2 text-lg">
-              Description
-            </div>
+            <div className="font-semibold mb-2 text-lg">Description</div>
             <div className="form-group pb-5 w-full">
               <textarea
                 placeholder="Enter a short description.."
@@ -143,9 +135,7 @@ const CreateCourse = () => {
                 onChange={(e) => setCourseDescription(e.target.value)}
               />
             </div>
-            <div className="font-semibold mb-2 text-lg">
-              Syllabus
-            </div>
+            <div className="font-semibold mb-2 text-lg">Syllabus</div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
@@ -155,9 +145,7 @@ const CreateCourse = () => {
                 onChange={(e) => setSyllabus(e.target.value)}
               />
             </div>
-            <div className="font-semibold mb-2 text-lg">
-              Developed skills
-            </div>
+            <div className="font-semibold mb-2 text-lg">Developed skills</div>
             <div className="form-group pb-5 w-full">
               <input
                 type="text"
@@ -168,9 +156,7 @@ const CreateCourse = () => {
               />
             </div>
             <div className="flex flex-row items-center mb-5">
-              <div className="font-semibold text-lg">
-                Difficulty
-              </div>
+              <div className="font-semibold text-lg">Difficulty</div>
               <select
                 className="bg-white border border-grays text-secondary rounded-md ml-5 px-2 py-1 hover:cursor-pointer font-nunito"
                 onChange={(e) => setCourseDifficulty(e.target.value)}
@@ -202,9 +188,7 @@ const CreateCourse = () => {
                 placeholder="Select a thumbnail file"
               />
             </label>
-            <div className="font-semibold mb-2 text-lg mt-5">
-              Category
-            </div>
+            <div className="font-semibold mb-2 text-lg mt-5">Category</div>
             <input
               type="text"
               className="p-3 rounded-md border border-grays w-full h-8"
@@ -212,9 +196,7 @@ const CreateCourse = () => {
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Separate with comma.."
             />
-            <div className="font-semibold mb-2 text-lg mt-5">
-              Price
-            </div>
+            <div className="font-semibold mb-2 text-lg mt-5">Price</div>
             <div className="form-group pb-5 w-full flex items-center">
               <div className="font-semibold text-lg mr-3">Rp </div>
               <input
