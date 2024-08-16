@@ -64,12 +64,12 @@ const SigninForm: React.FC = () => {
         variant: "destructive",
       });
       console.log(err);
-    } finally {
       setIsLoading(false);
     }
   };
 
   const handleRegisterClick = () => {
+    setIsLoading(true);
     router.push("/auth/signup");
   };
 

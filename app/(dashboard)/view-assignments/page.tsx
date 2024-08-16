@@ -106,14 +106,20 @@ const ViewAssignmentPage = () => {
         </div>
         <div className="flex">
           <button
-            onClick={() => router.push(`/create-assignments?id=${courseId}`)}
+            onClick={() => {
+              setIsLoading(true);
+              router.push(`/create-assignments?id=${courseId}`);
+            }}
             type="button"
             className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2 mr-5 hover:shadow-md transition"
           >
             Create new task
           </button>
           <button
-            onClick={() => router.push(`/view-submissions?id=${courseId}`)}
+            onClick={() => {
+              setIsLoading(true);
+              router.push(`/view-submissions?id=${courseId}`);
+            }}
             type="button"
             className="rounded-md bg-tertiary text-background bg-fourth px-10 font-nunito text-white font-extrabold my-5 py-2 hover:shadow-md transition"
           >
@@ -138,9 +144,10 @@ const ViewAssignmentPage = () => {
                   <div className="flex text-grays">
                     <button
                       className="hover:bg-gray-100 rounded-lg mr-1 p-1"
-                      onClick={() =>
-                        router.push(`edit-assignments?id=${assignment.id}`)
-                      }
+                      onClick={() => {
+                        setIsLoading(true);
+                        router.push(`edit-assignments?id=${assignment.id}`);
+                      }}
                     >
                       <PiNotePencilBold size={30} />
                     </button>

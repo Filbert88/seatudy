@@ -4,13 +4,8 @@ import React from "react";
 import {
   ForumCommentInterface,
   ForumPostInterface,
-  SideBarDataInterface,
   StudentEnrollmentInterface,
 } from "@/components/types/types";
-import {
-  getCourses,
-  getSideBarDataFromLocalStorage,
-} from "@/components/worker/local-storage-handler";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import LoadingBouncer from "./loading";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,9 +22,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
   }>({});
   const [postId, setPostId] = useState<string>("");
   const [commentFieldValue, setCommentFieldValue] = useState<string>("");
-  const [sideBarData, setSideBarData] = useState<
-    SideBarDataInterface | undefined
-  >();
+
   const [students, setStudents] = useState<StudentEnrollmentInterface[]>([]);
   const [isForumAvailable, setIsForumAvailable] = useState<boolean>(true);
   const [isPosting, setIsPosting] = useState<boolean>(false); // Separate loading state for posting
@@ -47,11 +40,14 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
         },
       });
       if (!response.ok) {
-        throw new Error("Failed to fetch forum data");
+        console.log("Thread not found")
+        setIsForumAvailable(false);
       }
-      const data = await response.json();
-      setForumData(data.posts);
-      setIsForumAvailable(data.posts.length > 0);
+      else {
+        const data = await response.json();
+        setForumData(data.posts);
+        setIsForumAvailable(data.posts.length > 0);
+      }
     } catch (error) {
       console.error("Error fetching forum data:", error);
       setIsForumAvailable(false);
@@ -116,9 +112,9 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
       content: commentFieldValue,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      userId: session?.user?.id || "unknown",
+      userId: session?.user?.id ?? "unknown",
       user: {
-        id: session?.user?.id || "unknown",
+        id: session?.user?.id ?? "unknown",
         fullName: "You",
       },
     };
@@ -225,16 +221,13 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
     }
   }, []);
 
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
-
   if (!(!isLoading && isForumAvailable && forumData && forumData?.length > 0)) {
     router.push(`/create-thread?id=${courseId}`);
   }
 
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
+      {isLoading && <LoadingBouncer />}
       <StudentBar students={students}/>
       {(!isLoading && isForumAvailable && forumData && forumData?.length > 0) &&
         <div className="flex flex-col h-screen pl-[24rem] pt-[6rem] w-full pr-20">
@@ -245,6 +238,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
             <button 
               className="bg-fourth hover:shadow-md transition px-5 py-2 font-bold text-white rounded-md ml-auto h-fit w-fit"
               onClick={() => {
+                setIsLoading(true);
                 router.push(`/create-thread?id=${courseId}`);
               }}
             >
@@ -252,7 +246,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
             </button>
           </div>
 
-          {forumData?.map((post: ForumPostInterface, index: number) => (
+          {forumData?.map((post: ForumPostInterface) => (
             <div
               key={post.createdAt}
               className="flex flex-col bg-white shadow-lg rounded-md my-3 p-3 justify-between"
@@ -272,7 +266,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
               />
               {postId === post.id ? (
                 <>
-                  <div
+                  <button
                     onClick={() => {
                       setPostId("");
                     }}
@@ -282,7 +276,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
                     <div className="ml-1 text-sm font-bold">
                       {`Hide ${post._count.comments} replies`}
                     </div>
-                  </div>
+                  </button>
                   <div className="my-2 ml-2 bg-primary shadow-sm shadow-grays p-2 pt-1 w-[40%]">
                     <div>Reply to this thread</div>
                     <textarea
@@ -308,7 +302,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
                   </div>
                   <div className="mt-1 ml-2">
                     {commentData[post.id]?.map(
-                      (comment: ForumCommentInterface, index: number) => (
+                      (comment: ForumCommentInterface) => (
                         <div
                           key={post.id}
                           className="flex flex-col border-t-2 p-3 justify-between"
@@ -326,7 +320,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
                   </div>
                 </>
               ) : (
-                <div
+                <button
                   onClick={() => {
                     setPostId(post.id);
                     setCommentFieldValue("");
@@ -338,7 +332,7 @@ const ViewForumPage = ({ session }: { session: Session | null }) => {
                   <div className="ml-1 text-sm font-bold">
                     {`View ${post._count.comments} replies`}
                   </div>
-                </div>
+                </button>
               )}
             </div>
           ))}

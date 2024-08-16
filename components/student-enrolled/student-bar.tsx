@@ -20,10 +20,6 @@ const StudentBar: React.FC<StudentBarProps> = ({ students = [] }) => {
     }
   };
 
-  const dummyImage =
-    "https://res.cloudinary.com/dl2cqncwz/image/upload/v1723449492/pmswrzvs7sh2u5wzgnjx.jpg";
-
-  console.log(students);
   return (
     <div className="fixed top-20 max-w-[20rem] min-w-[20rem] h-screen font-nunito left-0 bg-secondary text-white">
       <div className="text-2xl font-extrabold m-5 text-center">Enrollments</div>
@@ -35,7 +31,7 @@ const StudentBar: React.FC<StudentBarProps> = ({ students = [] }) => {
                 <div className="flex items-center p-2">
                   {student?.user.profileUrl ? 
                     <Image
-                      src={student?.user.profileUrl ?? dummyImage}
+                      src={student?.user.profileUrl}
                       width={40}
                       height={40}
                       alt="profile"

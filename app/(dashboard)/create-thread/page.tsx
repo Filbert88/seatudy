@@ -3,19 +3,17 @@
 
 import { useEffect, useState } from "react";
 import dynamic from 'next/dynamic';
-import CoursesBar from "@/components/assignments/course-bar";
 import {
-  CourseInterface,
-  SideBarDataInterface,
+
   StudentEnrollmentInterface,
 } from "@/components/types/types";
 import LoadingBouncer from "../loading";
-import { getCourses, getSideBarDataFromLocalStorage } from "@/components/worker/local-storage-handler";
+
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import "react-quill/dist/quill.snow.css";
 import "./custom-quill.css";
-import { useSession } from "next-auth/react";
+
 import StudentBar from "@/components/student-enrolled/student-bar";
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -23,13 +21,10 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const ViewForumPage = () => {
   const [courseId, setCourseId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [courseData, setCourseData] = useState<CourseInterface>();
-  const [sideBarData, setSideBarData] = useState<SideBarDataInterface | undefined>();
   const [students, setStudents] = useState<StudentEnrollmentInterface[]>([]);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const router = useRouter();
-  const session = useSession();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -121,11 +116,9 @@ const ViewForumPage = () => {
     }
   };
 
-  if (isLoading) {
-    return <LoadingBouncer />;
-  }
   return (
     <div className="min-h-screen w-screen flex flex-row bg-primary text-secondary font-nunito">
+      {isLoading && <LoadingBouncer />}
       <StudentBar students={students}/>
       {!isLoading && (
         <div className="flex flex-col h-screen pl-[24rem] pt-[6rem] w-full pr-20 pb-10 scroll overflow-hidden">

@@ -94,7 +94,10 @@ export default function Home() {
                 difficulty={course.difficulty}
                 thumbnailURL={course.thumbnailUrl}
                 className={course.materials.length === 0 ? "opacity-60 hover:cursor-default": ""}
-                onClick={() => router.push(`/course-detail?id=${course.id}`)}
+                onClick={() => {
+                  setIsLoading(true);
+                  router.push(`/course-detail?id=${course.id}`);
+                }}
               />
             </div>
           ))}

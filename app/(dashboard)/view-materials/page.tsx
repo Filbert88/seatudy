@@ -103,7 +103,10 @@ const ViewMaterialsPage = () => {
         {courseDetails?.title}
       </div>
       <button
-        onClick={() => router.push(`/create-materials?id=${courseId}`)}
+        onClick={() => {
+          setIsLoading(true);
+          router.push(`/create-materials?id=${courseId}`);
+        }}
         type="button"
         className="rounded-md text-background bg-fourth hover:shadow-md transition px-5 font-nunito text-white font-bold my-5 py-2"
       >
@@ -127,7 +130,10 @@ const ViewMaterialsPage = () => {
                 <div className="flex text-grays">
                   <button
                     className="hover:bg-gray-100 rounded-lg p-1 mr-1"
-                    onClick={() => router.push(`edit-materials?id=${material.id}`)}
+                    onClick={() => {
+                      setIsLoading(true);
+                      router.push(`edit-materials?id=${material.id}`);
+                    }}
                   >
                     <PiNotePencilBold size={30} />
                   </button>

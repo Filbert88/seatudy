@@ -1,11 +1,22 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import LoadingBouncer from "./loading";
+import { useRouter, useSearchParams } from "next/navigation";
+import LoadingBouncer from "../loading";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
 import { useToast } from "@/components/ui/use-toast";
+
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface CourseCategory {
+  courseId: string;
+  categoryId: string;
+  category: Category;
+}
 
 const CreateCourse = () => {
   const { data: session, status } = useSession();
@@ -21,6 +32,7 @@ const CreateCourse = () => {
   const [skills, setSkills] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const { toast } = useToast();
+  const id = useSearchParams().get("id");
 
   
   const formatNumberWithCommas = (number: string) => {
@@ -63,21 +75,21 @@ const CreateCourse = () => {
       f.append("price", coursePrice.replace(/,/g, ""));
       category.split(",").forEach((item) => f.append("categoryNames", item.trim().toLowerCase()));
 
-      const response = await fetch("/api/course/create", {
+      const response = await fetch(`/api/course/${id}/update`, {
         method: "POST",
         headers: {
           accept: "application/json",
         },
         body: f,
       });
-      if (response.status === 201) {
+      if (response.ok) {
         toast({
-          title: "Course created successfully",
+          title: "Course successfully updated",
         });
         router.push("/instructor-dashboard");
       } else {
         toast({
-          title: "Error creating course",
+          title: "Error updating course",
           variant: "destructive",
         });
       }
@@ -100,12 +112,56 @@ const CreateCourse = () => {
     }
   };
 
+  const getCourseDetail = async (courseId: string) => {
+    try {
+      setIsLoading(true);
+      await fetch(`/api/course/${courseId}`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+        },
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setCourseTitle(data.data.title);
+            setCourseDescription(data.data.description);
+            setCourseDifficulty(data.data.difficulty);
+            setCoursePrice(data.data.price);
+            setThumbnailUrl(data.data.thumbnailUrl);
+            setSyllabus(data.data.syllabus.join(", "));
+            setSkills(data.data.skills.join(", "));
+            const categoryNames = data.data.categories
+              .map((category: CourseCategory) => category.category.name.trim())
+              .filter((name: string) => name)  // Filter out any empty names
+              .join(", ");
+            setCategory(categoryNames);
+          });
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (status === "authenticated" && session?.user.role !== "INSTRUCTOR") {
       router.push("/");
     }
     setIsLoading(false);
   }, [status, session, router]);
+
+  useEffect(() => {
+    if (id) {
+      getCourseDetail(id);
+    }
+  }, []);
 
   if (isLoading) {
     return <LoadingBouncer />;
@@ -117,7 +173,7 @@ const CreateCourse = () => {
 
         <div className="bg-white text-secondary shadow-md p-5 my-5 min-w-[50rem]">
           <div className="flex font-nunito font-bold text-3xl mb-3 justify-center">
-            Creating a new course
+            Editing a course
           </div>
           <form className="form-content items-center justify-center">
             <div className="font-semibold mb-2 text-lg">
@@ -226,12 +282,23 @@ const CreateCourse = () => {
               />
             </div>
           </form>
-          <button
-            onClick={handleSubmit}
-            className="bg-fourth text-white py-2 px-5 font-semibold w-fit rounded-md mt-5"
-          >
-            Create course
-          </button>
+          <div className="flex">
+            <button
+              onClick={handleSubmit}
+              className="bg-fourth hover:shadow-md transition text-white py-2 px-5 font-semibold w-fit rounded-md mt-5"
+            >
+              Save Changes
+            </button>
+            <button
+              onClick={() => {
+                setIsLoading(true);
+                router.push(`delete-courses?id=${id}`);
+              }}
+              className="bg-red-500 hover:shadow-md transition text-white py-2 px-5 font-semibold w-fit rounded-md mt-5 ml-5"
+            >
+              Delete This Course
+            </button>
+          </div>
         </div>
       </div>
     </div>
