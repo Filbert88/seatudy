@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import ViewForumPage from "@/app/(user)/view-forum/forum-page";
+import { SessionProvider } from "next-auth/react";
 
 jest.mock("next/navigation", () => ({
   useRouter() {
@@ -23,6 +24,10 @@ const mockSession = {
 
 describe("View Forum Page", () => {
   it("should render", () => {
-    render(<ViewForumPage session={mockSession} />);
+    render(
+      <SessionProvider session={mockSession}>
+        <ViewForumPage session={mockSession} />
+      </SessionProvider>
+    );
   });
 });
