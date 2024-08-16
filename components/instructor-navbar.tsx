@@ -1,11 +1,13 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import SeatudyLogo from "./assets/seatudy-logo";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import LoadingBouncer from "./loading";
 
 const InstructorNavbar = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -17,14 +19,19 @@ const InstructorNavbar = () => {
 
   return (
     <nav className="h-20 bg-secondary flex fixed w-full z-50 font-normal">
+      {isLoading && <LoadingBouncer />}
       <div className="flex justify-between items-center ml-3 text-primary w-full">
-        <div
+        <button
           className="flex items-center hover:cursor-pointer mr-10"
-          onClick={() => handleNavbarClick("/")}
+          onClick={() => {
+            setIsLoading(true);
+            handleNavbarClick("/");
+            setIsLoading(false);
+          }}
         >
           <SeatudyLogo className="h-10 w-10 mx-2" />
           <span className="font-semibold text-2xl mx-2">seatudy</span>
-        </div>
+        </button>
         <div className="flex items-center">
           {status === "authenticated" &&
             !pathname.includes("instructor-dashboard") &&
@@ -35,7 +42,11 @@ const InstructorNavbar = () => {
             !pathname.includes("edit-assignments") && (
               <>
                 <button
-                  onClick={() => handleNavbarClick("/view-materials")}
+                  onClick={() => {
+                    setIsLoading(true);
+                    handleNavbarClick("/view-materials");
+                    setIsLoading(false);
+                  }}
                   className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
                     pathname.includes("view-materials") && "text-fourth"
                   }`}
@@ -43,7 +54,11 @@ const InstructorNavbar = () => {
                   Materials
                 </button>
                 <button
-                  onClick={() => handleNavbarClick("/view-assignments")}
+                  onClick={() => {
+                    setIsLoading(true);
+                    handleNavbarClick("/view-assignments");
+                    setIsLoading(false);
+                  }}
                   className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
                     pathname.includes("view-assignments") && "text-fourth"
                   }`}
@@ -51,7 +66,11 @@ const InstructorNavbar = () => {
                   Assignments
                 </button>
                 <button
-                  onClick={() => handleNavbarClick("/view-threads")}
+                  onClick={() => {
+                    setIsLoading(true);
+                    handleNavbarClick("/view-threads");
+                    setIsLoading(false);
+                  }}
                   className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
                     (pathname.includes("view-threads") ||
                       pathname.includes("create-thread")) &&
@@ -61,14 +80,18 @@ const InstructorNavbar = () => {
                   Discussions
                 </button>
                 <button
-                  onClick={() => handleNavbarClick("/delete-courses")}
+                  onClick={() => {
+                    setIsLoading(true);
+                    handleNavbarClick("/edit-courses");
+                    setIsLoading(false);
+                  }}
                   className={`mx-10 font-semibold hover:opacity-50 transition text-md hover:cursor-pointer ${
-                    pathname.includes("delete-courses")
-                      ? "text-fourth"
-                      : "text-red-500"
+                    (pathname.includes("edit-courses") ||
+                      pathname.includes("delete-courses")) &&
+                    "text-fourth"
                   }`}
                 >
-                  Delete Course
+                  Manage Course
                 </button>
               </>
             )}
@@ -78,12 +101,18 @@ const InstructorNavbar = () => {
             <>
               <IoNotificationsOutline
                 className="text-primary mx-2 h-6 w-6 hover:cursor-pointer hover:opacity-50 transition"
-                onClick={() => router.push("/instructor-notification-page")}
+                onClick={() => {
+                  setIsLoading(true);
+                  router.push("/instructor-notification-page");
+                  setIsLoading(false);
+                }}
               />
               <button
-                onClick={() =>
-                  router.push("/instructor-dashboard/view-profile")
-                }
+                onClick={() => {
+                  setIsLoading(true);
+                  router.push("/instructor-dashboard/view-profile");
+                  setIsLoading(false);
+                }}
                 className="hover:cursor-pointer hover:opacity-50 transition ml-5 flex items-center"
               >
                 <div className="mr-4 text-md">{session?.user?.name}</div>

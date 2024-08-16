@@ -149,7 +149,8 @@ const CheckOutPage = () => {
                 : "/assets/checkout_banner.gif"
             }
             fill
-            className="cover"
+            style={{ objectFit: "cover" }}
+            loading="lazy"
             alt="Course Image"
           />
         </div>
@@ -166,19 +167,17 @@ const CheckOutPage = () => {
             Your balance
           </div>
           <input value={`Rp ${formatNumber(profile?.balance ?? 0)}`} disabled className="py-1 px-3 rounded-md border border-grays w-full" />
-          <div className="text-xs flex items-center my-3">
+          <div className="text-xs flex items-center my-5">
             By clicking “purchase”, you agree to the Paid Services Terms
           </div>
-          <div className="text-xs flex items-center mb-5 max-w-[50%]">
-              *This purchase is non-refundable. Once you complete your
-              purchase, the item will be available for use immediately and can be
-              accessed in My Course options in your navigation bar.
+          <div className="text-xs flex items-center mb-8 max-w-[80%]">
+              {"*This purchase is non-refundable. Once you complete your purchase, the item will be available for use immediately and can be accessed in My Course options in your navigation bar."}
           </div>
           <div className="flex flex-row justify-end space-x-4 mb-2">
             <button
               onClick={() => router.back()}
               type="button"
-              className="rounded-md text-background px-6 font-nunito border-2 border-fourth text-fourth hover:shadow-md transition text-sm font-extrabold"
+              className="rounded-md text-background px-5 py-1 font-nunito border-2 border-fourth text-fourth hover:opacity-65 transition text-sm font-extrabold"
             >
               Go Back
             </button>

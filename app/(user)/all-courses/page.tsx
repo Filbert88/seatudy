@@ -130,7 +130,10 @@ export default function Home() {
                       ? "opacity-60 hover:cursor-default"
                       : ""
                   }
-                  onClick={() => router.push(`/course-detail?id=${course.id}`)}
+                  onClick={() => {
+                    setIsLoading(true);
+                    router.push(`/course-detail?id=${course.id}`);
+                  }}
                 />
               </div>
             ))}
